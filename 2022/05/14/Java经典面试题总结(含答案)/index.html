@@ -1,67 +1,151 @@
-<?xml version="1.0" encoding="utf-8"?>
-<search>
-  <entry>
-    <title>Linux快速入门</title>
-    <url>/2022/03/14/Linux%E5%BF%AB%E9%80%9F%E5%85%A5%E9%97%A8/</url>
-    <content><![CDATA[<p>前言：</p>
-<p>本教程是根据B站Up主狂神说记得笔记，有需要查看视频的小伙伴可以去看看狂神的视频，真的非常好！</p>
-<p>狂神说Linux视频地址：<a href="https://www.bilibili.com/video/BV187411y7hF?vd_source=ac95d1e4dae5cfd66da910c649ab5384">https://www.bilibili.com/video/BV187411y7hF?vd_source=ac95d1e4dae5cfd66da910c649ab5384</a></p>
-<h1 id="服务器相关知识"><a href="#服务器相关知识" class="headerlink" title="服务器相关知识"></a>服务器相关知识</h1><blockquote>
-<p>为什么程序员都需要一个自己的服务器？</p>
-</blockquote>
-<ol>
-<li>作为一个程序员，必须要学会发布自己的网站和项目!</li>
-<li>练习Linux操作</li>
-<li>把自己的远程仓库、远程数据库、远程tomcat等搭建在服务器上</li>
-<li>练习Linux进行任意的环境部署操作! 大部人都是Window下开发，不熟悉Linux<blockquote>
-<p>如何购买服务器？</p>
-</blockquote>
-</li>
-</ol>
-<p>新手可以先去阿里云领一个免费的服务器先用着</p>
-<p>阿里云新人服务器领取地址：<br><a href="https://imgtu.com/i/jFDbm6"><img src="https://s1.ax1x.com/2022/06/25/jFDbm6.jpg" alt="jFDbm6.jpg"></a><br>学生的话后期可以购买学生机，阿里云只有未满24周岁都可以享受学生机优惠</p>
-<p>优惠地址：<a href="https://www.aliyun.com/minisite/goods?userCode=0phtycgr">https://www.aliyun.com/minisite/goods?userCode=0phtycgr</a></p>
-<p>购买服务器时系统选择CentOS 推荐版本7.X，因为8.0之后改了好多命令，云盘的话选择40G就够用了，如下图所示：<br><a href="https://imgtu.com/i/jFDzpd"><img src="https://s1.ax1x.com/2022/06/25/jFDzpd.jpg" alt="jFDzpd.jpg"></a></p>
-<blockquote>
-<p>买完服务器之后该干什么？</p>
-</blockquote>
-<p>首先服务器就是一个远程的Linux</p>
-<ol>
-<li>在阿里云购买服务器需要开通安全组设置去进行端口的映射，比如8080或者3306<br><a href="https://imgtu.com/i/jFcwxH"><img src="https://s1.ax1x.com/2022/06/25/jFcwxH.jpg" alt="jFcwxH.jpg"></a></li>
-<li>获取服务器的公网ip地址，修改实例名称和密码，记住第一次修改需要重启，修改后就可以使用Xshell进行远程连接了</li>
-</ol>
-]]></content>
-      <categories>
-        <category>Linux</category>
-        <category>运维</category>
-      </categories>
-      <tags>
-        <tag>Linux</tag>
-        <tag>运维</tag>
-        <tag>教程</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>博客技术总结</title>
-    <url>/2022/05/14/%E5%8D%9A%E5%AE%A2%E6%8A%80%E6%9C%AF%E6%80%BB%E7%BB%93/</url>
-    <content><![CDATA[<h1 id="1-技术介绍"><a href="#1-技术介绍" class="headerlink" title="1.技术介绍"></a>1.技术介绍</h1><p>前端：vue + vuex + vue-router + axios + vuetify + element + echarts</p>
-<p>后端：SpringBoot + nginx + SpringSecurity + Swagger2 + MyBatisPlus + Mysql + Redis + elasticsearch + rabbitMQ + MaxWell</p>
-<h1 id="2-运行环境"><a href="#2-运行环境" class="headerlink" title="2.运行环境"></a>2.运行环境</h1><p>开发工具：IDEA</p>
-<p>服务器：阿里云1核2G CentOS8.0以上</p>
-<p>对象存储：阿里云OSS</p>
-<p>全站cdn加速</p>
-<p>cos对象储存</p>
-<p>全站https</p>
-<h1 id="3-项目总结"><a href="#3-项目总结" class="headerlink" title="3.项目总结"></a>3.项目总结</h1><p>此次对博客进行了全方位的升级，前端技术点和后端技术点相比第一，二版提升了不少。</p>
-<p>加入了许多动画过渡效果，并考虑到了一些用户细节（深色模式，图片预览，等），评论加入了表情和分页，提升了用户体验，。后台文章编辑器换为MarkDown，语法更加简洁，新增了草稿箱和自动保存文章等功能。</p>
-]]></content>
-  </entry>
-  <entry>
-    <title>Java经典面试题总结(含答案)</title>
-    <url>/2022/05/14/Java%E7%BB%8F%E5%85%B8%E9%9D%A2%E8%AF%95%E9%A2%98%E6%80%BB%E7%BB%93(%E5%90%AB%E7%AD%94%E6%A1%88)/</url>
-    <content><![CDATA[<p>前言：</p>
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"><title>Java经典面试题总结(含答案) | Gods Blog</title><meta name="keywords" content="Java,面试题"><meta name="author" content="Gods"><meta name="copyright" content="Gods"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="前言： 本文为CSDN博主「哪 吒」的原创文章，本篇仅供学习使用，尊重原创 原文链接：https:&#x2F;&#x2F;blog.csdn.net&#x2F;guorui_java&#x2F;article&#x2F;details&#x2F;119299329  1、JDK 和 JRE 有什么区别？JDK（Java Development Kit），Java开发工具包 JRE（Java Runtime Environment），Java运行环境 JDK">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Java经典面试题总结(含答案)">
+<meta property="og:url" content="https://apathy99977.github.io/2022/05/14/Java%E7%BB%8F%E5%85%B8%E9%9D%A2%E8%AF%95%E9%A2%98%E6%80%BB%E7%BB%93(%E5%90%AB%E7%AD%94%E6%A1%88)/index.html">
+<meta property="og:site_name" content="Gods Blog">
+<meta property="og:description" content="前言： 本文为CSDN博主「哪 吒」的原创文章，本篇仅供学习使用，尊重原创 原文链接：https:&#x2F;&#x2F;blog.csdn.net&#x2F;guorui_java&#x2F;article&#x2F;details&#x2F;119299329  1、JDK 和 JRE 有什么区别？JDK（Java Development Kit），Java开发工具包 JRE（Java Runtime Environment），Java运行环境 JDK">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://img2.baidu.com/it/u=1251990574,3092353013&fm=253&fmt=auto&app=138&f=GIF?w=800&h=320">
+<meta property="article:published_time" content="2022-05-14T05:14:00.000Z">
+<meta property="article:modified_time" content="2022-06-24T17:07:41.547Z">
+<meta property="article:author" content="Gods">
+<meta property="article:tag" content="Java">
+<meta property="article:tag" content="面试题">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://img2.baidu.com/it/u=1251990574,3092353013&fm=253&fmt=auto&app=138&f=GIF?w=800&h=320"><link rel="shortcut icon" href="/./img/tx.jpg"><link rel="canonical" href="https://apathy99977.github.io/2022/05/14/Java%E7%BB%8F%E5%85%B8%E9%9D%A2%E8%AF%95%E9%A2%98%E6%80%BB%E7%BB%93(%E5%90%AB%E7%AD%94%E6%A1%88)/"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6/css/all.min.css" media="print" onload="this.media='all'"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox.css" media="print" onload="this.media='all'"><script>const GLOBAL_CONFIG = { 
+  root: '/',
+  algolia: undefined,
+  localSearch: {"path":"/search.xml","preload":false,"languages":{"hits_empty":"找不到您查询的内容：${query}"}},
+  translate: undefined,
+  noticeOutdate: undefined,
+  highlight: {"plugin":"highlighjs","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false},
+  copy: {
+    success: '复制成功',
+    error: '复制错误',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: true,
+    post: true
+  },
+  runtime: '天',
+  date_suffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: {"limitCount":50,"languages":{"author":"作者: Gods","link":"链接: ","source":"来源: Gods Blog","info":"著作权归作者所有。商业转载请联系作者获得授权，非商业转载请注明出处。"}},
+  lightbox: 'fancybox',
+  Snackbar: undefined,
+  source: {
+    justifiedGallery: {
+      js: 'https://cdn.jsdelivr.net/npm/flickr-justified-gallery@2/dist/fjGallery.min.js',
+      css: 'https://cdn.jsdelivr.net/npm/flickr-justified-gallery@2/dist/fjGallery.min.css'
+    }
+  },
+  isPhotoFigcaption: false,
+  islazyload: false,
+  isAnchor: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: 'Java经典面试题总结(含答案)',
+  isPost: true,
+  isHome: false,
+  isHighlightShrink: false,
+  isToc: false,
+  postUpdate: '2022-06-25 01:07:41'
+}</script><noscript><style type="text/css">
+  #nav {
+    opacity: 1
+  }
+  .justified-gallery img {
+    opacity: 1
+  }
+
+  #recent-posts time,
+  #post-meta time {
+    display: inline !important
+  }
+</style></noscript><script>(win=>{
+    win.saveToLocal = {
+      set: function setWithExpiry(key, value, ttl) {
+        if (ttl === 0) return
+        const now = new Date()
+        const expiryDay = ttl * 86400000
+        const item = {
+          value: value,
+          expiry: now.getTime() + expiryDay,
+        }
+        localStorage.setItem(key, JSON.stringify(item))
+      },
+
+      get: function getWithExpiry(key) {
+        const itemStr = localStorage.getItem(key)
+
+        if (!itemStr) {
+          return undefined
+        }
+        const item = JSON.parse(itemStr)
+        const now = new Date()
+
+        if (now.getTime() > item.expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return item.value
+      }
+    }
+  
+    win.getScript = url => new Promise((resolve, reject) => {
+      const script = document.createElement('script')
+      script.src = url
+      script.async = true
+      script.onerror = reject
+      script.onload = script.onreadystatechange = function() {
+        const loadState = this.readyState
+        if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+        script.onload = script.onreadystatechange = null
+        resolve()
+      }
+      document.head.appendChild(script)
+    })
+  
+      win.activateDarkMode = function () {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      win.activateLightMode = function () {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+      const t = saveToLocal.get('theme')
+    
+          if (t === 'dark') activateDarkMode()
+          else if (t === 'light') activateLightMode()
+        
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        if (asideStatus === 'hide') {
+          document.documentElement.classList.add('hide-aside')
+        } else {
+          document.documentElement.classList.remove('hide-aside')
+        }
+      }
+    
+    const detectApple = () => {
+      if(/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)){
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+    })(window)</script><meta name="generator" content="Hexo 6.2.0"></head><body><div id="loading-box"><div class="loading-left-bg"></div><div class="loading-right-bg"></div><div class="spinner-box"><div class="configure-border-1"><div class="configure-core"></div></div><div class="configure-border-2"><div class="configure-core"></div></div><div class="loading-word">加载中...</div></div></div><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img is-center"><img src="/./img/tx.jpg" onerror="onerror=null;src='/img/friend_404.gif'" alt="avatar"/></div><div class="sidebar-site-data site-data is-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">3</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">5</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">3</div></a></div><hr/><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 主页</span></a></div><div class="menus_item"><a class="site-page group" href="javascript:void(0);"><i class="fa-fw fas fa-folder-open"></i><span> 归档</span><i class="fas fa-chevron-down"></i></a><ul class="menus_item_child"><li><a class="site-page child" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 时轴</span></a></li><li><a class="site-page child" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标题</span></a></li><li><a class="site-page child" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></li></ul></div><div class="menus_item"><a class="site-page group" href="javascript:void(0);"><i class="fa-fw fas fa-list"></i><span> 清单</span><i class="fas fa-chevron-down"></i></a><ul class="menus_item_child"><li><a class="site-page child" href="/books/"><i class="fa-fw fa-solid fa-book"></i><span> 说说</span></a></li><li><a class="site-page child" href="/music/"><i class="fa-fw fa-solid fa-music"></i><span> 音乐</span></a></li><li><a class="site-page child" href="/album/"><i class="fa-fw fa-solid fa-image"></i><span> 相册</span></a></li><li><a class="site-page child" href="/film/"><i class="fa-fw fa-solid fa-video"></i><span> 电影</span></a></li></ul></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> 友链</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于笔者</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header" style="background-image: url('https://s1.ax1x.com/2022/06/23/jCECPP.jpg')"><nav id="nav"><span id="blog_name"><a id="site-name" href="/">Gods Blog</a></span><div id="menus"><div id="search-button"><a class="site-page social-icon search"><i class="fas fa-search fa-fw"></i><span> 搜索</span></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 主页</span></a></div><div class="menus_item"><a class="site-page group" href="javascript:void(0);"><i class="fa-fw fas fa-folder-open"></i><span> 归档</span><i class="fas fa-chevron-down"></i></a><ul class="menus_item_child"><li><a class="site-page child" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 时轴</span></a></li><li><a class="site-page child" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标题</span></a></li><li><a class="site-page child" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></li></ul></div><div class="menus_item"><a class="site-page group" href="javascript:void(0);"><i class="fa-fw fas fa-list"></i><span> 清单</span><i class="fas fa-chevron-down"></i></a><ul class="menus_item_child"><li><a class="site-page child" href="/books/"><i class="fa-fw fa-solid fa-book"></i><span> 说说</span></a></li><li><a class="site-page child" href="/music/"><i class="fa-fw fa-solid fa-music"></i><span> 音乐</span></a></li><li><a class="site-page child" href="/album/"><i class="fa-fw fa-solid fa-image"></i><span> 相册</span></a></li><li><a class="site-page child" href="/film/"><i class="fa-fw fa-solid fa-video"></i><span> 电影</span></a></li></ul></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> 友链</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于笔者</span></a></div></div><div id="toggle-menu"><a class="site-page"><i class="fas fa-bars fa-fw"></i></a></div></div></nav><div id="post-info"><h1 class="post-title">Java经典面试题总结(含答案)</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2022-05-14T05:14:00.000Z" title="发表于 2022-05-14 13:14:00">2022-05-14</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2022-06-24T17:07:41.547Z" title="更新于 2022-06-25 01:07:41">2022-06-25</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/Java/">Java</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-wordcount"><i class="far fa-file-word fa-fw post-meta-icon"></i><span class="post-meta-label">字数总计:</span><span class="word-count">53.5k</span><span class="post-meta-separator">|</span><i class="far fa-clock fa-fw post-meta-icon"></i><span class="post-meta-label">阅读时长:</span><span>172分钟</span></span><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title="Java经典面试题总结(含答案)"><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">阅读量:</span><span id="busuanzi_value_page_pv"></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="post-content" id="article-container"><p>前言：</p>
 <p>本文为CSDN博主「哪 吒」的原创文章，本篇仅供学习使用，尊重原创</p>
-<p>原文链接：<a href="https://blog.csdn.net/guorui_java/article/details/119299329">https://blog.csdn.net/guorui_java/article/details/119299329</a></p>
+<p>原文链接：<a target="_blank" rel="noopener" href="https://blog.csdn.net/guorui_java/article/details/119299329">https://blog.csdn.net/guorui_java/article/details/119299329</a></p>
 <hr>
 <p>1、JDK 和 JRE 有什么区别？<br>JDK（Java Development Kit），Java开发工具包</p>
 <p>JRE（Java Runtime Environment），Java运行环境</p>
@@ -200,7 +284,7 @@
 <p>通常属性名是要和 包名、类名、方法名、字段名、常量名作出区别的:</p>
 <p>首先:必须用英文，不要用汉语拼音</p>
 <p>（1）包(package)</p>
-<p>用于将完成不同功能的类分门别类，放在不同的目录(包)下，包的命名规则：将公司域名反转作为包名。比如<a href="http://www.sohu.com/">www.sohu.com</a> 对于包名：每个字母都需要小写。比如：com.sohu.test;该包下的Test类的全名是：com.sohu.Test.Java 。</p>
+<p>用于将完成不同功能的类分门别类，放在不同的目录(包)下，包的命名规则：将公司域名反转作为包名。比如<a target="_blank" rel="noopener" href="http://www.sohu.com/">www.sohu.com</a> 对于包名：每个字母都需要小写。比如：com.sohu.test;该包下的Test类的全名是：com.sohu.Test.Java 。</p>
 <p>如果定义类的时候没有使用package,那么java就认为我们所定义的类位于默认包里面(default package)。</p>
 <p>（2）类</p>
 <p>首字母大写，如果一个类由多个单词构成，那么每个单词的首字母都大写，而且中间不使用任何的连接符。尽量使用英文。如ConnectionFactory</p>
@@ -577,14 +661,14 @@
 <p>1、攻击细节</p>
 <p>跨站请求攻击，简单地说，是攻击者通过一些技术手段欺骗用户的浏览器去访问一个自己曾经认证过的网站并运行一些操作（如发邮件，发消息，甚至财产操作如转账和购买商品）。由于浏览器曾经认证过，所以被访问的网站会认为是真正的用户操作而去运行。这利用了web中用户身份验证的一个漏洞：简单的身份验证只能保证请求发自某个用户的浏览器，却不能保证请求本身是用户自愿发出的。</p>
 <p>例子</p>
-<p>假如一家银行用以运行转账操作的URL地址如下：<a href="http://www.examplebank.com/withdraw?account=AccoutName&amp;amount=1000&amp;for=PayeeName">http://www.examplebank.com/withdraw?account=AccoutName&amp;amount=1000&amp;for=PayeeName</a></p>
+<p>假如一家银行用以运行转账操作的URL地址如下：<a target="_blank" rel="noopener" href="http://www.examplebank.com/withdraw?account=AccoutName&amp;amount=1000&amp;for=PayeeName">http://www.examplebank.com/withdraw?account=AccoutName&amp;amount=1000&amp;for=PayeeName</a></p>
 <p>那么，一个恶意攻击者可以在另一个网站上放置如下代码： <img src="http://www.examplebank.com/withdraw?account=Alice&amount=1000&for=Badman"></p>
 <p>如果有账户名为Alice的用户访问了恶意站点，而她之前刚访问过银行不久，登录信息尚未过期，那么她就会损失1000资金。</p>
 <p>这种恶意的网址可以有很多种形式，藏身于网页中的许多地方。此外，攻击者也不需要控制放置恶意网址的网站。例如他可以将这种地址藏在论坛，博客等任何用户生成信息的网站中。这意味着如果服务端没有合适的防御措施的话，用户即使访问熟悉的可信网站也有受攻击的危险。</p>
 <p>透过例子能够看出，攻击者并不能通过CSRF攻击来直接获取用户的账户控制权，也不能直接窃取用户的任何信息。他们能做到的，是欺骗用户浏览器，让其以用户的名义运行操作。</p>
 <p>2、防御措施</p>
 <p>检查Referer字段</p>
-<p>HTTP头中有一个Referer字段，这个字段用以标明请求来源于哪个地址。在处理敏感数据请求时，通常来说，Referer字段应和请求的地址位于同一域名下。以上文银行操作为例，Referer字段地址通常应该是转账按钮所在的网页地址，应该也位于<a href="http://www.examplebank.com之下.而如果是csrf攻击传来的请求,referer字段会是包含恶意网址的地址,不会位于www.examplebank.com之下,这时候服务器就能识别出恶意的访问./">www.examplebank.com之下。而如果是CSRF攻击传来的请求，Referer字段会是包含恶意网址的地址，不会位于www.examplebank.com之下，这时候服务器就能识别出恶意的访问。</a></p>
+<p>HTTP头中有一个Referer字段，这个字段用以标明请求来源于哪个地址。在处理敏感数据请求时，通常来说，Referer字段应和请求的地址位于同一域名下。以上文银行操作为例，Referer字段地址通常应该是转账按钮所在的网页地址，应该也位于<a target="_blank" rel="noopener" href="http://www.examplebank.com之下.而如果是csrf攻击传来的请求,referer字段会是包含恶意网址的地址,不会位于www.examplebank.com之下,这时候服务器就能识别出恶意的访问./">www.examplebank.com之下。而如果是CSRF攻击传来的请求，Referer字段会是包含恶意网址的地址，不会位于www.examplebank.com之下，这时候服务器就能识别出恶意的访问。</a></p>
 <p>这种办法简单易行，工作量低，仅需要在关键访问处增加一步校验。但这种办法也有其局限性，因其完全依赖浏览器发送正确的Referer字段。虽然http协议对此字段的内容有明确的规定，但并无法保证来访的浏览器的具体实现，亦无法保证浏览器没有安全漏洞影响到此字段。并且也存在攻击者攻击某些浏览器，篡改其Referer字段的可能。</p>
 <p>3、添加校验token</p>
 <p>由于CSRF的本质在于攻击者欺骗用户去访问自己设置的地址，所以如果要求在访问敏感数据请求时，要求用户浏览器提供不保存在cookie中，并且攻击者无法伪造的数据作为校验，那么攻击者就无法再运行CSRF攻击。这种数据通常是窗体中的一个数据项。服务器将其生成并附加在窗体中，其内容是一个伪随机数。当客户端通过窗体提交请求时，这个伪随机数也一并提交上去以供校验。正常的访问时，客户端浏览器能够正确得到并传回这个伪随机数，而通过CSRF传来的欺骗性攻击中，攻击者无从事先得知这个伪随机数的值，服务端就会因为校验token的值为空或者错误，拒绝这个可疑请求。</p>
@@ -749,7 +833,7 @@
 <p>是为了解决面向对象与关系型数据库存在的不匹配问题。</p>
 <p>ORM框架的优点：</p>
 <p>开发效率更高<br>数据访问更抽象、轻便<br>支持面向对象封装<br>121、Spring 有几种配置方式？<br>1、xml配置文件</p>
-<figure class="highlight xml"><table><tr><td class="code"><pre><span class="line"><span class="meta">&lt;?xml version=<span class="string">&quot;1.0&quot;</span> encoding=<span class="string">&quot;UTF-8&quot;</span>?&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">beans</span> <span class="attr">xmlns</span>=<span class="string">&quot;http://www.springframework.org/schema/beans&quot;</span></span></span><br><span class="line"><span class="tag">       <span class="attr">xmlns:xsi</span>=<span class="string">&quot;http://www.w3.org/2001/XMLSchema-instance&quot;</span></span></span><br><span class="line"><span class="tag">       <span class="attr">xsi:schemaLocation</span>=<span class="string">&quot;http://www.springframework.org/schema/beans</span></span></span><br><span class="line"><span class="string"><span class="tag">    http://www.springframework.org/schema/beans/spring-beans-3.0.xsd&quot;</span>&gt;</span></span><br><span class="line"></span><br><span class="line">    <span class="tag">&lt;<span class="name">bean</span> <span class="attr">id</span>=<span class="string">&quot;jackma&quot;</span> <span class="attr">class</span>=<span class="string">&quot;com.tyq.dto.User&quot;</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">&quot;name&quot;</span> <span class="attr">value</span>=<span class="string">&quot;jackma&quot;</span> /&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">&quot;age&quot;</span> <span class="attr">value</span>=<span class="string">&quot;55&quot;</span> /&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">&quot;dog&quot;</span> <span class="attr">ref</span>=<span class="string">&quot;jm&quot;</span> /&gt;</span></span><br><span class="line">     <span class="tag">&lt;/<span class="name">bean</span>&gt;</span></span><br><span class="line">     </span><br><span class="line">    <span class="tag">&lt;<span class="name">bean</span> <span class="attr">id</span>=<span class="string">&quot;jm&quot;</span> <span class="attr">class</span>=<span class="string">&quot;com.tyq.dto.Dog&quot;</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">&quot;name&quot;</span> <span class="attr">value</span>=<span class="string">&quot;jack&quot;</span> /&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">&quot;breed&quot;</span> <span class="attr">value</span>=<span class="string">&quot;金毛&quot;</span> /&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">&quot;age&quot;</span> <span class="attr">value</span>=<span class="string">&quot;2&quot;</span> /&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">bean</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">beans</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?xml version=<span class="string">&quot;1.0&quot;</span> encoding=<span class="string">&quot;UTF-8&quot;</span>?&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">beans</span> <span class="attr">xmlns</span>=<span class="string">&quot;http://www.springframework.org/schema/beans&quot;</span></span></span><br><span class="line"><span class="tag">       <span class="attr">xmlns:xsi</span>=<span class="string">&quot;http://www.w3.org/2001/XMLSchema-instance&quot;</span></span></span><br><span class="line"><span class="tag">       <span class="attr">xsi:schemaLocation</span>=<span class="string">&quot;http://www.springframework.org/schema/beans</span></span></span><br><span class="line"><span class="string"><span class="tag">    http://www.springframework.org/schema/beans/spring-beans-3.0.xsd&quot;</span>&gt;</span></span><br><span class="line"></span><br><span class="line">    <span class="tag">&lt;<span class="name">bean</span> <span class="attr">id</span>=<span class="string">&quot;jackma&quot;</span> <span class="attr">class</span>=<span class="string">&quot;com.tyq.dto.User&quot;</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">&quot;name&quot;</span> <span class="attr">value</span>=<span class="string">&quot;jackma&quot;</span> /&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">&quot;age&quot;</span> <span class="attr">value</span>=<span class="string">&quot;55&quot;</span> /&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">&quot;dog&quot;</span> <span class="attr">ref</span>=<span class="string">&quot;jm&quot;</span> /&gt;</span></span><br><span class="line">     <span class="tag">&lt;/<span class="name">bean</span>&gt;</span></span><br><span class="line">     </span><br><span class="line">    <span class="tag">&lt;<span class="name">bean</span> <span class="attr">id</span>=<span class="string">&quot;jm&quot;</span> <span class="attr">class</span>=<span class="string">&quot;com.tyq.dto.Dog&quot;</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">&quot;name&quot;</span> <span class="attr">value</span>=<span class="string">&quot;jack&quot;</span> /&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">&quot;breed&quot;</span> <span class="attr">value</span>=<span class="string">&quot;金毛&quot;</span> /&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">&quot;age&quot;</span> <span class="attr">value</span>=<span class="string">&quot;2&quot;</span> /&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">bean</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">beans</span>&gt;</span></span><br></pre></td></tr></table></figure>
 <p>2、基于注解的方式</p>
 <p>项目越来越大，基于xml配置太麻烦，Spring 2.x时代提供了声明bean的注解。</p>
 <p>（1）Bean的定义</p>
@@ -773,9 +857,9 @@
 
 <p>128、如何开启基于注解的自动装配？<br>要使用 @Autowired，需要注册 AutowiredAnnotationBeanPostProcessor，可以有以下两种方式来实现：</p>
 <p>引入配置文件中的<bean>下引入 <a href="context:annotation-config">context:annotation-config</a></p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">&lt;beans&gt;</span><br><span class="line">    &lt;context:annotation-config /&gt;</span><br><span class="line">&lt;/beans&gt;</span><br></pre></td></tr></table></figure>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">&lt;beans&gt;</span><br><span class="line">    &lt;context:annotation-config /&gt;</span><br><span class="line">&lt;/beans&gt;</span><br></pre></td></tr></table></figure>
 <p>在bean配置文件中直接引入AutowiredAnnotationBeanPostProcessor</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">&lt;beans&gt;</span><br><span class="line">    &lt;bean class=&quot;org.springframework.beans.factory.annotation.AutowiredAnnotationBeanPostProcessor&quot;/&gt;</span><br><span class="line">&lt;/beans&gt;</span><br></pre></td></tr></table></figure>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">&lt;beans&gt;</span><br><span class="line">    &lt;bean class=&quot;org.springframework.beans.factory.annotation.AutowiredAnnotationBeanPostProcessor&quot;/&gt;</span><br><span class="line">&lt;/beans&gt;</span><br></pre></td></tr></table></figure>
 <p>129、什么是 Spring Batch？<br>1、什么是spring batch?</p>
 <p>spring batch是一个轻量级的、完善的批处理框架，它主要的目的在于帮助企业建立健壮、高效的批处理应用。</p>
 <p>spring batch是Spring的一个子项目，它使用java语言并基于spring框架作为基础开发，使得已经使用Spring框架的开发者或者是企业可以更加容易访问和利用企业服务。</p>
@@ -959,8 +1043,8 @@ protected Object getSingleton(String beanName, boolean allowEarlyReference) &#12
 <p>4、mybatis框架主要是围绕sqlSessionFactory进行的，具体的步骤：</p>
 <p>定义一个configuration对象，其中包含数据源、事务、mapper文件资源以及影响数据库行为属性设置settings。<br>通过配置对象，则可以创建一个sqlSessionFactoryBuilder对象。<br>通过sqlSessionFactoryBuilder获得sqlSessionFactory实例。<br>通过sqlSessionFactory实例创建qlSession实例，通过sqlSession对数据库进行操作。<br>5、代码实例</p>
 <p>mybatis-config.xml</p>
-<figure class="highlight xml"><table><tr><td class="code"><pre><span class="line"><span class="meta">&lt;?xml version=<span class="string">&quot;1.0&quot;</span> encoding=<span class="string">&quot;UTF-8&quot;</span>?&gt;</span>  </span><br><span class="line"><span class="meta">&lt;!DOCTYPE <span class="keyword">configuration</span> <span class="keyword">PUBLIC</span> <span class="string">&quot;-//mybatis.org//DTD Config 3.0//EN&quot;</span>  </span></span><br><span class="line"><span class="meta"><span class="string">&quot;http://mybatis.org/dtd/mybatis-3-config.dtd&quot;</span>&gt;</span>  </span><br><span class="line"><span class="tag">&lt;<span class="name">configuration</span>&gt;</span>   </span><br><span class="line">    <span class="comment">&lt;!-- 加载类路径下的属性文件 --&gt;</span>  </span><br><span class="line">    <span class="tag">&lt;<span class="name">properties</span> <span class="attr">resource</span>=<span class="string">&quot;db.properties&quot;</span>/&gt;</span>  </span><br><span class="line"></span><br><span class="line">    <span class="comment">&lt;!-- 设置类型别名 --&gt;</span>  </span><br><span class="line">    <span class="tag">&lt;<span class="name">typeAliases</span>&gt;</span>  </span><br><span class="line">        <span class="tag">&lt;<span class="name">typeAlias</span> <span class="attr">type</span>=<span class="string">&quot;cn.itcast.javaee.mybatis.app04.Student&quot;</span> <span class="attr">alias</span>=<span class="string">&quot;student&quot;</span>/&gt;</span>  </span><br><span class="line">    <span class="tag">&lt;/<span class="name">typeAliases</span>&gt;</span>  </span><br><span class="line">     </span><br><span class="line">    <span class="comment">&lt;!-- 设置一个默认的连接环境信息 --&gt;</span>  </span><br><span class="line">    <span class="tag">&lt;<span class="name">environments</span> <span class="attr">default</span>=<span class="string">&quot;mysql_developer&quot;</span>&gt;</span>  </span><br><span class="line">     </span><br><span class="line">        <span class="comment">&lt;!-- 连接环境信息，取一个任意唯一的名字 --&gt;</span>  </span><br><span class="line">        <span class="tag">&lt;<span class="name">environment</span> <span class="attr">id</span>=<span class="string">&quot;mysql_developer&quot;</span>&gt;</span>  </span><br><span class="line">            <span class="comment">&lt;!-- mybatis使用jdbc事务管理方式 --&gt;</span>  </span><br><span class="line">            <span class="tag">&lt;<span class="name">transactionManager</span> <span class="attr">type</span>=<span class="string">&quot;jdbc&quot;</span>/&gt;</span>  </span><br><span class="line">            <span class="comment">&lt;!-- mybatis使用连接池方式来获取连接 --&gt;</span>  </span><br><span class="line">            <span class="tag">&lt;<span class="name">dataSource</span> <span class="attr">type</span>=<span class="string">&quot;pooled&quot;</span>&gt;</span>  </span><br><span class="line">                <span class="comment">&lt;!-- 配置与数据库交互的4个必要属性 --&gt;</span>  </span><br><span class="line">                <span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">&quot;driver&quot;</span> <span class="attr">value</span>=<span class="string">&quot;$&#123;mysql.driver&#125;&quot;</span>/&gt;</span>  </span><br><span class="line">                <span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">&quot;url&quot;</span> <span class="attr">value</span>=<span class="string">&quot;$&#123;mysql.url&#125;&quot;</span>/&gt;</span>  </span><br><span class="line">                <span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">&quot;username&quot;</span> <span class="attr">value</span>=<span class="string">&quot;$&#123;mysql.username&#125;&quot;</span>/&gt;</span>  </span><br><span class="line">                <span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">&quot;password&quot;</span> <span class="attr">value</span>=<span class="string">&quot;$&#123;mysql.password&#125;&quot;</span>/&gt;</span>  </span><br><span class="line">            <span class="tag">&lt;/<span class="name">dataSource</span>&gt;</span>  </span><br><span class="line">        <span class="tag">&lt;/<span class="name">environment</span>&gt;</span>  </span><br><span class="line">     </span><br><span class="line">        <span class="comment">&lt;!-- 连接环境信息，取一个任意唯一的名字 --&gt;</span>  </span><br><span class="line">        <span class="tag">&lt;<span class="name">environment</span> <span class="attr">id</span>=<span class="string">&quot;oracle_developer&quot;</span>&gt;</span>  </span><br><span class="line">            <span class="comment">&lt;!-- mybatis使用jdbc事务管理方式 --&gt;</span>  </span><br><span class="line">            <span class="tag">&lt;<span class="name">transactionManager</span> <span class="attr">type</span>=<span class="string">&quot;jdbc&quot;</span>/&gt;</span>  </span><br><span class="line">            <span class="comment">&lt;!-- mybatis使用连接池方式来获取连接 --&gt;</span>  </span><br><span class="line">            <span class="tag">&lt;<span class="name">dataSource</span> <span class="attr">type</span>=<span class="string">&quot;pooled&quot;</span>&gt;</span>  </span><br><span class="line">                <span class="comment">&lt;!-- 配置与数据库交互的4个必要属性 --&gt;</span>  </span><br><span class="line">                <span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">&quot;driver&quot;</span> <span class="attr">value</span>=<span class="string">&quot;$&#123;oracle.driver&#125;&quot;</span>/&gt;</span>  </span><br><span class="line">                <span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">&quot;url&quot;</span> <span class="attr">value</span>=<span class="string">&quot;$&#123;oracle.url&#125;&quot;</span>/&gt;</span>  </span><br><span class="line">                <span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">&quot;username&quot;</span> <span class="attr">value</span>=<span class="string">&quot;$&#123;oracle.username&#125;&quot;</span>/&gt;</span>  </span><br><span class="line">                <span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">&quot;password&quot;</span> <span class="attr">value</span>=<span class="string">&quot;$&#123;oracle.password&#125;&quot;</span>/&gt;</span>  </span><br><span class="line">            <span class="tag">&lt;/<span class="name">dataSource</span>&gt;</span>  </span><br><span class="line">        <span class="tag">&lt;/<span class="name">environment</span>&gt;</span>  </span><br><span class="line">    <span class="tag">&lt;/<span class="name">environments</span>&gt;</span>  </span><br><span class="line">     </span><br><span class="line">    <span class="comment">&lt;!-- 加载映射文件--&gt;</span>  </span><br><span class="line">    <span class="tag">&lt;<span class="name">mappers</span>&gt;</span>  </span><br><span class="line">        <span class="tag">&lt;<span class="name">mapper</span> <span class="attr">resource</span>=<span class="string">&quot;cn/itcast/javaee/mybatis/app14/StudentMapper.xml&quot;</span>/&gt;</span>  </span><br><span class="line">    <span class="tag">&lt;/<span class="name">mappers</span>&gt;</span>  </span><br><span class="line"></span><br><span class="line"><span class="tag">&lt;/<span class="name">configuration</span>&gt;</span>  </span><br></pre></td></tr></table></figure>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">MyBatisTest</span> &#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">main</span><span class="params">(String[] args)</span> &#123;</span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            <span class="comment">//读取mybatis-config.xml文件</span></span><br><span class="line">            <span class="type">InputStream</span> <span class="variable">resourceAsStream</span> <span class="operator">=</span> Resources.getResourceAsStream(<span class="string">&quot;mybatis-config.xml&quot;</span>);</span><br><span class="line">            <span class="comment">//初始化mybatis,创建SqlSessionFactory类的实例</span></span><br><span class="line">            <span class="type">SqlSessionFactory</span> <span class="variable">sqlSessionFactory</span> <span class="operator">=</span>  <span class="keyword">new</span> <span class="title class_">SqlSessionFactoryBuilder</span>().build(resourceAsStream);</span><br><span class="line">            <span class="comment">//创建session实例</span></span><br><span class="line">            <span class="type">SqlSession</span> <span class="variable">session</span> <span class="operator">=</span> sqlSessionFactory.openSession();</span><br><span class="line">            <span class="comment">/*</span></span><br><span class="line"><span class="comment">             * 接下来在这里做很多事情,到目前为止,目的已经达到得到了SqlSession对象.通过调用SqlSession里面的方法,</span></span><br><span class="line"><span class="comment">             * 可以测试MyBatis和Dao层接口方法之间的正确性,当然也可以做别的很多事情,在这里就不列举了</span></span><br><span class="line"><span class="comment">             */</span></span><br><span class="line">            <span class="comment">//插入数据</span></span><br><span class="line">            <span class="type">User</span> <span class="variable">user</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">User</span>();</span><br><span class="line">            user.setC_password(<span class="string">&quot;123&quot;</span>);</span><br><span class="line">            user.setC_username(<span class="string">&quot;123&quot;</span>);</span><br><span class="line">            user.setC_salt(<span class="string">&quot;123&quot;</span>);</span><br><span class="line">            <span class="comment">//第一个参数为方法的完全限定名:位置信息+映射文件当中的id</span></span><br><span class="line">            session.insert(<span class="string">&quot;com.cn.dao.UserMapping.insertUserInformation&quot;</span>, user);</span><br><span class="line">            <span class="comment">//提交事务</span></span><br><span class="line">            session.commit();</span><br><span class="line">            <span class="comment">//关闭session</span></span><br><span class="line">            session.close();</span><br><span class="line">        &#125; <span class="keyword">catch</span> (IOException e) &#123;</span><br><span class="line">            e.printStackTrace();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?xml version=<span class="string">&quot;1.0&quot;</span> encoding=<span class="string">&quot;UTF-8&quot;</span>?&gt;</span>  </span><br><span class="line"><span class="meta">&lt;!DOCTYPE <span class="keyword">configuration</span> <span class="keyword">PUBLIC</span> <span class="string">&quot;-//mybatis.org//DTD Config 3.0//EN&quot;</span>  </span></span><br><span class="line"><span class="meta"><span class="string">&quot;http://mybatis.org/dtd/mybatis-3-config.dtd&quot;</span>&gt;</span>  </span><br><span class="line"><span class="tag">&lt;<span class="name">configuration</span>&gt;</span>   </span><br><span class="line">    <span class="comment">&lt;!-- 加载类路径下的属性文件 --&gt;</span>  </span><br><span class="line">    <span class="tag">&lt;<span class="name">properties</span> <span class="attr">resource</span>=<span class="string">&quot;db.properties&quot;</span>/&gt;</span>  </span><br><span class="line"></span><br><span class="line">    <span class="comment">&lt;!-- 设置类型别名 --&gt;</span>  </span><br><span class="line">    <span class="tag">&lt;<span class="name">typeAliases</span>&gt;</span>  </span><br><span class="line">        <span class="tag">&lt;<span class="name">typeAlias</span> <span class="attr">type</span>=<span class="string">&quot;cn.itcast.javaee.mybatis.app04.Student&quot;</span> <span class="attr">alias</span>=<span class="string">&quot;student&quot;</span>/&gt;</span>  </span><br><span class="line">    <span class="tag">&lt;/<span class="name">typeAliases</span>&gt;</span>  </span><br><span class="line">     </span><br><span class="line">    <span class="comment">&lt;!-- 设置一个默认的连接环境信息 --&gt;</span>  </span><br><span class="line">    <span class="tag">&lt;<span class="name">environments</span> <span class="attr">default</span>=<span class="string">&quot;mysql_developer&quot;</span>&gt;</span>  </span><br><span class="line">     </span><br><span class="line">        <span class="comment">&lt;!-- 连接环境信息，取一个任意唯一的名字 --&gt;</span>  </span><br><span class="line">        <span class="tag">&lt;<span class="name">environment</span> <span class="attr">id</span>=<span class="string">&quot;mysql_developer&quot;</span>&gt;</span>  </span><br><span class="line">            <span class="comment">&lt;!-- mybatis使用jdbc事务管理方式 --&gt;</span>  </span><br><span class="line">            <span class="tag">&lt;<span class="name">transactionManager</span> <span class="attr">type</span>=<span class="string">&quot;jdbc&quot;</span>/&gt;</span>  </span><br><span class="line">            <span class="comment">&lt;!-- mybatis使用连接池方式来获取连接 --&gt;</span>  </span><br><span class="line">            <span class="tag">&lt;<span class="name">dataSource</span> <span class="attr">type</span>=<span class="string">&quot;pooled&quot;</span>&gt;</span>  </span><br><span class="line">                <span class="comment">&lt;!-- 配置与数据库交互的4个必要属性 --&gt;</span>  </span><br><span class="line">                <span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">&quot;driver&quot;</span> <span class="attr">value</span>=<span class="string">&quot;$&#123;mysql.driver&#125;&quot;</span>/&gt;</span>  </span><br><span class="line">                <span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">&quot;url&quot;</span> <span class="attr">value</span>=<span class="string">&quot;$&#123;mysql.url&#125;&quot;</span>/&gt;</span>  </span><br><span class="line">                <span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">&quot;username&quot;</span> <span class="attr">value</span>=<span class="string">&quot;$&#123;mysql.username&#125;&quot;</span>/&gt;</span>  </span><br><span class="line">                <span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">&quot;password&quot;</span> <span class="attr">value</span>=<span class="string">&quot;$&#123;mysql.password&#125;&quot;</span>/&gt;</span>  </span><br><span class="line">            <span class="tag">&lt;/<span class="name">dataSource</span>&gt;</span>  </span><br><span class="line">        <span class="tag">&lt;/<span class="name">environment</span>&gt;</span>  </span><br><span class="line">     </span><br><span class="line">        <span class="comment">&lt;!-- 连接环境信息，取一个任意唯一的名字 --&gt;</span>  </span><br><span class="line">        <span class="tag">&lt;<span class="name">environment</span> <span class="attr">id</span>=<span class="string">&quot;oracle_developer&quot;</span>&gt;</span>  </span><br><span class="line">            <span class="comment">&lt;!-- mybatis使用jdbc事务管理方式 --&gt;</span>  </span><br><span class="line">            <span class="tag">&lt;<span class="name">transactionManager</span> <span class="attr">type</span>=<span class="string">&quot;jdbc&quot;</span>/&gt;</span>  </span><br><span class="line">            <span class="comment">&lt;!-- mybatis使用连接池方式来获取连接 --&gt;</span>  </span><br><span class="line">            <span class="tag">&lt;<span class="name">dataSource</span> <span class="attr">type</span>=<span class="string">&quot;pooled&quot;</span>&gt;</span>  </span><br><span class="line">                <span class="comment">&lt;!-- 配置与数据库交互的4个必要属性 --&gt;</span>  </span><br><span class="line">                <span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">&quot;driver&quot;</span> <span class="attr">value</span>=<span class="string">&quot;$&#123;oracle.driver&#125;&quot;</span>/&gt;</span>  </span><br><span class="line">                <span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">&quot;url&quot;</span> <span class="attr">value</span>=<span class="string">&quot;$&#123;oracle.url&#125;&quot;</span>/&gt;</span>  </span><br><span class="line">                <span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">&quot;username&quot;</span> <span class="attr">value</span>=<span class="string">&quot;$&#123;oracle.username&#125;&quot;</span>/&gt;</span>  </span><br><span class="line">                <span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">&quot;password&quot;</span> <span class="attr">value</span>=<span class="string">&quot;$&#123;oracle.password&#125;&quot;</span>/&gt;</span>  </span><br><span class="line">            <span class="tag">&lt;/<span class="name">dataSource</span>&gt;</span>  </span><br><span class="line">        <span class="tag">&lt;/<span class="name">environment</span>&gt;</span>  </span><br><span class="line">    <span class="tag">&lt;/<span class="name">environments</span>&gt;</span>  </span><br><span class="line">     </span><br><span class="line">    <span class="comment">&lt;!-- 加载映射文件--&gt;</span>  </span><br><span class="line">    <span class="tag">&lt;<span class="name">mappers</span>&gt;</span>  </span><br><span class="line">        <span class="tag">&lt;<span class="name">mapper</span> <span class="attr">resource</span>=<span class="string">&quot;cn/itcast/javaee/mybatis/app14/StudentMapper.xml&quot;</span>/&gt;</span>  </span><br><span class="line">    <span class="tag">&lt;/<span class="name">mappers</span>&gt;</span>  </span><br><span class="line"></span><br><span class="line"><span class="tag">&lt;/<span class="name">configuration</span>&gt;</span>  </span><br></pre></td></tr></table></figure>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">MyBatisTest</span> &#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">main</span><span class="params">(String[] args)</span> &#123;</span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            <span class="comment">//读取mybatis-config.xml文件</span></span><br><span class="line">            <span class="type">InputStream</span> <span class="variable">resourceAsStream</span> <span class="operator">=</span> Resources.getResourceAsStream(<span class="string">&quot;mybatis-config.xml&quot;</span>);</span><br><span class="line">            <span class="comment">//初始化mybatis,创建SqlSessionFactory类的实例</span></span><br><span class="line">            <span class="type">SqlSessionFactory</span> <span class="variable">sqlSessionFactory</span> <span class="operator">=</span>  <span class="keyword">new</span> <span class="title class_">SqlSessionFactoryBuilder</span>().build(resourceAsStream);</span><br><span class="line">            <span class="comment">//创建session实例</span></span><br><span class="line">            <span class="type">SqlSession</span> <span class="variable">session</span> <span class="operator">=</span> sqlSessionFactory.openSession();</span><br><span class="line">            <span class="comment">/*</span></span><br><span class="line"><span class="comment">             * 接下来在这里做很多事情,到目前为止,目的已经达到得到了SqlSession对象.通过调用SqlSession里面的方法,</span></span><br><span class="line"><span class="comment">             * 可以测试MyBatis和Dao层接口方法之间的正确性,当然也可以做别的很多事情,在这里就不列举了</span></span><br><span class="line"><span class="comment">             */</span></span><br><span class="line">            <span class="comment">//插入数据</span></span><br><span class="line">            <span class="type">User</span> <span class="variable">user</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">User</span>();</span><br><span class="line">            user.setC_password(<span class="string">&quot;123&quot;</span>);</span><br><span class="line">            user.setC_username(<span class="string">&quot;123&quot;</span>);</span><br><span class="line">            user.setC_salt(<span class="string">&quot;123&quot;</span>);</span><br><span class="line">            <span class="comment">//第一个参数为方法的完全限定名:位置信息+映射文件当中的id</span></span><br><span class="line">            session.insert(<span class="string">&quot;com.cn.dao.UserMapping.insertUserInformation&quot;</span>, user);</span><br><span class="line">            <span class="comment">//提交事务</span></span><br><span class="line">            session.commit();</span><br><span class="line">            <span class="comment">//关闭session</span></span><br><span class="line">            session.close();</span><br><span class="line">        &#125; <span class="keyword">catch</span> (IOException e) &#123;</span><br><span class="line">            e.printStackTrace();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
 <p>145、mybatis如何防止sql注入<br>注意：但凡是sql注入漏洞的程序，都是因为程序要接受来自客户端用户输入的变量或URL传递的参数，并且这个变量或参数是组成sql语句的一部分，对于用户输入的内容或传递的参数，我们应该要时刻保持警惕，这是安全领域里的【外部数据不可信任】的原则，纵观web安全领域的各种攻击方式，大多数都是因为开发者违反了这个原则而导致的，所以自然能想到，就是变量的检测、过滤、验证下手，确保变量是开发者所预想的。</p>
 <p>1、检查变量数据类型和格式</p>
@@ -1396,13 +1480,106 @@ public String NullPointerExceptionHandler(Model model, Exception e) &#123;
 <p>3、字符串优化</p>
 <p>4、编码优化</p>
 <p>5、控制key的数量</p>
-]]></content>
-      <categories>
-        <category>Java</category>
-      </categories>
-      <tags>
-        <tag>Java</tag>
-        <tag>面试题</tag>
-      </tags>
-  </entry>
-</search>
+</article><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/Java/">Java</a><a class="post-meta__tags" href="/tags/%E9%9D%A2%E8%AF%95%E9%A2%98/">面试题</a></div><div class="post_share"><div class="social-share" data-image="https://img2.baidu.com/it/u=1251990574,3092353013&amp;fm=253&amp;fmt=auto&amp;app=138&amp;f=GIF?w=800&amp;h=320" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/social-share.js/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/gh/overtrue/share.js@master/dist/js/social-share.min.js" defer></script></div></div><div class="post-reward"><div class="reward-button"><i class="fas fa-qrcode"></i> 打赏</div><div class="reward-main"><ul class="reward-all"><li class="reward-item"><a href="/./img/weixin.png" target="_blank"><img class="post-qr-code-img" src="/./img/weixin.png" alt="微信"/></a><div class="post-qr-code-desc">微信</div></li><li class="reward-item"><a href="/./img/zhifubao.png" target="_blank"><img class="post-qr-code-img" src="/./img/zhifubao.png" alt="支付宝"/></a><div class="post-qr-code-desc">支付宝</div></li></ul></div></div><nav class="pagination-post" id="pagination"><div class="prev-post pull-left"><a href="/2022/05/14/%E5%8D%9A%E5%AE%A2%E6%8A%80%E6%9C%AF%E6%80%BB%E7%BB%93/"><img class="prev-cover" src="https://s1.ax1x.com/2022/06/23/jCEVbj.png" onerror="onerror=null;src='/img/404.jpg'" alt="cover of previous post"><div class="pagination-info"><div class="label">上一篇</div><div class="prev_info">博客技术总结</div></div></a></div><div class="next-post pull-right"><a href="/2022/03/14/Linux%E5%BF%AB%E9%80%9F%E5%85%A5%E9%97%A8/"><img class="next-cover" src="https://img2.baidu.com/it/u=2822059609,1888617833&amp;fm=253&amp;fmt=auto&amp;app=138&amp;f=PNG?w=688&amp;h=500" onerror="onerror=null;src='/img/404.jpg'" alt="cover of next post"><div class="pagination-info"><div class="label">下一篇</div><div class="next_info">Linux快速入门</div></div></a></div></nav></div><div class="aside-content" id="aside-content"><div class="card-widget card-info"><div class="is-center"><div class="avatar-img"><img src="/./img/tx.jpg" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info__name">Gods</div><div class="author-info__description">人来人往，勿失勿忘。</div></div><div class="card-info-data site-data is-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">3</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">5</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">3</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/Apathy99977"><i class="fab fa-github"></i><span>Github</span></a><div class="card-info-social-icons is-center"><a class="social-icon" href="https://github.com/Apathy99977/Apathy99977.github.io" target="_blank" title="Github"><i class="fab fa-github"></i></a><a class="social-icon" href="tencent://AddContact/?fromId=45&amp;fromSubId=1&amp;subcmd=all&amp;uin=2523941358&amp;website=www.qtxml.cn" target="_blank" title="QQ"><i class="fa-brands fa-qq"></i></a></div></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>公告</span></div><div class="announcement_content">我们登上并非我们所选择的舞台，演出并非我们所选择的剧本。人这一生中，我们能自己决定的事情其实非常少。如果这次你能自己决定的话，那我觉得...那就勇敢点嘛！</div></div><div class="sticky_layout"><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item"><a class="thumbnail" href="/2022/05/14/%E5%8D%9A%E5%AE%A2%E6%8A%80%E6%9C%AF%E6%80%BB%E7%BB%93/" title="博客技术总结"><img src="https://s1.ax1x.com/2022/06/23/jCEVbj.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="博客技术总结"/></a><div class="content"><a class="title" href="/2022/05/14/%E5%8D%9A%E5%AE%A2%E6%8A%80%E6%9C%AF%E6%80%BB%E7%BB%93/" title="博客技术总结">博客技术总结</a><time datetime="2022-05-14T05:14:00.000Z" title="发表于 2022-05-14 13:14:00">2022-05-14</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2022/05/14/Java%E7%BB%8F%E5%85%B8%E9%9D%A2%E8%AF%95%E9%A2%98%E6%80%BB%E7%BB%93(%E5%90%AB%E7%AD%94%E6%A1%88)/" title="Java经典面试题总结(含答案)"><img src="https://img2.baidu.com/it/u=1251990574,3092353013&amp;fm=253&amp;fmt=auto&amp;app=138&amp;f=GIF?w=800&amp;h=320" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="Java经典面试题总结(含答案)"/></a><div class="content"><a class="title" href="/2022/05/14/Java%E7%BB%8F%E5%85%B8%E9%9D%A2%E8%AF%95%E9%A2%98%E6%80%BB%E7%BB%93(%E5%90%AB%E7%AD%94%E6%A1%88)/" title="Java经典面试题总结(含答案)">Java经典面试题总结(含答案)</a><time datetime="2022-05-14T05:14:00.000Z" title="发表于 2022-05-14 13:14:00">2022-05-14</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2022/03/14/Linux%E5%BF%AB%E9%80%9F%E5%85%A5%E9%97%A8/" title="Linux快速入门"><img src="https://img2.baidu.com/it/u=2822059609,1888617833&amp;fm=253&amp;fmt=auto&amp;app=138&amp;f=PNG?w=688&amp;h=500" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="Linux快速入门"/></a><div class="content"><a class="title" href="/2022/03/14/Linux%E5%BF%AB%E9%80%9F%E5%85%A5%E9%97%A8/" title="Linux快速入门">Linux快速入门</a><time datetime="2022-03-14T05:14:00.000Z" title="发表于 2022-03-14 13:14:00">2022-03-14</time></div></div></div></div></div></div></main><footer id="footer" style="background-image: url('https://s1.ax1x.com/2022/06/23/jCECPP.jpg')"><div id="footer-wrap"><div class="copyright">&copy;2020 - 2022 By Gods</div><div class="footer_custom_text">赣ICP备2022000114号</div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="浅色和深色模式转换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside_config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button id="go-up" type="button" title="回到顶部"><i class="fas fa-arrow-up"></i></button></div></div><div id="local-search"><div class="search-dialog"><nav class="search-nav"><span class="search-dialog-title">搜索</span><span id="loading-status"></span><button class="search-close-button"><i class="fas fa-times"></i></button></nav><div class="is-center" id="loading-database"><i class="fas fa-spinner fa-pulse"></i><span>  数据库加载中</span></div><div class="search-wrap"><div id="local-search-input"><div class="local-search-box"><input class="local-search-box--input" placeholder="搜索文章" type="text"/></div></div><hr/><div id="local-search-results"></div></div></div><div id="search-mask"></div></div><div><script src="/js/utils.js"></script><script src="/js/main.js"></script><script src="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox.umd.js"></script><script src="https://cdn.jsdelivr.net/npm/instant.page@5/instantpage.min.js" type="module"></script><script>function panguFn () {
+  if (typeof pangu === 'object') pangu.autoSpacingPage()
+  else {
+    getScript('https://cdn.jsdelivr.net/npm/pangu@4/dist/browser/pangu.min.js')
+      .then(() => {
+        pangu.autoSpacingPage()
+      })
+  }
+}
+
+function panguInit () {
+  if (false){
+    GLOBAL_CONFIG_SITE.isPost && panguFn()
+  } else {
+    panguFn()
+  }
+}
+
+document.addEventListener('DOMContentLoaded', panguInit)</script><script src="/js/search/local-search.js"></script><script>var preloader = {
+  endLoading: () => {
+    document.body.style.overflow = 'auto';
+    document.getElementById('loading-box').classList.add("loaded")
+  },
+  initLoading: () => {
+    document.body.style.overflow = '';
+    document.getElementById('loading-box').classList.remove("loaded")
+
+  }
+}
+window.addEventListener('load',preloader.endLoading())</script><div class="js-pjax"></div><canvas class="fireworks" mobile="false"></canvas><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/dist/fireworks.min.js"></script><script defer="defer" id="fluttering_ribbon" mobile="false" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/dist/canvas-fluttering-ribbon.min.js"></script><script id="canvas_nest" defer="defer" color="0,0,255" opacity="0.7" zIndex="-1" count="99" mobile="false" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/dist/canvas-nest.min.js"></script><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/dist/activate-power-mode.min.js"></script><script>POWERMODE.colorful = true;
+POWERMODE.shake = false;
+POWERMODE.mobile = false;
+document.body.addEventListener('input', POWERMODE);
+</script><script src="https://cdn.jsdelivr.net/npm/pjax/pjax.min.js"></script><script>let pjaxSelectors = ["head > title","#config-diff","#body-wrap","#rightside-config-hide","#rightside-config-show",".js-pjax"]
+
+var pjax = new Pjax({
+  elements: 'a:not([target="_blank"])',
+  selectors: pjaxSelectors,
+  cacheBust: false,
+  analytics: false,
+  scrollRestoration: false
+})
+
+document.addEventListener('pjax:send', function () {
+
+  // removeEventListener scroll 
+  window.tocScrollFn && window.removeEventListener('scroll', window.tocScrollFn)
+  window.scrollCollect && window.removeEventListener('scroll', scrollCollect)
+
+  typeof preloader === 'object' && preloader.initLoading()
+  document.getElementById('rightside').style.cssText = "opacity: ''; transform: ''"
+  
+  if (window.aplayers) {
+    for (let i = 0; i < window.aplayers.length; i++) {
+      if (!window.aplayers[i].options.fixed) {
+        window.aplayers[i].destroy()
+      }
+    }
+  }
+
+  typeof typed === 'object' && typed.destroy()
+
+  //reset readmode
+  const $bodyClassList = document.body.classList
+  $bodyClassList.contains('read-mode') && $bodyClassList.remove('read-mode')
+
+})
+
+document.addEventListener('pjax:complete', function () {
+  window.refreshFn()
+
+  document.querySelectorAll('script[data-pjax]').forEach(item => {
+    const newScript = document.createElement('script')
+    const content = item.text || item.textContent || item.innerHTML || ""
+    Array.from(item.attributes).forEach(attr => newScript.setAttribute(attr.name, attr.value))
+    newScript.appendChild(document.createTextNode(content))
+    item.parentNode.replaceChild(newScript, item)
+  })
+
+  GLOBAL_CONFIG.islazyload && window.lazyLoadInstance.update()
+
+  typeof chatBtnFn === 'function' && chatBtnFn()
+  typeof panguInit === 'function' && panguInit()
+
+  // google analytics
+  typeof gtag === 'function' && gtag('config', '', {'page_path': window.location.pathname});
+
+  // baidu analytics
+  typeof _hmt === 'object' && _hmt.push(['_trackPageview',window.location.pathname]);
+
+  typeof loadMeting === 'function' && document.getElementsByClassName('aplayer').length && loadMeting()
+
+  // prismjs
+  typeof Prism === 'object' && Prism.highlightAll()
+
+  typeof preloader === 'object' && preloader.endLoading()
+})
+
+document.addEventListener('pjax:error', (e) => {
+  if (e.request.status === 404) {
+    pjax.loadUrl('/404.html')
+  }
+})</script><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div></body></html>
