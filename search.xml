@@ -1,6 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
 <search>
   <entry>
+    <title>博客技术总结</title>
+    <url>/2022/05/14/%E5%8D%9A%E5%AE%A2%E6%8A%80%E6%9C%AF%E6%80%BB%E7%BB%93/</url>
+    <content><![CDATA[<p>#1.技术介绍<br>前端：vue + vuex + vue-router + axios + vuetify + element + echarts</p>
+<p>后端：SpringBoot + nginx + SpringSecurity + Swagger2 + MyBatisPlus + Mysql + Redis + elasticsearch + rabbitMQ + MaxWell</p>
+<p>2.运行环境<br>开发工具：IDEA</p>
+<p>服务器：阿里云1核2G CentOS8.0以上</p>
+<p>对象存储：阿里云OSS</p>
+<p>全站cdn加速</p>
+<p>cos对象储存</p>
+<p>全站https</p>
+<p>4.项目总结<br>此次对博客进行了全方位的升级，前端技术点和后端技术点相比第一，二版提升了不少。</p>
+<p>加入了许多动画过渡效果，并考虑到了一些用户细节（深色模式，图片预览，等），评论加入了表情和分页，提升了用户体验，。后台文章编辑器换为MarkDown，语法更加简洁，新增了草稿箱和自动保存文章等功能。</p>
+]]></content>
+  </entry>
+  <entry>
     <title>Hello World</title>
     <url>/2022/06/21/hello-world/</url>
     <content><![CDATA[<p>Welcome to <a href="https://hexo.io/">Hexo</a>! This is your very first post. Check <a href="https://hexo.io/docs/">documentation</a> for more info. If you get any problems when using Hexo, you can find the answer in <a href="https://hexo.io/docs/troubleshooting.html">troubleshooting</a> or you can ask me on <a href="https://github.com/hexojs/hexo/issues">GitHub</a>.</p>
@@ -17,6 +32,45 @@
 
 <p>More info: <a href="https://hexo.io/docs/one-command-deployment.html">Deployment</a></p>
 ]]></content>
+  </entry>
+  <entry>
+    <title>Linux快速入门</title>
+    <url>/2022/03/14/Linux%E5%BF%AB%E9%80%9F%E5%85%A5%E9%97%A8/</url>
+    <content><![CDATA[<p>前言：<br>本教程是根据B站Up主狂神说记得笔记，有需要查看视频的小伙伴可以去看看狂神的视频，真的非常好！<br>Linux视频地址：<a href="https://www.bilibili.com/video/BV187411y7hF?vd_source=ac95d1e4dae5cfd66da910c649ab5384">https://www.bilibili.com/video/BV187411y7hF?vd_source=ac95d1e4dae5cfd66da910c649ab5384</a><br>#服务器相关知识</p>
+<blockquote>
+<p>为什么程序员都需要一个自己的服务器？</p>
+</blockquote>
+<ol>
+<li>作为一个程序员，必须要学会发布自己的网站和项目!</li>
+<li>练习Linux操作</li>
+<li>把自己的远程仓库、远程数据库、远程tomcat等搭建在服务器上</li>
+<li>练习Linux进行任意的环境部署操作! 大部人都是Window下开发，不熟悉Linux<blockquote>
+<p>如何购买服务器？</p>
+</blockquote>
+</li>
+</ol>
+<p>新手可以先去阿里云领一个免费的服务器先用着</p>
+<p>阿里云新人服务器领取地址：<br><a href="https://imgtu.com/i/jFDbm6"><img src="https://s1.ax1x.com/2022/06/25/jFDbm6.jpg" alt="jFDbm6.jpg"></a><br>学生的话后期可以购买学生机，阿里云只有未满24周岁都可以享受学生机优惠</p>
+<p>优惠地址：<a href="https://www.aliyun.com/minisite/goods?userCode=0phtycgr">https://www.aliyun.com/minisite/goods?userCode=0phtycgr</a></p>
+<p>购买服务器时系统选择CentOS 推荐版本7.X，因为8.0之后改了好多命令，云盘的话选择40G就够用了，如下图所示：<br><a href="https://imgtu.com/i/jFDzpd"><img src="https://s1.ax1x.com/2022/06/25/jFDzpd.jpg" alt="jFDzpd.jpg"></a></p>
+<blockquote>
+<p>买完服务器之后该干什么？</p>
+</blockquote>
+<p>首先服务器就是一个远程的Linux</p>
+<ol>
+<li>在阿里云购买服务器需要开通安全组设置去进行端口的映射，比如8080或者3306<br><a href="https://imgtu.com/i/jFcwxH"><img src="https://s1.ax1x.com/2022/06/25/jFcwxH.jpg" alt="jFcwxH.jpg"></a></li>
+<li>获取服务器的公网ip地址，修改实例名称和密码，记住第一次修改需要重启，修改后就可以使用Xshell进行远程连接了</li>
+</ol>
+]]></content>
+      <categories>
+        <category>Linux</category>
+        <category>运维</category>
+      </categories>
+      <tags>
+        <tag>Linux</tag>
+        <tag>运维</tag>
+        <tag>教程</tag>
+      </tags>
   </entry>
   <entry>
     <title>Swagger笔记</title>
@@ -65,6 +119,7 @@
     <version>2.9.2</version>
 </dependency>
 <!-- https://mvnrepository.com/artifact/io.springfox/springfox-swagger2 -->
+
 <dependency>
     <groupId>io.springfox</groupId>
     <artifactId>springfox-swagger2</artifactId>
