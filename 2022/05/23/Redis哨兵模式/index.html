@@ -1,0 +1,308 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"><title>Redis哨兵模式 | Gods Blog</title><meta name="keywords" content="数据库"><meta name="author" content="Gods"><meta name="copyright" content="Gods"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="Redis哨兵模式介绍： 主从切换技术的方法是:当主服务器宕机后，需要手动把一台从服务器切换为主服务器，这就需要人工干预，费事费力，还会造成一段时间内服务不可用。这不是一种推荐的方式，更多时候，我们优先考虑哨兵模式。Redis从2.8开始正式提供了Sentinel (哨兵）架构来解决这个问题。 谋朝篡位的自动版，能够后台监控主机是否故障，如果故障了根据投票数自动将从库转换为主库。 哨兵模式是一种特">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Redis哨兵模式">
+<meta property="og:url" content="https://apathy99977.github.io/2022/05/23/Redis%E5%93%A8%E5%85%B5%E6%A8%A1%E5%BC%8F/index.html">
+<meta property="og:site_name" content="Gods Blog">
+<meta property="og:description" content="Redis哨兵模式介绍： 主从切换技术的方法是:当主服务器宕机后，需要手动把一台从服务器切换为主服务器，这就需要人工干预，费事费力，还会造成一段时间内服务不可用。这不是一种推荐的方式，更多时候，我们优先考虑哨兵模式。Redis从2.8开始正式提供了Sentinel (哨兵）架构来解决这个问题。 谋朝篡位的自动版，能够后台监控主机是否故障，如果故障了根据投票数自动将从库转换为主库。 哨兵模式是一种特">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://apathy99977.github.io/img/wzfm.jpg">
+<meta property="article:published_time" content="2022-05-23T08:06:34.000Z">
+<meta property="article:modified_time" content="2022-06-26T02:24:11.280Z">
+<meta property="article:author" content="Gods">
+<meta property="article:tag" content="数据库">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://apathy99977.github.io/img/wzfm.jpg"><link rel="shortcut icon" href="/./img/tx.jpg"><link rel="canonical" href="https://apathy99977.github.io/2022/05/23/Redis%E5%93%A8%E5%85%B5%E6%A8%A1%E5%BC%8F/"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6/css/all.min.css" media="print" onload="this.media='all'"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox.css" media="print" onload="this.media='all'"><script>const GLOBAL_CONFIG = { 
+  root: '/',
+  algolia: undefined,
+  localSearch: {"path":"/search.xml","preload":false,"languages":{"hits_empty":"找不到您查询的内容：${query}"}},
+  translate: undefined,
+  noticeOutdate: undefined,
+  highlight: {"plugin":"highlighjs","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false},
+  copy: {
+    success: '复制成功',
+    error: '复制错误',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: true,
+    post: true
+  },
+  runtime: '天',
+  date_suffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: {"limitCount":50,"languages":{"author":"作者: Gods","link":"链接: ","source":"来源: Gods Blog","info":"著作权归作者所有。商业转载请联系作者获得授权，非商业转载请注明出处。"}},
+  lightbox: 'fancybox',
+  Snackbar: undefined,
+  source: {
+    justifiedGallery: {
+      js: 'https://cdn.jsdelivr.net/npm/flickr-justified-gallery@2/dist/fjGallery.min.js',
+      css: 'https://cdn.jsdelivr.net/npm/flickr-justified-gallery@2/dist/fjGallery.min.css'
+    }
+  },
+  isPhotoFigcaption: false,
+  islazyload: false,
+  isAnchor: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: 'Redis哨兵模式',
+  isPost: true,
+  isHome: false,
+  isHighlightShrink: false,
+  isToc: true,
+  postUpdate: '2022-06-26 10:24:11'
+}</script><noscript><style type="text/css">
+  #nav {
+    opacity: 1
+  }
+  .justified-gallery img {
+    opacity: 1
+  }
+
+  #recent-posts time,
+  #post-meta time {
+    display: inline !important
+  }
+</style></noscript><script>(win=>{
+    win.saveToLocal = {
+      set: function setWithExpiry(key, value, ttl) {
+        if (ttl === 0) return
+        const now = new Date()
+        const expiryDay = ttl * 86400000
+        const item = {
+          value: value,
+          expiry: now.getTime() + expiryDay,
+        }
+        localStorage.setItem(key, JSON.stringify(item))
+      },
+
+      get: function getWithExpiry(key) {
+        const itemStr = localStorage.getItem(key)
+
+        if (!itemStr) {
+          return undefined
+        }
+        const item = JSON.parse(itemStr)
+        const now = new Date()
+
+        if (now.getTime() > item.expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return item.value
+      }
+    }
+  
+    win.getScript = url => new Promise((resolve, reject) => {
+      const script = document.createElement('script')
+      script.src = url
+      script.async = true
+      script.onerror = reject
+      script.onload = script.onreadystatechange = function() {
+        const loadState = this.readyState
+        if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+        script.onload = script.onreadystatechange = null
+        resolve()
+      }
+      document.head.appendChild(script)
+    })
+  
+      win.activateDarkMode = function () {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      win.activateLightMode = function () {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+      const t = saveToLocal.get('theme')
+    
+          if (t === 'dark') activateDarkMode()
+          else if (t === 'light') activateLightMode()
+        
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        if (asideStatus === 'hide') {
+          document.documentElement.classList.add('hide-aside')
+        } else {
+          document.documentElement.classList.remove('hide-aside')
+        }
+      }
+    
+    const detectApple = () => {
+      if(/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)){
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+    })(window)</script><meta name="generator" content="Hexo 6.2.0"></head><body><div id="loading-box"><div class="loading-left-bg"></div><div class="loading-right-bg"></div><div class="spinner-box"><div class="configure-border-1"><div class="configure-core"></div></div><div class="configure-border-2"><div class="configure-core"></div></div><div class="loading-word">加载中...</div></div></div><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img is-center"><img src="/./img/tx.jpg" onerror="onerror=null;src='/img/friend_404.gif'" alt="avatar"/></div><div class="sidebar-site-data site-data is-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">13</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">12</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">5</div></a></div><hr/><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 主页</span></a></div><div class="menus_item"><a class="site-page group" href="javascript:void(0);"><i class="fa-fw fas fa-folder-open"></i><span> 归档</span><i class="fas fa-chevron-down"></i></a><ul class="menus_item_child"><li><a class="site-page child" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 时轴</span></a></li><li><a class="site-page child" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标题</span></a></li><li><a class="site-page child" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></li></ul></div><div class="menus_item"><a class="site-page group" href="javascript:void(0);"><i class="fa-fw fas fa-list"></i><span> 清单</span><i class="fas fa-chevron-down"></i></a><ul class="menus_item_child"><li><a class="site-page child" href="/books/"><i class="fa-fw fa-solid fa-book"></i><span> 说说</span></a></li><li><a class="site-page child" href="/music/"><i class="fa-fw fa-solid fa-music"></i><span> 音乐</span></a></li><li><a class="site-page child" href="/album/"><i class="fa-fw fa-solid fa-image"></i><span> 相册</span></a></li><li><a class="site-page child" href="/film/"><i class="fa-fw fa-solid fa-video"></i><span> 电影</span></a></li></ul></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> 友链</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于笔者</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header" style="background-image: url('/./img/wzfm.jpg')"><nav id="nav"><span id="blog_name"><a id="site-name" href="/">Gods Blog</a></span><div id="menus"><div id="search-button"><a class="site-page social-icon search"><i class="fas fa-search fa-fw"></i><span> 搜索</span></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 主页</span></a></div><div class="menus_item"><a class="site-page group" href="javascript:void(0);"><i class="fa-fw fas fa-folder-open"></i><span> 归档</span><i class="fas fa-chevron-down"></i></a><ul class="menus_item_child"><li><a class="site-page child" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 时轴</span></a></li><li><a class="site-page child" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标题</span></a></li><li><a class="site-page child" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></li></ul></div><div class="menus_item"><a class="site-page group" href="javascript:void(0);"><i class="fa-fw fas fa-list"></i><span> 清单</span><i class="fas fa-chevron-down"></i></a><ul class="menus_item_child"><li><a class="site-page child" href="/books/"><i class="fa-fw fa-solid fa-book"></i><span> 说说</span></a></li><li><a class="site-page child" href="/music/"><i class="fa-fw fa-solid fa-music"></i><span> 音乐</span></a></li><li><a class="site-page child" href="/album/"><i class="fa-fw fa-solid fa-image"></i><span> 相册</span></a></li><li><a class="site-page child" href="/film/"><i class="fa-fw fa-solid fa-video"></i><span> 电影</span></a></li></ul></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> 友链</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于笔者</span></a></div></div><div id="toggle-menu"><a class="site-page"><i class="fas fa-bars fa-fw"></i></a></div></div></nav><div id="post-info"><h1 class="post-title">Redis哨兵模式</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2022-05-23T08:06:34.000Z" title="发表于 2022-05-23 16:06:34">2022-05-23</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2022-06-26T02:24:11.280Z" title="更新于 2022-06-26 10:24:11">2022-06-26</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/redis/">redis</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-wordcount"><i class="far fa-file-word fa-fw post-meta-icon"></i><span class="post-meta-label">字数总计:</span><span class="word-count">3k</span><span class="post-meta-separator">|</span><i class="far fa-clock fa-fw post-meta-icon"></i><span class="post-meta-label">阅读时长:</span><span>12分钟</span></span><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title="Redis哨兵模式"><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">阅读量:</span><span id="busuanzi_value_page_pv"></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="post-content" id="article-container"><h1 id="Redis哨兵模式"><a href="#Redis哨兵模式" class="headerlink" title="Redis哨兵模式"></a>Redis哨兵模式</h1><p><strong>介绍：</strong></p>
+<p>主从切换技术的方法是:当主服务器宕机后，需要手动把一台从服务器切换为主服务器，这就需要人工干预，费事费力，还会造成一段时间内服务不可用。这不是一种推荐的方式，更多时候，我们优先考虑哨兵模式。Redis从2.8开始正式提供了Sentinel (哨兵）架构来解决这个问题。</p>
+<p>谋朝篡位的自动版，能够后台监控主机是否故障，如果故障了根据投票数<strong>自动将从库转换为主库</strong>。</p>
+<p>哨兵模式是一种特殊的模式，首先Redis提供了哨兵的命令，哨兵是一个独立的进程，作为进程，它会独立运行。其原理是<strong>哨兵通过发送命令,等待Redis服务器响应，从而监控运行的多个Redis实例。</strong></p>
+<p><img src="https://s2.loli.net/2022/02/23/SJBvaebKFPW6Lxs.png" alt="image-20220223160951455"></p>
+<p>这里的哨兵有两个作用<br>·通过发送命令，让Redis服务器返回监控其运行状态，包括主服务器和从服务器。<br>·当哨兵监测到master宕机，会自动将slave切换成master，然后通过发布订阅模式通知其他的从服务器，修改配置文件，让它<br>们切换主机。<br>然而一个哨兵进程对Redis服务器进行监控，可能会出现问题，为此，我们可以使用多个哨兵进行监控。各个哨兵之间还会进行监控，这样就形成了多哨兵模式。</p>
+<p><img src="https://s2.loli.net/2022/02/23/cSP9LAlOKHjoTfX.png" alt="image-20220223161321009"></p>
+<p>假设主服务器宕机，哨兵1先检测到这个结果，系统并不会马上进行failover过程，仅仅是哨兵1主观的认为主服务器不可用，这个现象成为<strong>主观下线</strong>。当后面的哨兵也检测到主服务器不可用，并且数量达到一定值时，那么哨兵之间就会进行一次投票，投票的结果由一个哨兵发起，进行failover[故障转移]操作。切换成功后，就会通过发布订阅模式，让各个哨兵把自己监控的从服务器实现切换主机,这个过程称为<strong>客观下线</strong>。</p>
+<h2 id="测试："><a href="#测试：" class="headerlink" title="测试："></a>测试：</h2><p>创建一个哨兵的一个配置文件，文件名随意：sentinel.conf </p>
+<p>配置文件：这里我就配置简单点</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sentinel monitor mymaster 127.0.0.1 6379 1</span><br></pre></td></tr></table></figure>
+
+
+
+<p><strong>正常的一主二从:</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"># Replication</span><br><span class="line">role:master</span><br><span class="line">connected_slaves:2</span><br><span class="line">slave0:ip=127.0.0.1,port=6362,state=online,offset=141888,lag=1</span><br><span class="line">slave1:ip=127.0.0.1,port=6361,state=online,offset=141888,lag=1</span><br></pre></td></tr></table></figure>
+
+
+
+<p><strong>启动哨兵模式：</strong></p>
+<p><img src="https://s2.loli.net/2022/02/23/7OSxgQsbL6nyFRi.png" alt="image-20220223165032216"></p>
+<p>命令：redis-sentinel  选用的配置文件，如果是哨兵集群就需要多个配置文件</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line">[root@VM-4-12-centos StudyHardConfig]# redis-sentinel sentinel.conf </span><br><span class="line">742116:X 23 Feb 2022 16:29:48.399 # oO0OoO0OoO0Oo Redis is starting oO0OoO0OoO0Oo</span><br><span class="line">742116:X 23 Feb 2022 16:29:48.399 # Redis version=6.0.6, bits=64, commit=00000000, modified=0, pid=742116, just started</span><br><span class="line">742116:X 23 Feb 2022 16:29:48.399 # Configuration loaded</span><br><span class="line">                _._                                                  </span><br><span class="line">           _.-``__ &#x27;&#x27;-._                                             </span><br><span class="line">      _.-``    `.  `_.  &#x27;&#x27;-._           Redis 6.0.6 (00000000/0) 64 bit</span><br><span class="line">  .-`` .-```.  ```\/    _.,_ &#x27;&#x27;-._                                   </span><br><span class="line"> (    &#x27;      ,       .-`  | `,    )     Running in sentinel mode</span><br><span class="line"> |`-._`-...-` __...-.``-._|&#x27;` _.-&#x27;|     Port: 26379   #哨兵端口</span><br><span class="line"> |    `-._   `._    /     _.-&#x27;    |     PID: 742116  </span><br><span class="line">  `-._    `-._  `-./  _.-&#x27;    _.-&#x27;                                   </span><br><span class="line"> |`-._`-._    `-.__.-&#x27;    _.-&#x27;_.-&#x27;|                                  </span><br><span class="line"> |    `-._`-._        _.-&#x27;_.-&#x27;    |           http://redis.io        </span><br><span class="line">  `-._    `-._`-.__.-&#x27;_.-&#x27;    _.-&#x27;                                   </span><br><span class="line"> |`-._`-._    `-.__.-&#x27;    _.-&#x27;_.-&#x27;|                                  </span><br><span class="line"> |    `-._`-._        _.-&#x27;_.-&#x27;    |                                  </span><br><span class="line">  `-._    `-._`-.__.-&#x27;_.-&#x27;    _.-&#x27;                                   </span><br><span class="line">      `-._    `-.__.-&#x27;    _.-&#x27;                                       </span><br><span class="line">          `-._        _.-&#x27;                                           </span><br><span class="line">              `-.__.-&#x27;                                               </span><br><span class="line"></span><br><span class="line">742116:X 23 Feb 2022 16:29:48.404 # Sentinel ID is d0592a16972e6c88a456c5c2969cf4141a0e2f07</span><br><span class="line">742116:X 23 Feb 2022 16:29:48.404 # +monitor master mymaster 127.0.0.1 6360 quorum 1</span><br><span class="line">#侦测到两个从节点，并表明主节点是谁，现在主节点表明的6360这个端口的redis</span><br><span class="line">742116:X 23 Feb 2022 16:29:48.404 * +slave slave 127.0.0.1:6362 127.0.0.1 6362 @ mymaster 127.0.0.1 6360</span><br><span class="line">742116:X 23 Feb 2022 16:29:48.408 * +slave slave 127.0.0.1:6361 127.0.0.1 6361 @ mymaster 127.0.0.1 6360</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+
+
+<p><strong>断供主节点，让哨兵自动选择一个从节点当主节点：</strong> </p>
+<p>如果master节点断开了，这个时候就会从 从机中随机选择一个服务器（根据一个投票算法）</p>
+<p>哨兵打印的新信息：</p>
+<p>这里投票，选择6362当主节点</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">Feb 2022 16:37:29.007 # +sdown master mymaster 127.0.0.1 6360</span><br><span class="line">742116:X 23 Feb 2022 16:37:29.007 # +odown master mymaster 127.0.0.1 6360 #quorum 1/1</span><br><span class="line">742116:X 23 Feb 2022 16:37:29.007 # +new-epoch 1</span><br><span class="line">742116:X 23 Feb 2022 16:37:29.007 # +try-failover master mymaster 127.0.0.1 6360</span><br><span class="line">742116:X 23 Feb 2022 16:37:29.011 # +vote-for-leader d0592a16972e6c88a456c5c2969cf4141a0e2f07 1</span><br><span class="line">742116:X 23 Feb 2022 16:37:29.011 # +elected-leader master mymaster 127.0.0.1 6360</span><br><span class="line">742116:X 23 Feb 2022 16:37:29.011 # +failover-state-select-slave master mymaster 127.0.0.1 6360</span><br><span class="line">742116:X 23 Feb 2022 16:37:29.066 # +selected-slave slave 127.0.0.1:6362 127.0.0.1 6362 @ mymaster 127.0.0.1 6360</span><br><span class="line">742116:X 23 Feb 2022 16:37:29.066 * +failover-state-send-slaveof-noone slave 127.0.0.1:6362 127.0.0.1 6362 @ mymaster 127.0.0.1 6360</span><br><span class="line">742116:X 23 Feb 2022 16:37:29.138 * +failover-state-wait-promotion slave 127.0.0.1:6362 127.0.0.1 6362 @ mymaster 127.0.0.1 6360</span><br><span class="line">742116:X 23 Feb 2022 16:37:29.419 # +promoted-slave slave 127.0.0.1:6362 127.0.0.1 6362 @ mymaster 127.0.0.1 6360</span><br><span class="line">742116:X 23 Feb 2022 16:37:29.420 # +failover-state-reconf-slaves master mymaster 127.0.0.1 6360</span><br><span class="line">742116:X 23 Feb 2022 16:37:29.498 * +slave-reconf-sent slave 127.0.0.1:6361 127.0.0.1 6361 @ mymaster 127.0.0.1 6360</span><br><span class="line">742116:X 23 Feb 2022 16:37:30.445 * +slave-reconf-inprog slave 127.0.0.1:6361 127.0.0.1 6361 @ mymaster 127.0.0.1 6360</span><br><span class="line">742116:X 23 Feb 2022 16:37:30.445 * +slave-reconf-done slave 127.0.0.1:6361 127.0.0.1 6361 @ mymaster 127.0.0.1 6360</span><br><span class="line">742116:X 23 Feb 2022 16:37:30.529 # +failover-end master mymaster 127.0.0.1 6360  #故障切换主线</span><br><span class="line">742116:X 23 Feb 2022 16:37:30.529 # +switch-master mymaster 127.0.0.1 6360 127.0.0.1 6362   #这里依旧选择了6362来当主节点</span><br><span class="line">742116:X 23 Feb 2022 16:37:30.529 * +slave slave 127.0.0.1:6361 127.0.0.1 6361 @ mymaster 127.0.0.1 6362</span><br><span class="line">742116:X 23 Feb 2022 16:37:30.529 * +slave slave 127.0.0.1:6360 127.0.0.1 6360 @ mymaster 127.0.0.1 6362</span><br><span class="line">742116:X 23 Feb 2022 16:38:00.593 # +sdown slave 127.0.0.1:6360 127.0.0.1 6360 @ mymaster 127.0.0.1 6362</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+
+
+<p>我们来看看6362信息：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">127.0.0.1:6362&gt;  SLAVEOF 127.0.0.1 6360</span><br><span class="line">OK Already connected to specified master</span><br><span class="line">127.0.0.1:6362&gt; info replication</span><br><span class="line"># Replication</span><br><span class="line">role:master   		#身份依旧是主节点了</span><br><span class="line">connected_slaves:1</span><br><span class="line">slave0:ip=127.0.0.1,port=6361,state=online,offset=191774,lag=1</span><br><span class="line">master_replid:01fa8e86c3fa6a51f5c111e46ef4e8622d062f23</span><br><span class="line">master_replid2:8009003a269bcd5e8af84c76891fc4bdc72dbf10</span><br><span class="line">master_repl_offset:191774</span><br><span class="line">second_repl_offset:170703</span><br><span class="line">repl_backlog_active:1</span><br><span class="line">repl_backlog_size:1048576</span><br><span class="line">repl_backlog_first_byte_offset:1</span><br><span class="line">repl_backlog_histlen:191774</span><br><span class="line">127.0.0.1:6362&gt; </span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+
+
+<p>如果这时6360这个节点重启呢？</p>
+<p>​	如果主机此时回来了，只能归并到新的主机下，当做从机，这就是哨兵模式的规则!</p>
+<p>​	6362：  可以看到 它变成从节点，哨兵也同样会打印信息，我就不打出来了</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">127.0.0.1:6362&gt; info replication</span><br><span class="line"># Replication</span><br><span class="line">role:master</span><br><span class="line">connected_slaves:2</span><br><span class="line">slave0:ip=127.0.0.1,port=6361,state=online,offset=198720,lag=1</span><br><span class="line">slave1:ip=127.0.0.1,port=6360,state=online,offset=198720,lag=0</span><br><span class="line">master_replid:01fa8e86c3fa6a51f5c111e46ef4e8622d062f23</span><br><span class="line">master_replid2:8009003a269bcd5e8af84c76891fc4bdc72dbf10</span><br><span class="line">master_repl_offset:198720</span><br><span class="line">second_repl_offset:170703</span><br><span class="line">repl_backlog_active:1</span><br><span class="line">repl_backlog_size:1048576</span><br><span class="line">repl_backlog_first_byte_offset:1</span><br><span class="line">repl_backlog_histlen:198720</span><br><span class="line">127.0.0.1:6362&gt; </span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+
+
+
+
+
+
+<p><strong>全部配置信息：</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br></pre></td><td class="code"><pre><span class="line"># Example sentinel.conf</span><br><span class="line"># 哨兵sentinel实例运行的端口 默认26379</span><br><span class="line">port 26379</span><br><span class="line"></span><br><span class="line"># 哨兵sentinel的工作目录</span><br><span class="line">dir /tmp</span><br><span class="line"></span><br><span class="line"># 哨兵sentinel监控的redis主节点的 ip port</span><br><span class="line"># master-name 可以自己命名的主节点名字 只能由字母A-z、数字0-9 、这三个字符&quot;.-_&quot;组成。</span><br><span class="line"># quorum 配置多少个sentinel哨兵统一认为master主节点失联 那么这时客观上认为主节点失联了</span><br><span class="line"># sentinel monitor &lt;master-name&gt; &lt;ip&gt; &lt;redis-port&gt; &lt;quorum&gt;</span><br><span class="line">sentinel monitor mymaster 127.0.0.1 6379 2</span><br><span class="line"></span><br><span class="line"># 当在Redis实例中开启了requirepass foobared 授权密码 这样所有连接Redis实例的客户端都要提供密码</span><br><span class="line"># 设置哨兵sentinel 连接主从的密码 注意必须为主从设置一样的验证密码</span><br><span class="line"># sentinel auth-pass &lt;master-name&gt; &lt;password&gt;</span><br><span class="line">sentinel auth-pass mymaster MySUPER--secret-0123passw0rd</span><br><span class="line"></span><br><span class="line"># 指定多少毫秒之后 主节点没有应答哨兵sentinel 此时 哨兵主观上认为主节点下线 默认30秒</span><br><span class="line"># sentinel down-after-milliseconds &lt;master-name&gt; &lt;milliseconds&gt;</span><br><span class="line">sentinel down-after-milliseconds mymaster 30000</span><br><span class="line"></span><br><span class="line"># 这个配置项指定了在发生failover主备切换时最多可以有多少个slave同时对新的master进行 同步，这个数字越小，完成failover所需的时间就越长，但是如果这个数字越大，就意味着越 多的slave因为replication而不可用。可以通过将这个值设为 1 来保证每次只有一个slave 处于不能处理命令请求的状态。</span><br><span class="line"># sentinel parallel-syncs &lt;master-name&gt; &lt;numslaves&gt;</span><br><span class="line">sentinel parallel-syncs mymaster 1</span><br><span class="line"></span><br><span class="line"># 故障转移的超时时间 failover-timeout 可以用在以下这些方面：</span><br><span class="line">#1. 同一个sentinel对同一个master两次failover之间的间隔时间。</span><br><span class="line">#2. 当一个slave从一个错误的master那里同步数据开始计算时间。直到slave被纠正为向正确的master那里同步数据时。</span><br><span class="line">#3.当想要取消一个正在进行的failover所需要的时间。 </span><br><span class="line">#4.当进行failover时，配置所有slaves指向新的master所需的最大时间。不过，即使过了这个超时，slaves依然会被正确配置为指向master，但是就不按parallel-syncs所配置的规则来了</span><br><span class="line"># 默认三分钟</span><br><span class="line"># sentinel failover-timeout &lt;master-name&gt; &lt;milliseconds&gt;</span><br><span class="line">sentinel failover-timeout mymaster 180000</span><br><span class="line"></span><br><span class="line"># SCRIPTS EXECUTION</span><br><span class="line">#配置当某一事件发生时所需要执行的脚本，可以通过脚本来通知管理员，例如当系统运行不正常时发邮件通知相关人员。</span><br><span class="line">#对于脚本的运行结果有以下规则：</span><br><span class="line">#若脚本执行后返回1，那么该脚本稍后将会被再次执行，重复次数目前默认为10</span><br><span class="line">#若脚本执行后返回2，或者比2更高的一个返回值，脚本将不会重复执行。</span><br><span class="line">#如果脚本在执行过程中由于收到系统中断信号被终止了，则同返回值为1时的行为相同。</span><br><span class="line">#一个脚本的最大执行时间为60s，如果超过这个时间，脚本将会被一个SIGKILL信号终止，之后重新执行。</span><br><span class="line">#通知型脚本:当sentinel有任何警告级别的事件发生时（比如说redis实例的主观失效和客观失效等等），将会去调用这个脚本，这时这个脚本应该通过邮件，SMS等方式去通知系统管理员关于系统不正常运行的信息。调用该脚本时，将传给脚本两个参数，一个是事件的类型，一个是事件的描述。如果sentinel.conf配置文件中配置了这个脚本路径，那么必须保证这个脚本存在于这个路径，并且是可执行的，否则sentinel无法正常启动成功。</span><br><span class="line"></span><br><span class="line">#通知脚本</span><br><span class="line"># shell编程</span><br><span class="line"># sentinel notification-script &lt;master-name&gt; &lt;script-path&gt;</span><br><span class="line">sentinel notification-script mymaster /var/redis/notify.sh</span><br><span class="line"></span><br><span class="line"># 客户端重新配置主节点参数脚本</span><br><span class="line"># 当一个master由于failover而发生改变时，这个脚本将会被调用，通知相关的客户端关于master地址已经发生改变的信息。</span><br><span class="line"># 以下参数将会在调用脚本时传给脚本:</span><br><span class="line"># &lt;master-name&gt; &lt;role&gt; &lt;state&gt; &lt;from-ip&gt; &lt;from-port&gt; &lt;to-ip&gt; &lt;to-port&gt;</span><br><span class="line"># 目前&lt;state&gt;总是“failover”,</span><br><span class="line"># &lt;role&gt;是“leader”或者“observer”中的一个。</span><br><span class="line"># 参数 from-ip, from-port, to-ip, to-port是用来和旧的master和新的master(即旧的slave)通信的</span><br><span class="line"># 这个脚本应该是通用的，能被多次调用，不是针对性的。</span><br><span class="line"># sentinel client-reconfig-script &lt;master-name&gt; &lt;script-path&gt;</span><br><span class="line">sentinel client-reconfig-script mymaster /var/redis/reconfig.sh # 一般都是由运维来配置！</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+
+
+
+
+<h2 id="哨兵模式优缺点："><a href="#哨兵模式优缺点：" class="headerlink" title="哨兵模式优缺点："></a>哨兵模式优缺点：</h2><p>哨兵模式<br>优点︰<br>1、哨兵集群，基于主从复制模式，所有的主从配置优点，它全有2、主从可以切接，故障可以转移﹐系统的可用性就会史好3、哨兵模式就是主从模式的升级，手动到自动，更加建壮!缺点:</p>
+<ol>
+<li>Redis不好啊在。扩容的,集群容量一旦到达上限，在线扩容就十分麻烦!2、实现哨兵模式的配置只实是很麻烦的，里面有很多选择!</li>
+</ol>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta">文章作者: </span><span class="post-copyright-info"><a href="https://apathy99977.github.io">Gods</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta">文章链接: </span><span class="post-copyright-info"><a href="https://apathy99977.github.io/2022/05/23/Redis%E5%93%A8%E5%85%B5%E6%A8%A1%E5%BC%8F/">https://apathy99977.github.io/2022/05/23/Redis哨兵模式/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta">版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来自 <a href="https://apathy99977.github.io" target="_blank">Gods Blog</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/%E6%95%B0%E6%8D%AE%E5%BA%93/">数据库</a></div><div class="post_share"><div class="social-share" data-image="/./img/wzfm.jpg" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/social-share.js/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/gh/overtrue/share.js@master/dist/js/social-share.min.js" defer></script></div></div><div class="post-reward"><div class="reward-button"><i class="fas fa-qrcode"></i> 打赏</div><div class="reward-main"><ul class="reward-all"><li class="reward-item"><a href="/./img/weixin.png" target="_blank"><img class="post-qr-code-img" src="/./img/weixin.png" alt="微信"/></a><div class="post-qr-code-desc">微信</div></li><li class="reward-item"><a href="/./img/zhifubao.png" target="_blank"><img class="post-qr-code-img" src="/./img/zhifubao.png" alt="支付宝"/></a><div class="post-qr-code-desc">支付宝</div></li></ul></div></div><nav class="pagination-post" id="pagination"><div class="next-post pull-full"><a href="/2022/05/21/redis%E9%9B%86%E7%BE%A4%EF%BC%88%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6%EF%BC%89/"><img class="next-cover" src="/./img/wzfm.jpg" onerror="onerror=null;src='/img/404.jpg'" alt="cover of next post"><div class="pagination-info"><div class="label">下一篇</div><div class="next_info">redis集群（主从复制）</div></div></a></div></nav><div class="relatedPosts"><div class="headline"><i class="fas fa-thumbs-up fa-fw"></i><span>相关推荐</span></div><div class="relatedPosts-list"><div><a href="/2022/05/21/Redis%E7%9A%84%E4%B8%89%E5%A4%A7%E7%89%B9%E6%AE%8A%E7%B1%BB%E5%9E%8B/" title="Redis的三大特殊类型"><img class="cover" src="/./img/wzfm.jpg" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2022-05-21</div><div class="title">Redis的三大特殊类型</div></div></a></div><div><a href="/2022/05/21/Redis%E4%BA%8B%E5%8A%A1/" title="Redis事务"><img class="cover" src="/./img/wzfm.jpg" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2022-05-21</div><div class="title">Redis事务</div></div></a></div><div><a href="/2022/05/21/redis%E7%9A%84%E4%BA%94%E5%A4%A7%E6%95%B0%E6%8D%AE%E7%B1%BB%E5%9E%8B/" title="redis的五大数据类型"><img class="cover" src="/./img/wzfm.jpg" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2022-05-21</div><div class="title">redis的五大数据类型</div></div></a></div><div><a href="/2022/05/20/redis%E7%9A%84%E6%8C%81%E4%B9%85%E5%8C%96/" title="redis的持久化"><img class="cover" src="/./img/wzfm.jpg" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2022-05-20</div><div class="title">redis的持久化</div></div></a></div><div><a href="/2022/05/19/redis%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6%E4%BB%8B%E7%BB%8D/" title="redis配置文件介绍"><img class="cover" src="/./img/wzfm.jpg" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2022-05-19</div><div class="title">redis配置文件介绍</div></div></a></div></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info"><div class="is-center"><div class="avatar-img"><img src="/./img/tx.jpg" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info__name">Gods</div><div class="author-info__description">人来人往，勿失勿忘。</div></div><div class="card-info-data site-data is-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">13</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">12</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">5</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/Apathy99977"><i class="fab fa-github"></i><span>Github</span></a><div class="card-info-social-icons is-center"><a class="social-icon" href="https://github.com/Apathy99977/Apathy99977.github.io" target="_blank" title="Github"><i class="fab fa-github"></i></a><a class="social-icon" href="tencent://AddContact/?fromId=45&amp;fromSubId=1&amp;subcmd=all&amp;uin=2523941358&amp;website=www.qtxml.cn" target="_blank" title="QQ"><i class="fa-brands fa-qq"></i></a></div></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>公告</span></div><div class="announcement_content">我们登上并非我们所选择的舞台，演出并非我们所选择的剧本。人这一生中，我们能自己决定的事情其实非常少。如果这次你能自己决定的话，那我觉得...那就勇敢点嘛！</div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#Redis%E5%93%A8%E5%85%B5%E6%A8%A1%E5%BC%8F"><span class="toc-number">1.</span> <span class="toc-text">Redis哨兵模式</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%B5%8B%E8%AF%95%EF%BC%9A"><span class="toc-number">1.1.</span> <span class="toc-text">测试：</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%93%A8%E5%85%B5%E6%A8%A1%E5%BC%8F%E4%BC%98%E7%BC%BA%E7%82%B9%EF%BC%9A"><span class="toc-number">1.2.</span> <span class="toc-text">哨兵模式优缺点：</span></a></li></ol></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item"><a class="thumbnail" href="/2022/05/23/Redis%E5%93%A8%E5%85%B5%E6%A8%A1%E5%BC%8F/" title="Redis哨兵模式"><img src="/./img/wzfm.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="Redis哨兵模式"/></a><div class="content"><a class="title" href="/2022/05/23/Redis%E5%93%A8%E5%85%B5%E6%A8%A1%E5%BC%8F/" title="Redis哨兵模式">Redis哨兵模式</a><time datetime="2022-05-23T08:06:34.000Z" title="发表于 2022-05-23 16:06:34">2022-05-23</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2022/05/21/redis%E9%9B%86%E7%BE%A4%EF%BC%88%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6%EF%BC%89/" title="redis集群（主从复制）"><img src="/./img/wzfm.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="redis集群（主从复制）"/></a><div class="content"><a class="title" href="/2022/05/21/redis%E9%9B%86%E7%BE%A4%EF%BC%88%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6%EF%BC%89/" title="redis集群（主从复制）">redis集群（主从复制）</a><time datetime="2022-05-21T07:26:56.000Z" title="发表于 2022-05-21 15:26:56">2022-05-21</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2022/05/21/redis%E6%80%BB%E7%AC%94%E8%AE%B0/" title="redis总笔记"><img src="/./img/wzfm.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="redis总笔记"/></a><div class="content"><a class="title" href="/2022/05/21/redis%E6%80%BB%E7%AC%94%E8%AE%B0/" title="redis总笔记">redis总笔记</a><time datetime="2022-05-21T04:33:12.000Z" title="发表于 2022-05-21 12:33:12">2022-05-21</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2022/05/21/Redis%E4%BA%8B%E5%8A%A1/" title="Redis事务"><img src="/./img/wzfm.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="Redis事务"/></a><div class="content"><a class="title" href="/2022/05/21/Redis%E4%BA%8B%E5%8A%A1/" title="Redis事务">Redis事务</a><time datetime="2022-05-21T01:23:17.000Z" title="发表于 2022-05-21 09:23:17">2022-05-21</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2022/05/21/Redis%E7%9A%84%E4%B8%89%E5%A4%A7%E7%89%B9%E6%AE%8A%E7%B1%BB%E5%9E%8B/" title="Redis的三大特殊类型"><img src="/./img/wzfm.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="Redis的三大特殊类型"/></a><div class="content"><a class="title" href="/2022/05/21/Redis%E7%9A%84%E4%B8%89%E5%A4%A7%E7%89%B9%E6%AE%8A%E7%B1%BB%E5%9E%8B/" title="Redis的三大特殊类型">Redis的三大特殊类型</a><time datetime="2022-05-21T01:22:08.000Z" title="发表于 2022-05-21 09:22:08">2022-05-21</time></div></div></div></div></div></div></main><footer id="footer" style="background-image: url('/./img/wzfm.jpg')"><div id="footer-wrap"><div class="copyright">&copy;2020 - 2022 By Gods</div><div class="footer_custom_text">赣ICP备2022000114号</div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="浅色和深色模式转换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside_config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><button id="go-up" type="button" title="回到顶部"><i class="fas fa-arrow-up"></i></button></div></div><div id="local-search"><div class="search-dialog"><nav class="search-nav"><span class="search-dialog-title">搜索</span><span id="loading-status"></span><button class="search-close-button"><i class="fas fa-times"></i></button></nav><div class="is-center" id="loading-database"><i class="fas fa-spinner fa-pulse"></i><span>  数据库加载中</span></div><div class="search-wrap"><div id="local-search-input"><div class="local-search-box"><input class="local-search-box--input" placeholder="搜索文章" type="text"/></div></div><hr/><div id="local-search-results"></div></div></div><div id="search-mask"></div></div><div><script src="/js/utils.js"></script><script src="/js/main.js"></script><script src="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox.umd.js"></script><script src="https://cdn.jsdelivr.net/npm/instant.page@5/instantpage.min.js" type="module"></script><script>function panguFn () {
+  if (typeof pangu === 'object') pangu.autoSpacingPage()
+  else {
+    getScript('https://cdn.jsdelivr.net/npm/pangu@4/dist/browser/pangu.min.js')
+      .then(() => {
+        pangu.autoSpacingPage()
+      })
+  }
+}
+
+function panguInit () {
+  if (false){
+    GLOBAL_CONFIG_SITE.isPost && panguFn()
+  } else {
+    panguFn()
+  }
+}
+
+document.addEventListener('DOMContentLoaded', panguInit)</script><script src="/js/search/local-search.js"></script><script>var preloader = {
+  endLoading: () => {
+    document.body.style.overflow = 'auto';
+    document.getElementById('loading-box').classList.add("loaded")
+  },
+  initLoading: () => {
+    document.body.style.overflow = '';
+    document.getElementById('loading-box').classList.remove("loaded")
+
+  }
+}
+window.addEventListener('load',preloader.endLoading())</script><div class="js-pjax"></div><canvas class="fireworks" mobile="false"></canvas><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/dist/fireworks.min.js"></script><script defer="defer" id="fluttering_ribbon" mobile="false" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/dist/canvas-fluttering-ribbon.min.js"></script><script id="canvas_nest" defer="defer" color="0,0,255" opacity="0.7" zIndex="-1" count="99" mobile="false" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/dist/canvas-nest.min.js"></script><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/dist/activate-power-mode.min.js"></script><script>POWERMODE.colorful = true;
+POWERMODE.shake = false;
+POWERMODE.mobile = false;
+document.body.addEventListener('input', POWERMODE);
+</script><script src="https://cdn.jsdelivr.net/npm/pjax/pjax.min.js"></script><script>let pjaxSelectors = ["head > title","#config-diff","#body-wrap","#rightside-config-hide","#rightside-config-show",".js-pjax"]
+
+var pjax = new Pjax({
+  elements: 'a:not([target="_blank"])',
+  selectors: pjaxSelectors,
+  cacheBust: false,
+  analytics: false,
+  scrollRestoration: false
+})
+
+document.addEventListener('pjax:send', function () {
+
+  // removeEventListener scroll 
+  window.tocScrollFn && window.removeEventListener('scroll', window.tocScrollFn)
+  window.scrollCollect && window.removeEventListener('scroll', scrollCollect)
+
+  typeof preloader === 'object' && preloader.initLoading()
+  document.getElementById('rightside').style.cssText = "opacity: ''; transform: ''"
+  
+  if (window.aplayers) {
+    for (let i = 0; i < window.aplayers.length; i++) {
+      if (!window.aplayers[i].options.fixed) {
+        window.aplayers[i].destroy()
+      }
+    }
+  }
+
+  typeof typed === 'object' && typed.destroy()
+
+  //reset readmode
+  const $bodyClassList = document.body.classList
+  $bodyClassList.contains('read-mode') && $bodyClassList.remove('read-mode')
+
+})
+
+document.addEventListener('pjax:complete', function () {
+  window.refreshFn()
+
+  document.querySelectorAll('script[data-pjax]').forEach(item => {
+    const newScript = document.createElement('script')
+    const content = item.text || item.textContent || item.innerHTML || ""
+    Array.from(item.attributes).forEach(attr => newScript.setAttribute(attr.name, attr.value))
+    newScript.appendChild(document.createTextNode(content))
+    item.parentNode.replaceChild(newScript, item)
+  })
+
+  GLOBAL_CONFIG.islazyload && window.lazyLoadInstance.update()
+
+  typeof chatBtnFn === 'function' && chatBtnFn()
+  typeof panguInit === 'function' && panguInit()
+
+  // google analytics
+  typeof gtag === 'function' && gtag('config', '', {'page_path': window.location.pathname});
+
+  // baidu analytics
+  typeof _hmt === 'object' && _hmt.push(['_trackPageview',window.location.pathname]);
+
+  typeof loadMeting === 'function' && document.getElementsByClassName('aplayer').length && loadMeting()
+
+  // prismjs
+  typeof Prism === 'object' && Prism.highlightAll()
+
+  typeof preloader === 'object' && preloader.endLoading()
+})
+
+document.addEventListener('pjax:error', (e) => {
+  if (e.request.status === 404) {
+    pjax.loadUrl('/404.html')
+  }
+})</script><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div></body></html>
