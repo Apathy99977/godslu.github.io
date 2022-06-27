@@ -42,6 +42,67 @@
       </tags>
   </entry>
   <entry>
+    <title>Redis事务</title>
+    <url>/2022/05/21/Redis%E4%BA%8B%E5%8A%A1/</url>
+    <content><![CDATA[<h2 id="Redis事务"><a href="#Redis事务" class="headerlink" title="Redis事务"></a>Redis事务</h2><p>Redis事务本质：一组命令的集合！一个事务中的所有命令都会被序列号，在事务执行过程中，会按照顺序执行！ 一次性，顺序性，排他性！执行一些列的命令！</p>
+<p><strong>Redis事务没有隔离级别的概念！</strong> 所有的命令在事务中，并没有直接被执行！只有发起执行命令的时候才会执行（Exec）</p>
+<p><strong>Redis单条命令式保存原则性的，但是事务不保证原子性！</strong> 在事务中，就算中途发生错误后面的命令依旧会执行</p>
+<p><strong>redis的事务：</strong> 1，开启命令（multi） 2，命令入队(…) 3，执行事务(exec) 4,退出事务（DISCARD）</p>
+<p><strong>正常使用事务</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">127.0.0.1:6379&gt; multi</span><br><span class="line">OK</span><br><span class="line">127.0.0.1:6379&gt; set key1 value1</span><br><span class="line">QUEUED</span><br><span class="line">127.0.0.1:6379&gt; set key2 value2</span><br><span class="line">QUEUED</span><br><span class="line">127.0.0.1:6379&gt; LPUSH list 1</span><br><span class="line">QUEUED</span><br><span class="line">127.0.0.1:6379&gt; exec</span><br><span class="line">1) OK</span><br><span class="line">2) OK</span><br><span class="line">3) (integer) 1</span><br></pre></td></tr></table></figure>
+
+<p><strong>退出事务</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">127.0.0.1:6379&gt; multi</span><br><span class="line">OK</span><br><span class="line">127.0.0.1:6379&gt; set key aa</span><br><span class="line">QUEUED</span><br><span class="line">127.0.0.1:6379&gt; DISCARD</span><br><span class="line">OK</span><br><span class="line">127.0.0.1:6379&gt; </span><br></pre></td></tr></table></figure>
+
+
+
+<p><strong>编译型异常（代码有问题！命令有错！），事务中所有的命令都不会执行！</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">127.0.0.1:6379&gt; multi</span><br><span class="line">OK</span><br><span class="line">127.0.0.1:6379&gt; set s1 v1</span><br><span class="line">QUEUED</span><br><span class="line">127.0.0.1:6379&gt; getset sss</span><br><span class="line">(error) ERR wrong number of arguments for &#x27;getset&#x27; command</span><br><span class="line">127.0.0.1:6379&gt; set s2 v2</span><br><span class="line">QUEUED</span><br><span class="line">127.0.0.1:6379&gt; exec</span><br><span class="line">(error) EXECABORT Transaction discarded because of previous errors.</span><br></pre></td></tr></table></figure>
+
+
+
+<p><strong>运行时异常（如果出现错误会打印出来，但并不妨碍接下来的命令执行）</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">127.0.0.1:6379&gt; set key1 v1</span><br><span class="line">OK</span><br><span class="line">127.0.0.1:6379&gt; multi</span><br><span class="line">OK</span><br><span class="line">127.0.0.1:6379&gt; incr key1   #加1</span><br><span class="line">QUEUED</span><br><span class="line">127.0.0.1:6379&gt; set key2 v2</span><br><span class="line">QUEUED</span><br><span class="line">127.0.0.1:6379&gt; get key2</span><br><span class="line">QUEUED</span><br><span class="line">127.0.0.1:6379&gt; exec</span><br><span class="line">1) (error) ERR value is not an integer or out of range</span><br><span class="line">2) OK</span><br><span class="line">3) &quot;v2&quot;</span><br><span class="line">127.0.0.1:6379&gt; </span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="使用乐观锁"><a href="#使用乐观锁" class="headerlink" title="使用乐观锁"></a>使用乐观锁</h3><p>使用watch可充当乐观锁</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">watch key  #选择要监控的key</span><br><span class="line">unwatch   #当执行失败时放弃监视，并重新监视</span><br><span class="line">执行失败是因为值改变了，所以需要重新监视</span><br></pre></td></tr></table></figure>
+
+<p>实际这部分是接着事务那一块，加了一个watch命令。</p>
+<p>这里要有一个乐观锁和悲观锁的概念：<br>悲观锁：</p>
+<p>很悲观，认为什么时候都会出现问题，无论做什么都会加锁</p>
+<p>乐观锁：</p>
+<p>很乐观，认为什么时候都不会出现问题，所以不会上锁！更新数据的时候去判断一下，在此期间是否有人修改过这个数据<br>获取version<br>更新的时候比较version</p>
+<p>watch命令<br>使用watch key监控指定数据，相当于乐观锁加锁。类似一个CAS操作。</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">127.0.0.1:6379&gt; set money 100 # 设置余额:100</span><br><span class="line">OK</span><br><span class="line">127.0.0.1:6379&gt; set use 0 # 支出使用:0</span><br><span class="line">OK</span><br><span class="line">127.0.0.1:6379&gt; watch money # 监视money (上锁)</span><br><span class="line">OK</span><br><span class="line">127.0.0.1:6379&gt; multi</span><br><span class="line">OK</span><br><span class="line">127.0.0.1:6379&gt; DECRBY money 20</span><br><span class="line">QUEUED</span><br><span class="line">127.0.0.1:6379&gt; INCRBY use 20</span><br><span class="line">QUEUED</span><br><span class="line">127.0.0.1:6379&gt; exec # 监视值没有被中途修改，事务正常执行</span><br><span class="line">1) (integer) 80</span><br><span class="line">2) (integer) 20</span><br><span class="line"></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>测试多线程修改值，使用watch可以当做redis的乐观锁操作（相当于getversion）</p>
+<p>起两个客户端模拟多线程<br>线程一</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">127.0.0.1:6379&gt; watch money # money上锁</span><br><span class="line">OK</span><br><span class="line">127.0.0.1:6379&gt; multi</span><br><span class="line">OK</span><br><span class="line">127.0.0.1:6379&gt; DECRBY money 20</span><br><span class="line">QUEUED</span><br><span class="line">127.0.0.1:6379&gt; INCRBY use 20</span><br><span class="line">QUEUED</span><br><span class="line">127.0.0.1:6379&gt; 	# 此时事务并没有执行</span><br><span class="line"></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>线程二</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">127.0.0.1:6379&gt; INCRBY money 500 # 修改了线程一中监视的money</span><br><span class="line">(integer) 600</span><br></pre></td></tr></table></figure>
+
+<p>回到线程一客户端</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">127.0.0.1:6379&gt; EXEC # 执行之前，另一个线程修改了我们的值，这个时候就会导致事务执行失败</span><br><span class="line">(nil) # 没有结果，说明事务执行失败</span><br><span class="line"></span><br><span class="line">127.0.0.1:6379&gt; get money # 线程2 修改生效</span><br><span class="line">&quot;600&quot;</span><br><span class="line">127.0.0.1:6379&gt; get use # 线程1事务执行失败，数值没有被修改</span><br><span class="line">&quot;0&quot;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>解锁获取最新值，然后再加锁进行事务。</p>
+<p>unwatch进行解锁。</p>
+<p>实际上用得不多，很多利用redis分布式锁一般是setex+lua脚本（Redisson）</p>
+<p>但是redis分布式锁是最简单实现的，但是也会有问题GC阻塞时间太长，导致时间失效，或者是redis服务器时钟漂移（就是两台服务器时间不一致，一个快导致两个服务器一把锁），还有单点故障master挂掉slave成为master也会带来问题。</p>
+<p>解决单点故障有redlock，就是对多个端设置时间，但是对于每个redis实例设置一个超时时间，比如书1min有效时间，超时时间是1秒，你在1秒内获取不到这个实例，就取获取下一个锁。</p>
+<p><strong>Redis乐观锁摘抄链接</strong>：<a href="https://blog.csdn.net/FeiChangWuRao/article/details/122824426">https://blog.csdn.net/FeiChangWuRao/article/details/122824426</a></p>
+]]></content>
+      <categories>
+        <category>redis</category>
+      </categories>
+      <tags>
+        <tag>数据库</tag>
+        <tag>事务</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>Redis哨兵模式</title>
     <url>/2022/05/23/Redis%E5%93%A8%E5%85%B5%E6%A8%A1%E5%BC%8F/</url>
     <content><![CDATA[<h1 id="Redis哨兵模式"><a href="#Redis哨兵模式" class="headerlink" title="Redis哨兵模式"></a>Redis哨兵模式</h1><p><strong>介绍：</strong></p>
@@ -111,67 +172,6 @@
       </categories>
       <tags>
         <tag>数据库</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>Redis事务</title>
-    <url>/2022/05/21/Redis%E4%BA%8B%E5%8A%A1/</url>
-    <content><![CDATA[<h2 id="Redis事务"><a href="#Redis事务" class="headerlink" title="Redis事务"></a>Redis事务</h2><p>Redis事务本质：一组命令的集合！一个事务中的所有命令都会被序列号，在事务执行过程中，会按照顺序执行！ 一次性，顺序性，排他性！执行一些列的命令！</p>
-<p><strong>Redis事务没有隔离级别的概念！</strong> 所有的命令在事务中，并没有直接被执行！只有发起执行命令的时候才会执行（Exec）</p>
-<p><strong>Redis单条命令式保存原则性的，但是事务不保证原子性！</strong> 在事务中，就算中途发生错误后面的命令依旧会执行</p>
-<p><strong>redis的事务：</strong> 1，开启命令（multi） 2，命令入队(…) 3，执行事务(exec) 4,退出事务（DISCARD）</p>
-<p><strong>正常使用事务</strong></p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">127.0.0.1:6379&gt; multi</span><br><span class="line">OK</span><br><span class="line">127.0.0.1:6379&gt; set key1 value1</span><br><span class="line">QUEUED</span><br><span class="line">127.0.0.1:6379&gt; set key2 value2</span><br><span class="line">QUEUED</span><br><span class="line">127.0.0.1:6379&gt; LPUSH list 1</span><br><span class="line">QUEUED</span><br><span class="line">127.0.0.1:6379&gt; exec</span><br><span class="line">1) OK</span><br><span class="line">2) OK</span><br><span class="line">3) (integer) 1</span><br></pre></td></tr></table></figure>
-
-<p><strong>退出事务</strong></p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">127.0.0.1:6379&gt; multi</span><br><span class="line">OK</span><br><span class="line">127.0.0.1:6379&gt; set key aa</span><br><span class="line">QUEUED</span><br><span class="line">127.0.0.1:6379&gt; DISCARD</span><br><span class="line">OK</span><br><span class="line">127.0.0.1:6379&gt; </span><br></pre></td></tr></table></figure>
-
-
-
-<p><strong>编译型异常（代码有问题！命令有错！），事务中所有的命令都不会执行！</strong></p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">127.0.0.1:6379&gt; multi</span><br><span class="line">OK</span><br><span class="line">127.0.0.1:6379&gt; set s1 v1</span><br><span class="line">QUEUED</span><br><span class="line">127.0.0.1:6379&gt; getset sss</span><br><span class="line">(error) ERR wrong number of arguments for &#x27;getset&#x27; command</span><br><span class="line">127.0.0.1:6379&gt; set s2 v2</span><br><span class="line">QUEUED</span><br><span class="line">127.0.0.1:6379&gt; exec</span><br><span class="line">(error) EXECABORT Transaction discarded because of previous errors.</span><br></pre></td></tr></table></figure>
-
-
-
-<p><strong>运行时异常（如果出现错误会打印出来，但并不妨碍接下来的命令执行）</strong></p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">127.0.0.1:6379&gt; set key1 v1</span><br><span class="line">OK</span><br><span class="line">127.0.0.1:6379&gt; multi</span><br><span class="line">OK</span><br><span class="line">127.0.0.1:6379&gt; incr key1   #加1</span><br><span class="line">QUEUED</span><br><span class="line">127.0.0.1:6379&gt; set key2 v2</span><br><span class="line">QUEUED</span><br><span class="line">127.0.0.1:6379&gt; get key2</span><br><span class="line">QUEUED</span><br><span class="line">127.0.0.1:6379&gt; exec</span><br><span class="line">1) (error) ERR value is not an integer or out of range</span><br><span class="line">2) OK</span><br><span class="line">3) &quot;v2&quot;</span><br><span class="line">127.0.0.1:6379&gt; </span><br></pre></td></tr></table></figure>
-
-
-
-<h3 id="使用乐观锁"><a href="#使用乐观锁" class="headerlink" title="使用乐观锁"></a>使用乐观锁</h3><p>使用watch可充当乐观锁</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">watch key  #选择要监控的key</span><br><span class="line">unwatch   #当执行失败时放弃监视，并重新监视</span><br><span class="line">执行失败是因为值改变了，所以需要重新监视</span><br></pre></td></tr></table></figure>
-
-<p>实际这部分是接着事务那一块，加了一个watch命令。</p>
-<p>这里要有一个乐观锁和悲观锁的概念：<br>悲观锁：</p>
-<p>很悲观，认为什么时候都会出现问题，无论做什么都会加锁</p>
-<p>乐观锁：</p>
-<p>很乐观，认为什么时候都不会出现问题，所以不会上锁！更新数据的时候去判断一下，在此期间是否有人修改过这个数据<br>获取version<br>更新的时候比较version</p>
-<p>watch命令<br>使用watch key监控指定数据，相当于乐观锁加锁。类似一个CAS操作。</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">127.0.0.1:6379&gt; set money 100 # 设置余额:100</span><br><span class="line">OK</span><br><span class="line">127.0.0.1:6379&gt; set use 0 # 支出使用:0</span><br><span class="line">OK</span><br><span class="line">127.0.0.1:6379&gt; watch money # 监视money (上锁)</span><br><span class="line">OK</span><br><span class="line">127.0.0.1:6379&gt; multi</span><br><span class="line">OK</span><br><span class="line">127.0.0.1:6379&gt; DECRBY money 20</span><br><span class="line">QUEUED</span><br><span class="line">127.0.0.1:6379&gt; INCRBY use 20</span><br><span class="line">QUEUED</span><br><span class="line">127.0.0.1:6379&gt; exec # 监视值没有被中途修改，事务正常执行</span><br><span class="line">1) (integer) 80</span><br><span class="line">2) (integer) 20</span><br><span class="line"></span><br><span class="line"></span><br></pre></td></tr></table></figure>
-
-<p>测试多线程修改值，使用watch可以当做redis的乐观锁操作（相当于getversion）</p>
-<p>起两个客户端模拟多线程<br>线程一</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">127.0.0.1:6379&gt; watch money # money上锁</span><br><span class="line">OK</span><br><span class="line">127.0.0.1:6379&gt; multi</span><br><span class="line">OK</span><br><span class="line">127.0.0.1:6379&gt; DECRBY money 20</span><br><span class="line">QUEUED</span><br><span class="line">127.0.0.1:6379&gt; INCRBY use 20</span><br><span class="line">QUEUED</span><br><span class="line">127.0.0.1:6379&gt; 	# 此时事务并没有执行</span><br><span class="line"></span><br><span class="line"></span><br></pre></td></tr></table></figure>
-
-<p>线程二</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">127.0.0.1:6379&gt; INCRBY money 500 # 修改了线程一中监视的money</span><br><span class="line">(integer) 600</span><br></pre></td></tr></table></figure>
-
-<p>回到线程一客户端</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">127.0.0.1:6379&gt; EXEC # 执行之前，另一个线程修改了我们的值，这个时候就会导致事务执行失败</span><br><span class="line">(nil) # 没有结果，说明事务执行失败</span><br><span class="line"></span><br><span class="line">127.0.0.1:6379&gt; get money # 线程2 修改生效</span><br><span class="line">&quot;600&quot;</span><br><span class="line">127.0.0.1:6379&gt; get use # 线程1事务执行失败，数值没有被修改</span><br><span class="line">&quot;0&quot;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
-
-<p>解锁获取最新值，然后再加锁进行事务。</p>
-<p>unwatch进行解锁。</p>
-<p>实际上用得不多，很多利用redis分布式锁一般是setex+lua脚本（Redisson）</p>
-<p>但是redis分布式锁是最简单实现的，但是也会有问题GC阻塞时间太长，导致时间失效，或者是redis服务器时钟漂移（就是两台服务器时间不一致，一个快导致两个服务器一把锁），还有单点故障master挂掉slave成为master也会带来问题。</p>
-<p>解决单点故障有redlock，就是对多个端设置时间，但是对于每个redis实例设置一个超时时间，比如书1min有效时间，超时时间是1秒，你在1秒内获取不到这个实例，就取获取下一个锁。</p>
-<p><strong>Redis乐观锁摘抄链接</strong>：<a href="https://blog.csdn.net/FeiChangWuRao/article/details/122824426">https://blog.csdn.net/FeiChangWuRao/article/details/122824426</a></p>
-]]></content>
-      <categories>
-        <category>redis</category>
-      </categories>
-      <tags>
-        <tag>数据库</tag>
-        <tag>事务</tag>
       </tags>
   </entry>
   <entry>
@@ -1631,50 +1631,6 @@ public String NullPointerExceptionHandler(Model model, Exception e) &#123;
       </tags>
   </entry>
   <entry>
-    <title>redis的五大数据类型</title>
-    <url>/2022/05/21/redis%E7%9A%84%E4%BA%94%E5%A4%A7%E6%95%B0%E6%8D%AE%E7%B1%BB%E5%9E%8B/</url>
-    <content><![CDATA[<h2 id="Redis简单了解与5大数据类型"><a href="#Redis简单了解与5大数据类型" class="headerlink" title="Redis简单了解与5大数据类型"></a>Redis简单了解与5大数据类型</h2><h2 id="Redis是单线程的"><a href="#Redis是单线程的" class="headerlink" title="Redis是单线程的"></a>Redis是单线程的</h2><p>Redis是很快的，官方表示，Redis是基于内存操作，cpu并不是Redis性能瓶颈，Redis的瓶颈是根据机器和网络带宽。</p>
-<p>Redis是C语言写的，官方提供的数据为 100000+ 的Qps，完成不比同样是使用key-value的Memecahe差！</p>
-<h2 id="Redis为什么单线程还那么快？"><a href="#Redis为什么单线程还那么快？" class="headerlink" title="Redis为什么单线程还那么快？"></a>Redis为什么单线程还那么快？</h2><p>1，高性能的服务器不一定是多线程的 2，多线程不一定比单线程效率高！</p>
-<p>redis是将所有的数据全部放置内存中的，所以使用单线程去操作效率就是最高的，多线程cpu上下文切换耗时，对于内存系统来说，如果没有上下文切换效率就是最高的，多次读写都在一个cpu上的，在内存情况下，这个就是最佳方案</p>
-<p>redis一共有16个数据库 默认使用第0个</p>
-<h2 id="5大数据类型"><a href="#5大数据类型" class="headerlink" title="5大数据类型"></a>5大数据类型</h2><p>不区分大小写</p>
-<h3 id="String-的一些命令"><a href="#String-的一些命令" class="headerlink" title="String 的一些命令"></a>String 的一些命令</h3><figure class="highlight java"><table><tr><td class="code"><pre><span class="line">select <span class="number">1</span> #改变数字可切换数据库</span><br><span class="line">keys *  #查看当前数据库使用的key</span><br><span class="line">set key value  #向数据库填充kv键值对数据</span><br><span class="line">get key  #获取指定key的value</span><br><span class="line">flushall  #清空全部 会将其他库的也清除</span><br><span class="line">flushdb   #清空单前数据库</span><br><span class="line">EXISTS key  #判断当前key是否存在 存在返回<span class="number">1</span> 否者<span class="number">0</span></span><br><span class="line">move key <span class="number">1</span> #将指定的key键值对移动到指定的数据库</span><br><span class="line">EXPIRE key <span class="number">10</span>  #将指定key在指定的时间过期 <span class="number">10</span>为<span class="number">10</span>秒</span><br><span class="line">ttl key  #查看指定的key还剩余多少存活时间 -<span class="number">1</span>为永久存活 -<span class="number">2</span>为死亡</span><br><span class="line">type key  #查看当前key的数据类型</span><br><span class="line">APPEND key content  #追加指定key的value的内容 content为追加内容 </span><br><span class="line">STRLEN key  #查看指定key的value长度</span><br><span class="line">incr key  #可以为指定的key自增</span><br><span class="line">decr key #为指定的key减<span class="number">1</span></span><br><span class="line">INCRBY key i  #为指定的key 加上 i个（数字）</span><br><span class="line">DECRBY key i  #为指定的key 减 i (数字)</span><br><span class="line">GETRANGE key s e  #截取指定长度字符串 ，该方法区间（ &#125;</span><br><span class="line">GETRANGE key i -<span class="number">1</span>  #结尾为-<span class="number">1</span>可以查看全部字符串 和 get一样</span><br><span class="line">SETRANGE key s content  #替换指定位置开始的字符串 输入几个就替换几个</span><br><span class="line">setex key time value  #创建或修改一个键值对，并设置过期时间</span><br><span class="line">setnx key value  #创建一个键值对 、当如何已经有这个键值对了就会创建失败</span><br><span class="line">mset key value [k v...]  #可一次设置多个，kv键值对</span><br><span class="line">mget key [key...]  #一次获取多个value</span><br><span class="line">msetnx key value [k v...]  #可一次设置多个，kv键值对，但要满足原子性，同时成功，同时失败</span><br><span class="line">getset key value  #读取并修改 先读，可以用于更新新内容</span><br></pre></td></tr></table></figure>
-
-<h3 id="List"><a href="#List" class="headerlink" title="List"></a>List</h3><p>list可以当作链表来看，左右都可以插入</p>
-<p>可控制向左向右添加后移出，是需要开头加 L（左） 或 R（右），List的命令以L开头，除控制左右外，可存在重复值</p>
-<p>添加后内容顺序为 54321</p>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line">LPUSH key element [element...] #tianj或创建并添加值</span><br><span class="line">LRANGE key s e  ;#查看List的数据 从s开始 到e结束的位置</span><br><span class="line">LPOP #移出左第一个，（左右可调节）</span><br><span class="line">LINDEX key index   #根据下标查看值，必须大写，只能从左</span><br><span class="line">LLEN key   #获取指定list的长度</span><br><span class="line">LREM key count value  #移出指定的内容，并且可以设置移出几个</span><br><span class="line">ltrim key start stop  #通过下标截取要的部分 不在区间的则都移出</span><br><span class="line">rpoplpush key1 key2  #移出key1中最右的第一个并添加到key2的左边第一个</span><br><span class="line">lset key index value  #可修改list中指定下标的value，如果不存在列表就会报错</span><br><span class="line">LINSERT key before|after pivot element #向指定key里的value的前或后插入内容。 pivot key里的内容 element 插入的内容</span><br></pre></td></tr></table></figure>
-
-
-
-<h3 id="Set"><a href="#Set" class="headerlink" title="Set"></a>Set</h3><p>set的命令都是以s开头的 set中的值是无需不能重复的</p>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line">sadd key value  #创建或添加</span><br><span class="line">SMEMBERS key  #查看set中的元素</span><br><span class="line">SISMEMBER key value  #判断当前set中是否有当前value</span><br><span class="line">scard setkey  #获取当前set的个数</span><br><span class="line">srem setkey element[element..]  #移出指定的值</span><br><span class="line">SRANDMEMBER setkey 【count】  #在指定的key中随机获取count个元素</span><br><span class="line">SPOP setkey 【count】  #随机移除count个元素</span><br><span class="line">SMOVE setkey1 setkey2 value  #将setkey1的value移出到setkey2中</span><br><span class="line">SINTER key [key...]  #获取选中key的交集，要都有的才会显示</span><br><span class="line">SUNION key [key...] #获取选中的并集，不会输出重复的 #并集解释：若A和B是集合，则A和B并集是有所有A的元素和所有B的元素，而没有其他元素的集合。A和B的并集通常写作 <span class="string">&quot;A∪B&quot;</span>，读作“A并B”</span><br></pre></td></tr></table></figure>
-
-
-
-<h3 id="Hash"><a href="#Hash" class="headerlink" title="Hash"></a>Hash</h3><p>Hash类型为key-（key-value） 所有的hash命令是以h开头的</p>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line">hset key field value [field value...]  #创建Hash</span><br><span class="line">#示例：hset hash field1 value1 ；key（hash）-value（field1-value1）</span><br><span class="line">#注意：低版本一次填充多个需要使用hmset命令</span><br><span class="line">hget key field   #获取field value值，需要两个key的值</span><br><span class="line">hmget key field [field...]  #获取多个 field ，高版本可能没有这个命令，而是直接使用hset</span><br><span class="line">hdel key field [field...]  #删除指定的field，</span><br><span class="line">hgetall key    #查看当前key中的value（k-v键值对都会显示）</span><br><span class="line">HEXISTS key field   #查询hash中是否存在指定的key</span><br><span class="line">hkeys key     #查看hash中所有的key</span><br><span class="line">hvals key     #查看hasg中所有的value</span><br><span class="line">HINCRBY key field i    #为指定key中的field 的value进行相加，可以加负数，这样就是相减</span><br><span class="line">hsetnx key field value #如果field存在则无需，不存在创建</span><br></pre></td></tr></table></figure>
-
-
-
-<h3 id="Zset"><a href="#Zset" class="headerlink" title="Zset"></a>Zset</h3><p>有序集合，，从小到大</p>
-<p>在set的基础上加了一个值， zadd k score v ,多了个score多了了，可以用于表示</p>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line">zadd key sroce value [...]  #添加zset</span><br><span class="line">zrange key start stop  #查看指定key数据范围</span><br><span class="line">ZRANGEBYSCORE key min max [WITHSCORCES] [LIMIT offset ount]   #用于指定key筛选排序  min可以使用-inf 意思为负无限制，max使用+inf 正无限，获取score包含在他们的区间值</span><br><span class="line">ZREVRANGEBYSCORE key max min [WITHSCORCES] [LIMIT offset ount]  #上面排正序，这个是倒叙</span><br><span class="line">zrem key member [member...]   #使用要删除的value并移除</span><br><span class="line">ZCARD key   #查询当前集合key有多少个值</span><br><span class="line">ZCOUNT key min max #获取指定key的指定区间内有多个个值</span><br></pre></td></tr></table></figure>
-
-
-
-<h2 id="官网地址"><a href="#官网地址" class="headerlink" title="官网地址"></a>官网地址</h2><p>一切以官网为准 <a href="http://www.redis.cn/" title="Redis官网">Redis官网</a></p>
-]]></content>
-      <categories>
-        <category>redis</category>
-      </categories>
-      <tags>
-        <tag>数据库</tag>
-        <tag>数据类型</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>SpringBootSecurity</title>
     <url>/2022/05/02/SpringBootSecurity/</url>
     <content><![CDATA[<h1 id="SpringBoot安全框架："><a href="#SpringBoot安全框架：" class="headerlink" title="SpringBoot安全框架："></a>SpringBoot安全框架：</h1><h2 id="HttpBasic认证模式："><a href="#HttpBasic认证模式：" class="headerlink" title="HttpBasic认证模式："></a>HttpBasic认证模式：</h2><p>这是种防君子不防小人的认证，也是最简单的一个认证模式</p>
@@ -2243,157 +2199,48 @@ public CorsConfigurationSource corsConfigurationSource()&#123;
       </tags>
   </entry>
   <entry>
-    <title>redis的持久化</title>
-    <url>/2022/05/20/redis%E7%9A%84%E6%8C%81%E4%B9%85%E5%8C%96/</url>
-    <content><![CDATA[<h1 id="Redis的持久化"><a href="#Redis的持久化" class="headerlink" title="Redis的持久化"></a>Redis的持久化</h1><p>redis是内存数据库，如果数据不持久化，当程序关闭时将会丢失数据，所以Redis提供了持久化</p>
-<h3 id="RDB"><a href="#RDB" class="headerlink" title="RDB"></a>RDB</h3><p><strong>什么是RDB？</strong></p>
-<p><img src="https://s2.loli.net/2022/02/20/IeEx1JmZS82vk9s.png" alt="image-20220220232522977"></p>
-<p>在指定的时间间隔内将内存中的数据集快照写入磁盘，也就是行话讲的Snapshot快照，它恢复时是将快照文件直接读到内存里。Redis会单独创建 ( fork )一个子进程来进行持久化，会先将数据写入到一个临时文件中，待持久化过程都结束了，再用这个临时文件替换上次持久化好的文件。整个过程中，主进程是不进行任何IO操作的。这就确保了极高的性能。如果需要进行大规模数据的恢复，且对于数据恢复的完整性不是非常敏感，那RDB方式要比AOF方式更加的高效。RDB的缺点是最后一次持久化后的数据可能丢失。我们默认的就是RDB，一般情况不需要修改这个配置！</p>
-<p>在生成环境我们将会对这个文件进行备份</p>
-<p><strong>缺点：</strong></p>
-<p>如果在最后一次宕机了，就没有办法去持久化了，需要一定的时间间隔</p>
-<p>在创建frok进程的时候，会占用一定的空间</p>
-<p><strong>优点：</strong></p>
-<p>RDB比AOF更加的高效，适合大规模恢复数据</p>
-<p>RDB保存的文件是dump.rdb   ，在配置文件中有讲，都是在配置文件中设置的</p>
-<p><strong>持久化触发机制：</strong></p>
-<p>注意：kill的情况下不会触发</p>
-<p>1,save的规则满足的情况下会触发rdb规则</p>
-<p>2,执行flushall命令也会触发rdb规则</p>
-<p>3,当退出redis时也会触发rdb规则   </p>
-<p>会生成一个dump.rdb文件，redis在重启时会读取文件，恢复数据，如果删除，关闭后就不会有之前的数据了</p>
-<p><strong>如恢复rdb文件：</strong></p>
-<p>只需要将rdb文件放置redis启动目录下，</p>
-<p>dump.rdb放在redis-server同级目录</p>
-<h2 id="AOF"><a href="#AOF" class="headerlink" title="AOF"></a>AOF</h2><p>它会将我们所有的命令记录下来，history，恢复的时候就会把这个文件全部执行一遍！</p>
-<p><strong>在redis4.0以后支持混合模式，rdb与aof同时开启会优先aof</strong></p>
-<p><img src="https://s2.loli.net/2022/02/20/r1N7HEity9OXqdA.png" alt="image-20220220233046582"></p>
-<p>以日志的形式来记录每个写操作，将Redis执行过的所有指令记录下来(读操作不记录），只许追加文件但不可以改写文件，redis启动之初会读取该文件重新构建数据，换言之，redis重启的话就根据日志文件的内容将写指令从前到后执行一次以完成数据的恢复工作</p>
-<p><strong>默认不开AOF，需要去配置文件中手动开启</strong></p>
-<p><strong>Aof保存的是appendonly.aof 文件</strong></p>
-<p>文件同样可以在配置文件中修改:</p>
-<p>&#x2F;&#x2F;The name of the append only file (default: “appendonly.aof”)</p>
-<p>​	appendfilename “appendonly.aof”</p>
-<p><strong>当我们开启时输入了命令后就会生成aod文件：</strong></p>
-<p><img src="https://s2.loli.net/2022/02/21/lDiAuKGo345PORI.png" alt="image-20220221100633418"></p>
-<p><strong>文件的内容为：</strong></p>
-<p><img src="https://s2.loli.net/2022/02/22/DGtZmALfOyTziFh.png" alt="image-20220222225551886"></p>
-<p>这个文件是能破坏的，破坏后启动redis会报错 ，但是系统会生成一个备用文件，我们可以使用它来修改appendonly.aof</p>
-<p>破坏后登录：</p>
-<p><img src="https://s2.loli.net/2022/02/21/JuwqZhENCfp9LIn.png" alt="image-20220221102935481"></p>
-<p>破坏后是可以使用这个文件进行恢复的</p>
-<p><img src="https://s2.loli.net/2022/02/21/X4TEjb1n5VfL2Fk.png" alt="image-20220221103321224"></p>
-<p>使用命令：redis-check-aof –fix appendonly.aof  进行恢复，恢复后 就能正常登录了</p>
-<p>注意：要在appendonly.aof文件位置使用该命令</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">[root@VM-4-12-centos ~]# redis-check-aof --fix appendonly.aof</span><br><span class="line">Cannot open file: appendonly.aof</span><br><span class="line">[root@VM-4-12-centos ~]# cd /usr/local/bin</span><br><span class="line">[root@VM-4-12-centos bin]# redis-check-aof --fix appendonly.aof</span><br><span class="line">0x              3c: Expected \r\n, got: 7765</span><br><span class="line">AOF analyzed: size=143, ok_up_to=52, diff=91</span><br><span class="line">This will shrink the AOF from 143 bytes, with 91 bytes, to 52 bytes</span><br><span class="line">Continue? [y/N]: y</span><br><span class="line">Successfully truncated AOF</span><br><span class="line">[root@VM-4-12-centos bin]# </span><br></pre></td></tr></table></figure>
+    <title>redis的五大数据类型</title>
+    <url>/2022/05/21/redis%E7%9A%84%E4%BA%94%E5%A4%A7%E6%95%B0%E6%8D%AE%E7%B1%BB%E5%9E%8B/</url>
+    <content><![CDATA[<h2 id="Redis简单了解与5大数据类型"><a href="#Redis简单了解与5大数据类型" class="headerlink" title="Redis简单了解与5大数据类型"></a>Redis简单了解与5大数据类型</h2><h2 id="Redis是单线程的"><a href="#Redis是单线程的" class="headerlink" title="Redis是单线程的"></a>Redis是单线程的</h2><p>Redis是很快的，官方表示，Redis是基于内存操作，cpu并不是Redis性能瓶颈，Redis的瓶颈是根据机器和网络带宽。</p>
+<p>Redis是C语言写的，官方提供的数据为 100000+ 的Qps，完成不比同样是使用key-value的Memecahe差！</p>
+<h2 id="Redis为什么单线程还那么快？"><a href="#Redis为什么单线程还那么快？" class="headerlink" title="Redis为什么单线程还那么快？"></a>Redis为什么单线程还那么快？</h2><p>1，高性能的服务器不一定是多线程的 2，多线程不一定比单线程效率高！</p>
+<p>redis是将所有的数据全部放置内存中的，所以使用单线程去操作效率就是最高的，多线程cpu上下文切换耗时，对于内存系统来说，如果没有上下文切换效率就是最高的，多次读写都在一个cpu上的，在内存情况下，这个就是最佳方案</p>
+<p>redis一共有16个数据库 默认使用第0个</p>
+<h2 id="5大数据类型"><a href="#5大数据类型" class="headerlink" title="5大数据类型"></a>5大数据类型</h2><p>不区分大小写</p>
+<h3 id="String-的一些命令"><a href="#String-的一些命令" class="headerlink" title="String 的一些命令"></a>String 的一些命令</h3><figure class="highlight java"><table><tr><td class="code"><pre><span class="line">select <span class="number">1</span> #改变数字可切换数据库</span><br><span class="line">keys *  #查看当前数据库使用的key</span><br><span class="line">set key value  #向数据库填充kv键值对数据</span><br><span class="line">get key  #获取指定key的value</span><br><span class="line">flushall  #清空全部 会将其他库的也清除</span><br><span class="line">flushdb   #清空单前数据库</span><br><span class="line">EXISTS key  #判断当前key是否存在 存在返回<span class="number">1</span> 否者<span class="number">0</span></span><br><span class="line">move key <span class="number">1</span> #将指定的key键值对移动到指定的数据库</span><br><span class="line">EXPIRE key <span class="number">10</span>  #将指定key在指定的时间过期 <span class="number">10</span>为<span class="number">10</span>秒</span><br><span class="line">ttl key  #查看指定的key还剩余多少存活时间 -<span class="number">1</span>为永久存活 -<span class="number">2</span>为死亡</span><br><span class="line">type key  #查看当前key的数据类型</span><br><span class="line">APPEND key content  #追加指定key的value的内容 content为追加内容 </span><br><span class="line">STRLEN key  #查看指定key的value长度</span><br><span class="line">incr key  #可以为指定的key自增</span><br><span class="line">decr key #为指定的key减<span class="number">1</span></span><br><span class="line">INCRBY key i  #为指定的key 加上 i个（数字）</span><br><span class="line">DECRBY key i  #为指定的key 减 i (数字)</span><br><span class="line">GETRANGE key s e  #截取指定长度字符串 ，该方法区间（ &#125;</span><br><span class="line">GETRANGE key i -<span class="number">1</span>  #结尾为-<span class="number">1</span>可以查看全部字符串 和 get一样</span><br><span class="line">SETRANGE key s content  #替换指定位置开始的字符串 输入几个就替换几个</span><br><span class="line">setex key time value  #创建或修改一个键值对，并设置过期时间</span><br><span class="line">setnx key value  #创建一个键值对 、当如何已经有这个键值对了就会创建失败</span><br><span class="line">mset key value [k v...]  #可一次设置多个，kv键值对</span><br><span class="line">mget key [key...]  #一次获取多个value</span><br><span class="line">msetnx key value [k v...]  #可一次设置多个，kv键值对，但要满足原子性，同时成功，同时失败</span><br><span class="line">getset key value  #读取并修改 先读，可以用于更新新内容</span><br></pre></td></tr></table></figure>
 
+<h3 id="List"><a href="#List" class="headerlink" title="List"></a>List</h3><p>list可以当作链表来看，左右都可以插入</p>
+<p>可控制向左向右添加后移出，是需要开头加 L（左） 或 R（右），List的命令以L开头，除控制左右外，可存在重复值</p>
+<p>添加后内容顺序为 54321</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line">LPUSH key element [element...] #tianj或创建并添加值</span><br><span class="line">LRANGE key s e  ;#查看List的数据 从s开始 到e结束的位置</span><br><span class="line">LPOP #移出左第一个，（左右可调节）</span><br><span class="line">LINDEX key index   #根据下标查看值，必须大写，只能从左</span><br><span class="line">LLEN key   #获取指定list的长度</span><br><span class="line">LREM key count value  #移出指定的内容，并且可以设置移出几个</span><br><span class="line">ltrim key start stop  #通过下标截取要的部分 不在区间的则都移出</span><br><span class="line">rpoplpush key1 key2  #移出key1中最右的第一个并添加到key2的左边第一个</span><br><span class="line">lset key index value  #可修改list中指定下标的value，如果不存在列表就会报错</span><br><span class="line">LINSERT key before|after pivot element #向指定key里的value的前或后插入内容。 pivot key里的内容 element 插入的内容</span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="Set"><a href="#Set" class="headerlink" title="Set"></a>Set</h3><p>set的命令都是以s开头的 set中的值是无需不能重复的</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line">sadd key value  #创建或添加</span><br><span class="line">SMEMBERS key  #查看set中的元素</span><br><span class="line">SISMEMBER key value  #判断当前set中是否有当前value</span><br><span class="line">scard setkey  #获取当前set的个数</span><br><span class="line">srem setkey element[element..]  #移出指定的值</span><br><span class="line">SRANDMEMBER setkey 【count】  #在指定的key中随机获取count个元素</span><br><span class="line">SPOP setkey 【count】  #随机移除count个元素</span><br><span class="line">SMOVE setkey1 setkey2 value  #将setkey1的value移出到setkey2中</span><br><span class="line">SINTER key [key...]  #获取选中key的交集，要都有的才会显示</span><br><span class="line">SUNION key [key...] #获取选中的并集，不会输出重复的 #并集解释：若A和B是集合，则A和B并集是有所有A的元素和所有B的元素，而没有其他元素的集合。A和B的并集通常写作 <span class="string">&quot;A∪B&quot;</span>，读作“A并B”</span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="Hash"><a href="#Hash" class="headerlink" title="Hash"></a>Hash</h3><p>Hash类型为key-（key-value） 所有的hash命令是以h开头的</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line">hset key field value [field value...]  #创建Hash</span><br><span class="line">#示例：hset hash field1 value1 ；key（hash）-value（field1-value1）</span><br><span class="line">#注意：低版本一次填充多个需要使用hmset命令</span><br><span class="line">hget key field   #获取field value值，需要两个key的值</span><br><span class="line">hmget key field [field...]  #获取多个 field ，高版本可能没有这个命令，而是直接使用hset</span><br><span class="line">hdel key field [field...]  #删除指定的field，</span><br><span class="line">hgetall key    #查看当前key中的value（k-v键值对都会显示）</span><br><span class="line">HEXISTS key field   #查询hash中是否存在指定的key</span><br><span class="line">hkeys key     #查看hash中所有的key</span><br><span class="line">hvals key     #查看hasg中所有的value</span><br><span class="line">HINCRBY key field i    #为指定key中的field 的value进行相加，可以加负数，这样就是相减</span><br><span class="line">hsetnx key field value #如果field存在则无需，不存在创建</span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="Zset"><a href="#Zset" class="headerlink" title="Zset"></a>Zset</h3><p>有序集合，，从小到大</p>
+<p>在set的基础上加了一个值， zadd k score v ,多了个score多了了，可以用于表示</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line">zadd key sroce value [...]  #添加zset</span><br><span class="line">zrange key start stop  #查看指定key数据范围</span><br><span class="line">ZRANGEBYSCORE key min max [WITHSCORCES] [LIMIT offset ount]   #用于指定key筛选排序  min可以使用-inf 意思为负无限制，max使用+inf 正无限，获取score包含在他们的区间值</span><br><span class="line">ZREVRANGEBYSCORE key max min [WITHSCORCES] [LIMIT offset ount]  #上面排正序，这个是倒叙</span><br><span class="line">zrem key member [member...]   #使用要删除的value并移除</span><br><span class="line">ZCARD key   #查询当前集合key有多少个值</span><br><span class="line">ZCOUNT key min max #获取指定key的指定区间内有多个个值</span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="官网地址"><a href="#官网地址" class="headerlink" title="官网地址"></a>官网地址</h2><p>一切以官网为准 <a href="http://www.redis.cn/" title="Redis官网">Redis官网</a></p>
 ]]></content>
       <categories>
         <category>redis</category>
       </categories>
       <tags>
         <tag>数据库</tag>
+        <tag>数据类型</tag>
       </tags>
-  </entry>
-  <entry>
-    <title>redis的安装</title>
-    <url>/2022/05/21/redis%E7%9A%84%E5%AE%89%E8%A3%85/</url>
-    <content><![CDATA[<h2 id="安装Redis"><a href="#安装Redis" class="headerlink" title="安装Redis"></a>安装Redis</h2><h2 id="如何安装redis"><a href="#如何安装redis" class="headerlink" title="如何安装redis"></a>如何安装redis</h2><p>先去redis的官网下安装redis： <a href="http://www.redis.cn/">Redis中文官网</a></p>
-<p>redis不推荐在windos上安装</p>
-<p>CentOS7以上 安装方法： 安装ridis前需要先安装：gcc</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">yum -y install gcc</span><br><span class="line">yum -y install gcc-c++</span><br></pre></td></tr></table></figure>
-
-<p>安装好gcc后解压你的Redis安装包</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">tar -zxvf Reids安装包   #gz为后缀的</span><br></pre></td></tr></table></figure>
-
-<p>解压好后进入到redis里make编译</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">cd rieds</span><br><span class="line">make   #编译</span><br><span class="line">make install  #安装确认一下 也可以不执行</span><br></pre></td></tr></table></figure>
-
-<p>到这就安装完成了！</p>
-<p>我们可以去看下我们安装的程序：</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">cd /usr/local/bin</span><br></pre></td></tr></table></figure>
-
-<p>我们自己安装的程序都会在里面！</p>
-<p>我们可以在这里创建一个文件夹存放我们配置文件，这里我们创建一个存放Redis的配置文件，以后修改也是修改这里的配置文件而不修改软件里的，可以确保安全性：</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">mkdir SHconfig</span><br><span class="line">cp /opt/Redis/redis-6.0.6/redis.conf SHconfig</span><br></pre></td></tr></table></figure>
-
-<p>redis默认不是后台启动的，需要修改配置文件：</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">vim redis.conf</span><br><span class="line">将daemonize no 改为 daemonize yes</span><br><span class="line">设置密码</span><br><span class="line">requirepass foobared</span><br><span class="line">requirepass 123   指定密码123</span><br><span class="line">设置完密码后每次登录操作需要使用auth进行登录才能使用</span><br><span class="line">[root@VM-4-12-centos StudyHardConfig]# redis-cli</span><br><span class="line">127.0.0.1:6379&gt; set key1 q</span><br><span class="line">(error) NOAUTH Authentication required.</span><br><span class="line">127.0.0.1:6379&gt; auth 031215</span><br><span class="line">OK</span><br><span class="line">127.0.0.1:6379&gt; set key1 v1</span><br><span class="line">OK</span><br></pre></td></tr></table></figure>
-
-
-
-<h2 id="启动Redis："><a href="#启动Redis：" class="headerlink" title="启动Redis："></a>启动Redis：</h2><h3 id="在安装目录下执行："><a href="#在安装目录下执行：" class="headerlink" title="在安装目录下执行："></a>在安装目录下执行：</h3><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">redis-server shconfig/redis.conf #后面的参数是表示选用的配置文件</span><br></pre></td></tr></table></figure>
-
-<h3 id="在安装目录下测试连接并退出："><a href="#在安装目录下测试连接并退出：" class="headerlink" title="在安装目录下测试连接并退出："></a>在安装目录下测试连接并退出：</h3><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">[root@VM-4-12-centos bin]# redis-cli -p 6379 #连接</span><br><span class="line">127.0.0.1:6379&gt; ping</span><br><span class="line">PONG</span><br><span class="line">127.0.0.1:6379&gt; set name studyhard</span><br><span class="line">OK</span><br><span class="line">127.0.0.1:6379&gt; get name</span><br><span class="line">&quot;studyhard&quot;</span><br><span class="line">127.0.0.1:6379&gt; keys *</span><br><span class="line">1) &quot;name&quot;</span><br><span class="line">127.0.0.1:6379&gt; shutdown #关闭reids</span><br><span class="line">not connected&gt; exit   #退出</span><br></pre></td></tr></table></figure>
-
-<h2 id="当然还有更简单的方法"><a href="#当然还有更简单的方法" class="headerlink" title="当然还有更简单的方法"></a>当然还有更简单的方法</h2><p>使用宝塔面板~~ 十分的快捷</p>
-]]></content>
-      <categories>
-        <category>redis</category>
-      </categories>
-      <tags>
-        <tag>安装</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>redis配置文件介绍</title>
-    <url>/2022/05/19/redis%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6%E4%BB%8B%E7%BB%8D/</url>
-    <content><![CDATA[<h1 id="Redis的配置文件解释"><a href="#Redis的配置文件解释" class="headerlink" title="Redis的配置文件解释"></a>Redis的配置文件解释</h1><h2 id="网络"><a href="#网络" class="headerlink" title="网络"></a>网络</h2><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">bind 127.0.0.1   #绑定的ip地址 这个是只运行本地访问</span><br><span class="line">protected-mode yes   # 保护模式   是为了禁止公网访问redis cache，加强redis安全的</span><br><span class="line">port  6379   #端口设置</span><br></pre></td></tr></table></figure>
-
-
-
-<h2 id="通用GENERAL"><a href="#通用GENERAL" class="headerlink" title="通用GENERAL"></a>通用GENERAL</h2><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">daemonize yes     #以守护线程的方式运行，默认是no，我们需要直接开启为yes！</span><br><span class="line"></span><br><span class="line">supervised no</span><br><span class="line">#如果需要在机器启动（upstart模式 或systemd模式）时就启动Redis服务器，可以通过该选项来配置Redis。</span><br><span class="line">#supervised no - 不会与supervised tree进行交互</span><br><span class="line">#supervised upstart - 将Redis服务器添加到SIGSTOP 模式中</span><br><span class="line">#supervised systemd - 将READY=1 写入 $NOTIFY_SOCKET</span><br><span class="line">#supervised auto - 根据环境变量UPSTART_JOB 或 NOTIFY_SOCKET检测upstart 还是 systemd</span><br><span class="line">#上述 supervision 方法（upstart或systemd）仅发出“程序已就绪”信号，不会继续给supervisor返回ping回复。</span><br><span class="line"></span><br><span class="line">pidfile /var/run/redis_6379.pid   # 如果以后台方式运行，我们就需要指定一个pid文件！</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">databases 16   # 有多少个数据库 默认16个</span><br><span class="line"></span><br><span class="line">logfile &quot;&quot;   #日志的文件位置名</span><br><span class="line"></span><br><span class="line">loglevel notice    #需要哪些情况打印log</span><br><span class="line">#日志</span><br><span class="line"># Specify the server verbosity level.</span><br><span class="line"># This can be one of:</span><br><span class="line"># debug (a lot of information, useful for development/testing)</span><br><span class="line"># verbose (many rarely useful info, but not a mess like the debug level)</span><br><span class="line"># notice (moderately verbose, what you want in production probably) 生产环境</span><br><span class="line"># warning (only very important / critical messages are logged)</span><br><span class="line"></span><br><span class="line">always-show-logo yes  #是否总是显示LOGO</span><br></pre></td></tr></table></figure>
-
-
-
-
-
-<h2 id="SNAPSHOTTING-（快照）"><a href="#SNAPSHOTTING-（快照）" class="headerlink" title="SNAPSHOTTING :（快照）"></a>SNAPSHOTTING :（快照）</h2><p><strong>什么是快照？用来做什么？</strong></p>
-<p>快照是特定数据集的一个完整可用的拷贝，该数据集包含源数据在拷贝点的静态映象，它可以是数据再现的一个副本或者复制。</p>
-<p>说起来有些文绉绉的不好理解，那么这究竟是什么意思？<strong>通俗地讲，咱们可以把快照理解成拍照。</strong></p>
-<p>譬如说，在某一时刻用手机给你拍了一张照片，那么照片中的你的状态就定格在了拍照的那一瞬间。当明天的你再来看这张照片的时候，你就能看到拍照时你的状态是如何的，这就是简单意义上的快照。</p>
-<p>那么，快照的实际应用场景是哪些呢？前面其实有说到，快照是备份技术的一种，一旦原来的数据发生了变化（可能因为某些原因数据发生了丢失等等），使用快照就可以恢复原来的数据。</p>
-<p><strong>redis是内存数据库，如果没有持久化，那么数据断电及失！</strong></p>
-<p>持久化，在规定的时间内，执行了对少次操作，则会持久化到文件 .rdb .aof</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">#如果在900秒内执行至少有一个 key进行了修改，我们就进行持久化操作</span><br><span class="line">save 900 1</span><br><span class="line">#如果在300秒内执行至少有10个 key进行了修改，我们就进行持久化操作</span><br><span class="line">save 300 10</span><br><span class="line">#如果在60秒内执行至少有10000个 key进行了修改，我们就进行持久化操作</span><br><span class="line">save 60 10000</span><br><span class="line">#这个持久化是可以自定义的，根据同上来自定义</span><br><span class="line"></span><br><span class="line">stop-writes-on-bgsave-error yes   #持久化如果出错。是否停止工作！</span><br><span class="line"></span><br><span class="line">rdbcompression yes   #是否压缩rad文件，是否需要消耗一些cpu资源！</span><br><span class="line"></span><br><span class="line">rdbchecksum yes   #保存rad文件的时候，进行错误的检查校验！</span><br><span class="line"></span><br><span class="line">dbfilename dump.rdb  #持久化数据库的文件名</span><br><span class="line"></span><br><span class="line">dir ./  #rdb 文件保存的目录！</span><br></pre></td></tr></table></figure>
-
-
-
-<h2 id="CLIENTS-（限制）"><a href="#CLIENTS-（限制）" class="headerlink" title="CLIENTS （限制）"></a>CLIENTS （限制）</h2><p><strong>这些默认不开启</strong></p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">maxclients 10000   #设置能连接上redis的最大客户端数量</span><br><span class="line"></span><br><span class="line">maxmemory &lt;bytes&gt;  # redis 配置最大的内存容量</span><br><span class="line"></span><br><span class="line">maxmemory-policy noeviction  #内存到达上限之后的处理策略</span><br><span class="line"># volatile-lru -&gt; 只对设置了过去时间的key进行LRU（默认值）</span><br><span class="line"># allkeys-lru -&gt; 删除LRU算法的key</span><br><span class="line"># allkeys-lfu -&gt; 随机删除</span><br><span class="line"># volatile-random -&gt; 随机删除即将过期的key</span><br><span class="line"># allkeys-random -&gt; 随机删除</span><br><span class="line"># volatile-ttl -&gt; 删除即将过期的</span><br><span class="line"># noeviction -&gt; 永不过期，返回错误</span><br></pre></td></tr></table></figure>
-
-
-
-<h2 id="APPEND-ONLY模式-aof配置"><a href="#APPEND-ONLY模式-aof配置" class="headerlink" title="APPEND ONLY模式  aof配置"></a>APPEND ONLY模式  aof配置</h2><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">appendonly no   #默认是不开启aof模式的，默认是使用rdb方式持久化的，在大部分所有的情况下，rdb完全够用！</span><br><span class="line"></span><br><span class="line">appendfilename &quot;appendonly.aof&quot;  #持久化的文件名字</span><br><span class="line"></span><br><span class="line"># appendfsync always  #每次修改都会sync 。 消耗性能</span><br><span class="line">appendfsync everysec  #每次执行sync，可能会丢失这1秒的数据！</span><br><span class="line"># appendfsync no      #不执行sync，这个时候操作系统自己同步数据，速度最快</span><br></pre></td></tr></table></figure>
-
-
-
-
-
-<h2 id="REPLICATION"><a href="#REPLICATION" class="headerlink" title="REPLICATION"></a>REPLICATION</h2><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">replicaof &lt;masterip&gt; &lt;masterport&gt;    #设置连接主机ip 端口</span><br><span class="line">masterauth &lt;master-password&gt;     #设置连接主机需要的密码</span><br></pre></td></tr></table></figure>
-
-]]></content>
-      <categories>
-        <category>redis</category>
-      </categories>
-      <tags>
-        <tag>数据库</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>博客技术总结</title>
-    <url>/2022/05/14/%E5%8D%9A%E5%AE%A2%E6%8A%80%E6%9C%AF%E6%80%BB%E7%BB%93/</url>
-    <content><![CDATA[<h1 id="1-技术介绍"><a href="#1-技术介绍" class="headerlink" title="1.技术介绍"></a>1.技术介绍</h1><p>前端：vue + vuex + vue-router + axios + vuetify + element + echarts</p>
-<p>后端：SpringBoot + nginx + SpringSecurity + Swagger2 + MyBatisPlus + Mysql + Redis + elasticsearch + rabbitMQ + MaxWell</p>
-<h1 id="2-运行环境"><a href="#2-运行环境" class="headerlink" title="2.运行环境"></a>2.运行环境</h1><p>开发工具：IDEA</p>
-<p>服务器：阿里云1核2G CentOS8.0以上</p>
-<p>对象存储：阿里云OSS</p>
-<p>全站cdn加速</p>
-<p>cos对象储存</p>
-<p>全站https</p>
-<h1 id="3-项目总结"><a href="#3-项目总结" class="headerlink" title="3.项目总结"></a>3.项目总结</h1><p>此次对博客进行了全方位的升级，前端技术点和后端技术点相比第一，二版提升了不少。</p>
-<p>加入了许多动画过渡效果，并考虑到了一些用户细节（深色模式，图片预览，等），评论加入了表情和分页，提升了用户体验，。后台文章编辑器换为MarkDown，语法更加简洁，新增了草稿箱和自动保存文章等功能。</p>
-]]></content>
   </entry>
   <entry>
     <title>redis集群（主从复制）</title>
@@ -2499,5 +2346,158 @@ public CorsConfigurationSource corsConfigurationSource()&#123;
       <tags>
         <tag>集群</tag>
       </tags>
+  </entry>
+  <entry>
+    <title>redis配置文件介绍</title>
+    <url>/2022/05/19/redis%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6%E4%BB%8B%E7%BB%8D/</url>
+    <content><![CDATA[<h1 id="Redis的配置文件解释"><a href="#Redis的配置文件解释" class="headerlink" title="Redis的配置文件解释"></a>Redis的配置文件解释</h1><h2 id="网络"><a href="#网络" class="headerlink" title="网络"></a>网络</h2><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">bind 127.0.0.1   #绑定的ip地址 这个是只运行本地访问</span><br><span class="line">protected-mode yes   # 保护模式   是为了禁止公网访问redis cache，加强redis安全的</span><br><span class="line">port  6379   #端口设置</span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="通用GENERAL"><a href="#通用GENERAL" class="headerlink" title="通用GENERAL"></a>通用GENERAL</h2><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">daemonize yes     #以守护线程的方式运行，默认是no，我们需要直接开启为yes！</span><br><span class="line"></span><br><span class="line">supervised no</span><br><span class="line">#如果需要在机器启动（upstart模式 或systemd模式）时就启动Redis服务器，可以通过该选项来配置Redis。</span><br><span class="line">#supervised no - 不会与supervised tree进行交互</span><br><span class="line">#supervised upstart - 将Redis服务器添加到SIGSTOP 模式中</span><br><span class="line">#supervised systemd - 将READY=1 写入 $NOTIFY_SOCKET</span><br><span class="line">#supervised auto - 根据环境变量UPSTART_JOB 或 NOTIFY_SOCKET检测upstart 还是 systemd</span><br><span class="line">#上述 supervision 方法（upstart或systemd）仅发出“程序已就绪”信号，不会继续给supervisor返回ping回复。</span><br><span class="line"></span><br><span class="line">pidfile /var/run/redis_6379.pid   # 如果以后台方式运行，我们就需要指定一个pid文件！</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">databases 16   # 有多少个数据库 默认16个</span><br><span class="line"></span><br><span class="line">logfile &quot;&quot;   #日志的文件位置名</span><br><span class="line"></span><br><span class="line">loglevel notice    #需要哪些情况打印log</span><br><span class="line">#日志</span><br><span class="line"># Specify the server verbosity level.</span><br><span class="line"># This can be one of:</span><br><span class="line"># debug (a lot of information, useful for development/testing)</span><br><span class="line"># verbose (many rarely useful info, but not a mess like the debug level)</span><br><span class="line"># notice (moderately verbose, what you want in production probably) 生产环境</span><br><span class="line"># warning (only very important / critical messages are logged)</span><br><span class="line"></span><br><span class="line">always-show-logo yes  #是否总是显示LOGO</span><br></pre></td></tr></table></figure>
+
+
+
+
+
+<h2 id="SNAPSHOTTING-（快照）"><a href="#SNAPSHOTTING-（快照）" class="headerlink" title="SNAPSHOTTING :（快照）"></a>SNAPSHOTTING :（快照）</h2><p><strong>什么是快照？用来做什么？</strong></p>
+<p>快照是特定数据集的一个完整可用的拷贝，该数据集包含源数据在拷贝点的静态映象，它可以是数据再现的一个副本或者复制。</p>
+<p>说起来有些文绉绉的不好理解，那么这究竟是什么意思？<strong>通俗地讲，咱们可以把快照理解成拍照。</strong></p>
+<p>譬如说，在某一时刻用手机给你拍了一张照片，那么照片中的你的状态就定格在了拍照的那一瞬间。当明天的你再来看这张照片的时候，你就能看到拍照时你的状态是如何的，这就是简单意义上的快照。</p>
+<p>那么，快照的实际应用场景是哪些呢？前面其实有说到，快照是备份技术的一种，一旦原来的数据发生了变化（可能因为某些原因数据发生了丢失等等），使用快照就可以恢复原来的数据。</p>
+<p><strong>redis是内存数据库，如果没有持久化，那么数据断电及失！</strong></p>
+<p>持久化，在规定的时间内，执行了对少次操作，则会持久化到文件 .rdb .aof</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">#如果在900秒内执行至少有一个 key进行了修改，我们就进行持久化操作</span><br><span class="line">save 900 1</span><br><span class="line">#如果在300秒内执行至少有10个 key进行了修改，我们就进行持久化操作</span><br><span class="line">save 300 10</span><br><span class="line">#如果在60秒内执行至少有10000个 key进行了修改，我们就进行持久化操作</span><br><span class="line">save 60 10000</span><br><span class="line">#这个持久化是可以自定义的，根据同上来自定义</span><br><span class="line"></span><br><span class="line">stop-writes-on-bgsave-error yes   #持久化如果出错。是否停止工作！</span><br><span class="line"></span><br><span class="line">rdbcompression yes   #是否压缩rad文件，是否需要消耗一些cpu资源！</span><br><span class="line"></span><br><span class="line">rdbchecksum yes   #保存rad文件的时候，进行错误的检查校验！</span><br><span class="line"></span><br><span class="line">dbfilename dump.rdb  #持久化数据库的文件名</span><br><span class="line"></span><br><span class="line">dir ./  #rdb 文件保存的目录！</span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="CLIENTS-（限制）"><a href="#CLIENTS-（限制）" class="headerlink" title="CLIENTS （限制）"></a>CLIENTS （限制）</h2><p><strong>这些默认不开启</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">maxclients 10000   #设置能连接上redis的最大客户端数量</span><br><span class="line"></span><br><span class="line">maxmemory &lt;bytes&gt;  # redis 配置最大的内存容量</span><br><span class="line"></span><br><span class="line">maxmemory-policy noeviction  #内存到达上限之后的处理策略</span><br><span class="line"># volatile-lru -&gt; 只对设置了过去时间的key进行LRU（默认值）</span><br><span class="line"># allkeys-lru -&gt; 删除LRU算法的key</span><br><span class="line"># allkeys-lfu -&gt; 随机删除</span><br><span class="line"># volatile-random -&gt; 随机删除即将过期的key</span><br><span class="line"># allkeys-random -&gt; 随机删除</span><br><span class="line"># volatile-ttl -&gt; 删除即将过期的</span><br><span class="line"># noeviction -&gt; 永不过期，返回错误</span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="APPEND-ONLY模式-aof配置"><a href="#APPEND-ONLY模式-aof配置" class="headerlink" title="APPEND ONLY模式  aof配置"></a>APPEND ONLY模式  aof配置</h2><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">appendonly no   #默认是不开启aof模式的，默认是使用rdb方式持久化的，在大部分所有的情况下，rdb完全够用！</span><br><span class="line"></span><br><span class="line">appendfilename &quot;appendonly.aof&quot;  #持久化的文件名字</span><br><span class="line"></span><br><span class="line"># appendfsync always  #每次修改都会sync 。 消耗性能</span><br><span class="line">appendfsync everysec  #每次执行sync，可能会丢失这1秒的数据！</span><br><span class="line"># appendfsync no      #不执行sync，这个时候操作系统自己同步数据，速度最快</span><br></pre></td></tr></table></figure>
+
+
+
+
+
+<h2 id="REPLICATION"><a href="#REPLICATION" class="headerlink" title="REPLICATION"></a>REPLICATION</h2><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">replicaof &lt;masterip&gt; &lt;masterport&gt;    #设置连接主机ip 端口</span><br><span class="line">masterauth &lt;master-password&gt;     #设置连接主机需要的密码</span><br></pre></td></tr></table></figure>
+
+]]></content>
+      <categories>
+        <category>redis</category>
+      </categories>
+      <tags>
+        <tag>数据库</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>redis的持久化</title>
+    <url>/2022/05/20/redis%E7%9A%84%E6%8C%81%E4%B9%85%E5%8C%96/</url>
+    <content><![CDATA[<h1 id="Redis的持久化"><a href="#Redis的持久化" class="headerlink" title="Redis的持久化"></a>Redis的持久化</h1><p>redis是内存数据库，如果数据不持久化，当程序关闭时将会丢失数据，所以Redis提供了持久化</p>
+<h3 id="RDB"><a href="#RDB" class="headerlink" title="RDB"></a>RDB</h3><p><strong>什么是RDB？</strong></p>
+<p><img src="https://s2.loli.net/2022/02/20/IeEx1JmZS82vk9s.png" alt="image-20220220232522977"></p>
+<p>在指定的时间间隔内将内存中的数据集快照写入磁盘，也就是行话讲的Snapshot快照，它恢复时是将快照文件直接读到内存里。Redis会单独创建 ( fork )一个子进程来进行持久化，会先将数据写入到一个临时文件中，待持久化过程都结束了，再用这个临时文件替换上次持久化好的文件。整个过程中，主进程是不进行任何IO操作的。这就确保了极高的性能。如果需要进行大规模数据的恢复，且对于数据恢复的完整性不是非常敏感，那RDB方式要比AOF方式更加的高效。RDB的缺点是最后一次持久化后的数据可能丢失。我们默认的就是RDB，一般情况不需要修改这个配置！</p>
+<p>在生成环境我们将会对这个文件进行备份</p>
+<p><strong>缺点：</strong></p>
+<p>如果在最后一次宕机了，就没有办法去持久化了，需要一定的时间间隔</p>
+<p>在创建frok进程的时候，会占用一定的空间</p>
+<p><strong>优点：</strong></p>
+<p>RDB比AOF更加的高效，适合大规模恢复数据</p>
+<p>RDB保存的文件是dump.rdb   ，在配置文件中有讲，都是在配置文件中设置的</p>
+<p><strong>持久化触发机制：</strong></p>
+<p>注意：kill的情况下不会触发</p>
+<p>1,save的规则满足的情况下会触发rdb规则</p>
+<p>2,执行flushall命令也会触发rdb规则</p>
+<p>3,当退出redis时也会触发rdb规则   </p>
+<p>会生成一个dump.rdb文件，redis在重启时会读取文件，恢复数据，如果删除，关闭后就不会有之前的数据了</p>
+<p><strong>如恢复rdb文件：</strong></p>
+<p>只需要将rdb文件放置redis启动目录下，</p>
+<p>dump.rdb放在redis-server同级目录</p>
+<h2 id="AOF"><a href="#AOF" class="headerlink" title="AOF"></a>AOF</h2><p>它会将我们所有的命令记录下来，history，恢复的时候就会把这个文件全部执行一遍！</p>
+<p><strong>在redis4.0以后支持混合模式，rdb与aof同时开启会优先aof</strong></p>
+<p><img src="https://s2.loli.net/2022/02/20/r1N7HEity9OXqdA.png" alt="image-20220220233046582"></p>
+<p>以日志的形式来记录每个写操作，将Redis执行过的所有指令记录下来(读操作不记录），只许追加文件但不可以改写文件，redis启动之初会读取该文件重新构建数据，换言之，redis重启的话就根据日志文件的内容将写指令从前到后执行一次以完成数据的恢复工作</p>
+<p><strong>默认不开AOF，需要去配置文件中手动开启</strong></p>
+<p><strong>Aof保存的是appendonly.aof 文件</strong></p>
+<p>文件同样可以在配置文件中修改:</p>
+<p>&#x2F;&#x2F;The name of the append only file (default: “appendonly.aof”)</p>
+<p>​	appendfilename “appendonly.aof”</p>
+<p><strong>当我们开启时输入了命令后就会生成aod文件：</strong></p>
+<p><img src="https://s2.loli.net/2022/02/21/lDiAuKGo345PORI.png" alt="image-20220221100633418"></p>
+<p><strong>文件的内容为：</strong></p>
+<p><img src="https://s2.loli.net/2022/02/22/DGtZmALfOyTziFh.png" alt="image-20220222225551886"></p>
+<p>这个文件是能破坏的，破坏后启动redis会报错 ，但是系统会生成一个备用文件，我们可以使用它来修改appendonly.aof</p>
+<p>破坏后登录：</p>
+<p><img src="https://s2.loli.net/2022/02/21/JuwqZhENCfp9LIn.png" alt="image-20220221102935481"></p>
+<p>破坏后是可以使用这个文件进行恢复的</p>
+<p><img src="https://s2.loli.net/2022/02/21/X4TEjb1n5VfL2Fk.png" alt="image-20220221103321224"></p>
+<p>使用命令：redis-check-aof –fix appendonly.aof  进行恢复，恢复后 就能正常登录了</p>
+<p>注意：要在appendonly.aof文件位置使用该命令</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">[root@VM-4-12-centos ~]# redis-check-aof --fix appendonly.aof</span><br><span class="line">Cannot open file: appendonly.aof</span><br><span class="line">[root@VM-4-12-centos ~]# cd /usr/local/bin</span><br><span class="line">[root@VM-4-12-centos bin]# redis-check-aof --fix appendonly.aof</span><br><span class="line">0x              3c: Expected \r\n, got: 7765</span><br><span class="line">AOF analyzed: size=143, ok_up_to=52, diff=91</span><br><span class="line">This will shrink the AOF from 143 bytes, with 91 bytes, to 52 bytes</span><br><span class="line">Continue? [y/N]: y</span><br><span class="line">Successfully truncated AOF</span><br><span class="line">[root@VM-4-12-centos bin]# </span><br></pre></td></tr></table></figure>
+
+]]></content>
+      <categories>
+        <category>redis</category>
+      </categories>
+      <tags>
+        <tag>数据库</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>redis的安装</title>
+    <url>/2022/05/21/redis%E7%9A%84%E5%AE%89%E8%A3%85/</url>
+    <content><![CDATA[<h2 id="安装Redis"><a href="#安装Redis" class="headerlink" title="安装Redis"></a>安装Redis</h2><h2 id="如何安装redis"><a href="#如何安装redis" class="headerlink" title="如何安装redis"></a>如何安装redis</h2><p>先去redis的官网下安装redis： <a href="http://www.redis.cn/">Redis中文官网</a></p>
+<p>redis不推荐在windos上安装</p>
+<p>CentOS7以上 安装方法： 安装ridis前需要先安装：gcc</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">yum -y install gcc</span><br><span class="line">yum -y install gcc-c++</span><br></pre></td></tr></table></figure>
+
+<p>安装好gcc后解压你的Redis安装包</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">tar -zxvf Reids安装包   #gz为后缀的</span><br></pre></td></tr></table></figure>
+
+<p>解压好后进入到redis里make编译</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">cd rieds</span><br><span class="line">make   #编译</span><br><span class="line">make install  #安装确认一下 也可以不执行</span><br></pre></td></tr></table></figure>
+
+<p>到这就安装完成了！</p>
+<p>我们可以去看下我们安装的程序：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">cd /usr/local/bin</span><br></pre></td></tr></table></figure>
+
+<p>我们自己安装的程序都会在里面！</p>
+<p>我们可以在这里创建一个文件夹存放我们配置文件，这里我们创建一个存放Redis的配置文件，以后修改也是修改这里的配置文件而不修改软件里的，可以确保安全性：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">mkdir SHconfig</span><br><span class="line">cp /opt/Redis/redis-6.0.6/redis.conf SHconfig</span><br></pre></td></tr></table></figure>
+
+<p>redis默认不是后台启动的，需要修改配置文件：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">vim redis.conf</span><br><span class="line">将daemonize no 改为 daemonize yes</span><br><span class="line">设置密码</span><br><span class="line">requirepass foobared</span><br><span class="line">requirepass 123   指定密码123</span><br><span class="line">设置完密码后每次登录操作需要使用auth进行登录才能使用</span><br><span class="line">[root@VM-4-12-centos StudyHardConfig]# redis-cli</span><br><span class="line">127.0.0.1:6379&gt; set key1 q</span><br><span class="line">(error) NOAUTH Authentication required.</span><br><span class="line">127.0.0.1:6379&gt; auth 031215</span><br><span class="line">OK</span><br><span class="line">127.0.0.1:6379&gt; set key1 v1</span><br><span class="line">OK</span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="启动Redis："><a href="#启动Redis：" class="headerlink" title="启动Redis："></a>启动Redis：</h2><h3 id="在安装目录下执行："><a href="#在安装目录下执行：" class="headerlink" title="在安装目录下执行："></a>在安装目录下执行：</h3><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">redis-server shconfig/redis.conf #后面的参数是表示选用的配置文件</span><br></pre></td></tr></table></figure>
+
+<h3 id="在安装目录下测试连接并退出："><a href="#在安装目录下测试连接并退出：" class="headerlink" title="在安装目录下测试连接并退出："></a>在安装目录下测试连接并退出：</h3><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">[root@VM-4-12-centos bin]# redis-cli -p 6379 #连接</span><br><span class="line">127.0.0.1:6379&gt; ping</span><br><span class="line">PONG</span><br><span class="line">127.0.0.1:6379&gt; set name studyhard</span><br><span class="line">OK</span><br><span class="line">127.0.0.1:6379&gt; get name</span><br><span class="line">&quot;studyhard&quot;</span><br><span class="line">127.0.0.1:6379&gt; keys *</span><br><span class="line">1) &quot;name&quot;</span><br><span class="line">127.0.0.1:6379&gt; shutdown #关闭reids</span><br><span class="line">not connected&gt; exit   #退出</span><br></pre></td></tr></table></figure>
+
+<h2 id="当然还有更简单的方法"><a href="#当然还有更简单的方法" class="headerlink" title="当然还有更简单的方法"></a>当然还有更简单的方法</h2><p>使用宝塔面板~~ 十分的快捷</p>
+]]></content>
+      <categories>
+        <category>redis</category>
+      </categories>
+      <tags>
+        <tag>安装</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>博客技术总结</title>
+    <url>/2022/05/14/%E5%8D%9A%E5%AE%A2%E6%8A%80%E6%9C%AF%E6%80%BB%E7%BB%93/</url>
+    <content><![CDATA[<h1 id="1-技术介绍"><a href="#1-技术介绍" class="headerlink" title="1.技术介绍"></a>1.技术介绍</h1><p>前端：vue + vuex + vue-router + axios + vuetify + element + echarts</p>
+<p>后端：SpringBoot + nginx + SpringSecurity + Swagger2 + MyBatisPlus + Mysql + Redis + elasticsearch + rabbitMQ + MaxWell</p>
+<h1 id="2-运行环境"><a href="#2-运行环境" class="headerlink" title="2.运行环境"></a>2.运行环境</h1><p>开发工具：IDEA</p>
+<p>服务器：阿里云1核2G CentOS8.0以上</p>
+<p>对象存储：阿里云OSS</p>
+<p>全站cdn加速</p>
+<p>cos对象储存</p>
+<p>全站https</p>
+<h1 id="3-项目总结"><a href="#3-项目总结" class="headerlink" title="3.项目总结"></a>3.项目总结</h1><p>此次对博客进行了全方位的升级，前端技术点和后端技术点相比第一，二版提升了不少。</p>
+<p>加入了许多动画过渡效果，并考虑到了一些用户细节（深色模式，图片预览，等），评论加入了表情和分页，提升了用户体验，。后台文章编辑器换为MarkDown，语法更加简洁，新增了草稿箱和自动保存文章等功能。</p>
+]]></content>
   </entry>
 </search>
