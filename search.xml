@@ -103,6 +103,78 @@
       </tags>
   </entry>
   <entry>
+    <title>Redis哨兵模式</title>
+    <url>/2022/05/23/Redis%E5%93%A8%E5%85%B5%E6%A8%A1%E5%BC%8F/</url>
+    <content><![CDATA[<h1 id="Redis哨兵模式"><a href="#Redis哨兵模式" class="headerlink" title="Redis哨兵模式"></a>Redis哨兵模式</h1><p><strong>介绍：</strong></p>
+<p>主从切换技术的方法是:当主服务器宕机后，需要手动把一台从服务器切换为主服务器，这就需要人工干预，费事费力，还会造成一段时间内服务不可用。这不是一种推荐的方式，更多时候，我们优先考虑哨兵模式。Redis从2.8开始正式提供了Sentinel (哨兵）架构来解决这个问题。</p>
+<p>谋朝篡位的自动版，能够后台监控主机是否故障，如果故障了根据投票数<strong>自动将从库转换为主库</strong>。</p>
+<p>哨兵模式是一种特殊的模式，首先Redis提供了哨兵的命令，哨兵是一个独立的进程，作为进程，它会独立运行。其原理是<strong>哨兵通过发送命令,等待Redis服务器响应，从而监控运行的多个Redis实例。</strong></p>
+<p><img src="https://s2.loli.net/2022/02/23/SJBvaebKFPW6Lxs.png" alt="image-20220223160951455"></p>
+<p>这里的哨兵有两个作用<br>·通过发送命令，让Redis服务器返回监控其运行状态，包括主服务器和从服务器。<br>·当哨兵监测到master宕机，会自动将slave切换成master，然后通过发布订阅模式通知其他的从服务器，修改配置文件，让它<br>们切换主机。<br>然而一个哨兵进程对Redis服务器进行监控，可能会出现问题，为此，我们可以使用多个哨兵进行监控。各个哨兵之间还会进行监控，这样就形成了多哨兵模式。</p>
+<p><img src="https://s2.loli.net/2022/02/23/cSP9LAlOKHjoTfX.png" alt="image-20220223161321009"></p>
+<p>假设主服务器宕机，哨兵1先检测到这个结果，系统并不会马上进行failover过程，仅仅是哨兵1主观的认为主服务器不可用，这个现象成为<strong>主观下线</strong>。当后面的哨兵也检测到主服务器不可用，并且数量达到一定值时，那么哨兵之间就会进行一次投票，投票的结果由一个哨兵发起，进行failover[故障转移]操作。切换成功后，就会通过发布订阅模式，让各个哨兵把自己监控的从服务器实现切换主机,这个过程称为<strong>客观下线</strong>。</p>
+<h2 id="测试："><a href="#测试：" class="headerlink" title="测试："></a>测试：</h2><p>创建一个哨兵的一个配置文件，文件名随意：sentinel.conf </p>
+<p>配置文件：这里我就配置简单点</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">sentinel monitor mymaster 127.0.0.1 6379 1</span><br></pre></td></tr></table></figure>
+
+
+
+<p><strong>正常的一主二从:</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line"># Replication</span><br><span class="line">role:master</span><br><span class="line">connected_slaves:2</span><br><span class="line">slave0:ip=127.0.0.1,port=6362,state=online,offset=141888,lag=1</span><br><span class="line">slave1:ip=127.0.0.1,port=6361,state=online,offset=141888,lag=1</span><br></pre></td></tr></table></figure>
+
+
+
+<p><strong>启动哨兵模式：</strong></p>
+<p><img src="https://s2.loli.net/2022/02/23/7OSxgQsbL6nyFRi.png" alt="image-20220223165032216"></p>
+<p>命令：redis-sentinel  选用的配置文件，如果是哨兵集群就需要多个配置文件</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">[root@VM-4-12-centos StudyHardConfig]# redis-sentinel sentinel.conf </span><br><span class="line">742116:X 23 Feb 2022 16:29:48.399 # oO0OoO0OoO0Oo Redis is starting oO0OoO0OoO0Oo</span><br><span class="line">742116:X 23 Feb 2022 16:29:48.399 # Redis version=6.0.6, bits=64, commit=00000000, modified=0, pid=742116, just started</span><br><span class="line">742116:X 23 Feb 2022 16:29:48.399 # Configuration loaded</span><br><span class="line">                _._                                                  </span><br><span class="line">           _.-``__ &#x27;&#x27;-._                                             </span><br><span class="line">      _.-``    `.  `_.  &#x27;&#x27;-._           Redis 6.0.6 (00000000/0) 64 bit</span><br><span class="line">  .-`` .-```.  ```\/    _.,_ &#x27;&#x27;-._                                   </span><br><span class="line"> (    &#x27;      ,       .-`  | `,    )     Running in sentinel mode</span><br><span class="line"> |`-._`-...-` __...-.``-._|&#x27;` _.-&#x27;|     Port: 26379   #哨兵端口</span><br><span class="line"> |    `-._   `._    /     _.-&#x27;    |     PID: 742116  </span><br><span class="line">  `-._    `-._  `-./  _.-&#x27;    _.-&#x27;                                   </span><br><span class="line"> |`-._`-._    `-.__.-&#x27;    _.-&#x27;_.-&#x27;|                                  </span><br><span class="line"> |    `-._`-._        _.-&#x27;_.-&#x27;    |           http://redis.io        </span><br><span class="line">  `-._    `-._`-.__.-&#x27;_.-&#x27;    _.-&#x27;                                   </span><br><span class="line"> |`-._`-._    `-.__.-&#x27;    _.-&#x27;_.-&#x27;|                                  </span><br><span class="line"> |    `-._`-._        _.-&#x27;_.-&#x27;    |                                  </span><br><span class="line">  `-._    `-._`-.__.-&#x27;_.-&#x27;    _.-&#x27;                                   </span><br><span class="line">      `-._    `-.__.-&#x27;    _.-&#x27;                                       </span><br><span class="line">          `-._        _.-&#x27;                                           </span><br><span class="line">              `-.__.-&#x27;                                               </span><br><span class="line"></span><br><span class="line">742116:X 23 Feb 2022 16:29:48.404 # Sentinel ID is d0592a16972e6c88a456c5c2969cf4141a0e2f07</span><br><span class="line">742116:X 23 Feb 2022 16:29:48.404 # +monitor master mymaster 127.0.0.1 6360 quorum 1</span><br><span class="line">#侦测到两个从节点，并表明主节点是谁，现在主节点表明的6360这个端口的redis</span><br><span class="line">742116:X 23 Feb 2022 16:29:48.404 * +slave slave 127.0.0.1:6362 127.0.0.1 6362 @ mymaster 127.0.0.1 6360</span><br><span class="line">742116:X 23 Feb 2022 16:29:48.408 * +slave slave 127.0.0.1:6361 127.0.0.1 6361 @ mymaster 127.0.0.1 6360</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+
+
+<p><strong>断供主节点，让哨兵自动选择一个从节点当主节点：</strong> </p>
+<p>如果master节点断开了，这个时候就会从 从机中随机选择一个服务器（根据一个投票算法）</p>
+<p>哨兵打印的新信息：</p>
+<p>这里投票，选择6362当主节点</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">Feb 2022 16:37:29.007 # +sdown master mymaster 127.0.0.1 6360</span><br><span class="line">742116:X 23 Feb 2022 16:37:29.007 # +odown master mymaster 127.0.0.1 6360 #quorum 1/1</span><br><span class="line">742116:X 23 Feb 2022 16:37:29.007 # +new-epoch 1</span><br><span class="line">742116:X 23 Feb 2022 16:37:29.007 # +try-failover master mymaster 127.0.0.1 6360</span><br><span class="line">742116:X 23 Feb 2022 16:37:29.011 # +vote-for-leader d0592a16972e6c88a456c5c2969cf4141a0e2f07 1</span><br><span class="line">742116:X 23 Feb 2022 16:37:29.011 # +elected-leader master mymaster 127.0.0.1 6360</span><br><span class="line">742116:X 23 Feb 2022 16:37:29.011 # +failover-state-select-slave master mymaster 127.0.0.1 6360</span><br><span class="line">742116:X 23 Feb 2022 16:37:29.066 # +selected-slave slave 127.0.0.1:6362 127.0.0.1 6362 @ mymaster 127.0.0.1 6360</span><br><span class="line">742116:X 23 Feb 2022 16:37:29.066 * +failover-state-send-slaveof-noone slave 127.0.0.1:6362 127.0.0.1 6362 @ mymaster 127.0.0.1 6360</span><br><span class="line">742116:X 23 Feb 2022 16:37:29.138 * +failover-state-wait-promotion slave 127.0.0.1:6362 127.0.0.1 6362 @ mymaster 127.0.0.1 6360</span><br><span class="line">742116:X 23 Feb 2022 16:37:29.419 # +promoted-slave slave 127.0.0.1:6362 127.0.0.1 6362 @ mymaster 127.0.0.1 6360</span><br><span class="line">742116:X 23 Feb 2022 16:37:29.420 # +failover-state-reconf-slaves master mymaster 127.0.0.1 6360</span><br><span class="line">742116:X 23 Feb 2022 16:37:29.498 * +slave-reconf-sent slave 127.0.0.1:6361 127.0.0.1 6361 @ mymaster 127.0.0.1 6360</span><br><span class="line">742116:X 23 Feb 2022 16:37:30.445 * +slave-reconf-inprog slave 127.0.0.1:6361 127.0.0.1 6361 @ mymaster 127.0.0.1 6360</span><br><span class="line">742116:X 23 Feb 2022 16:37:30.445 * +slave-reconf-done slave 127.0.0.1:6361 127.0.0.1 6361 @ mymaster 127.0.0.1 6360</span><br><span class="line">742116:X 23 Feb 2022 16:37:30.529 # +failover-end master mymaster 127.0.0.1 6360  #故障切换主线</span><br><span class="line">742116:X 23 Feb 2022 16:37:30.529 # +switch-master mymaster 127.0.0.1 6360 127.0.0.1 6362   #这里依旧选择了6362来当主节点</span><br><span class="line">742116:X 23 Feb 2022 16:37:30.529 * +slave slave 127.0.0.1:6361 127.0.0.1 6361 @ mymaster 127.0.0.1 6362</span><br><span class="line">742116:X 23 Feb 2022 16:37:30.529 * +slave slave 127.0.0.1:6360 127.0.0.1 6360 @ mymaster 127.0.0.1 6362</span><br><span class="line">742116:X 23 Feb 2022 16:38:00.593 # +sdown slave 127.0.0.1:6360 127.0.0.1 6360 @ mymaster 127.0.0.1 6362</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+
+
+<p>我们来看看6362信息：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">127.0.0.1:6362&gt;  SLAVEOF 127.0.0.1 6360</span><br><span class="line">OK Already connected to specified master</span><br><span class="line">127.0.0.1:6362&gt; info replication</span><br><span class="line"># Replication</span><br><span class="line">role:master   		#身份依旧是主节点了</span><br><span class="line">connected_slaves:1</span><br><span class="line">slave0:ip=127.0.0.1,port=6361,state=online,offset=191774,lag=1</span><br><span class="line">master_replid:01fa8e86c3fa6a51f5c111e46ef4e8622d062f23</span><br><span class="line">master_replid2:8009003a269bcd5e8af84c76891fc4bdc72dbf10</span><br><span class="line">master_repl_offset:191774</span><br><span class="line">second_repl_offset:170703</span><br><span class="line">repl_backlog_active:1</span><br><span class="line">repl_backlog_size:1048576</span><br><span class="line">repl_backlog_first_byte_offset:1</span><br><span class="line">repl_backlog_histlen:191774</span><br><span class="line">127.0.0.1:6362&gt; </span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+
+
+<p>如果这时6360这个节点重启呢？</p>
+<p>​	如果主机此时回来了，只能归并到新的主机下，当做从机，这就是哨兵模式的规则!</p>
+<p>​	6362：  可以看到 它变成从节点，哨兵也同样会打印信息，我就不打出来了</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">127.0.0.1:6362&gt; info replication</span><br><span class="line"># Replication</span><br><span class="line">role:master</span><br><span class="line">connected_slaves:2</span><br><span class="line">slave0:ip=127.0.0.1,port=6361,state=online,offset=198720,lag=1</span><br><span class="line">slave1:ip=127.0.0.1,port=6360,state=online,offset=198720,lag=0</span><br><span class="line">master_replid:01fa8e86c3fa6a51f5c111e46ef4e8622d062f23</span><br><span class="line">master_replid2:8009003a269bcd5e8af84c76891fc4bdc72dbf10</span><br><span class="line">master_repl_offset:198720</span><br><span class="line">second_repl_offset:170703</span><br><span class="line">repl_backlog_active:1</span><br><span class="line">repl_backlog_size:1048576</span><br><span class="line">repl_backlog_first_byte_offset:1</span><br><span class="line">repl_backlog_histlen:198720</span><br><span class="line">127.0.0.1:6362&gt; </span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+
+
+
+
+
+
+<p><strong>全部配置信息：</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line"># Example sentinel.conf</span><br><span class="line"># 哨兵sentinel实例运行的端口 默认26379</span><br><span class="line">port 26379</span><br><span class="line"></span><br><span class="line"># 哨兵sentinel的工作目录</span><br><span class="line">dir /tmp</span><br><span class="line"></span><br><span class="line"># 哨兵sentinel监控的redis主节点的 ip port</span><br><span class="line"># master-name 可以自己命名的主节点名字 只能由字母A-z、数字0-9 、这三个字符&quot;.-_&quot;组成。</span><br><span class="line"># quorum 配置多少个sentinel哨兵统一认为master主节点失联 那么这时客观上认为主节点失联了</span><br><span class="line"># sentinel monitor &lt;master-name&gt; &lt;ip&gt; &lt;redis-port&gt; &lt;quorum&gt;</span><br><span class="line">sentinel monitor mymaster 127.0.0.1 6379 2</span><br><span class="line"></span><br><span class="line"># 当在Redis实例中开启了requirepass foobared 授权密码 这样所有连接Redis实例的客户端都要提供密码</span><br><span class="line"># 设置哨兵sentinel 连接主从的密码 注意必须为主从设置一样的验证密码</span><br><span class="line"># sentinel auth-pass &lt;master-name&gt; &lt;password&gt;</span><br><span class="line">sentinel auth-pass mymaster MySUPER--secret-0123passw0rd</span><br><span class="line"></span><br><span class="line"># 指定多少毫秒之后 主节点没有应答哨兵sentinel 此时 哨兵主观上认为主节点下线 默认30秒</span><br><span class="line"># sentinel down-after-milliseconds &lt;master-name&gt; &lt;milliseconds&gt;</span><br><span class="line">sentinel down-after-milliseconds mymaster 30000</span><br><span class="line"></span><br><span class="line"># 这个配置项指定了在发生failover主备切换时最多可以有多少个slave同时对新的master进行 同步，这个数字越小，完成failover所需的时间就越长，但是如果这个数字越大，就意味着越 多的slave因为replication而不可用。可以通过将这个值设为 1 来保证每次只有一个slave 处于不能处理命令请求的状态。</span><br><span class="line"># sentinel parallel-syncs &lt;master-name&gt; &lt;numslaves&gt;</span><br><span class="line">sentinel parallel-syncs mymaster 1</span><br><span class="line"></span><br><span class="line"># 故障转移的超时时间 failover-timeout 可以用在以下这些方面：</span><br><span class="line">#1. 同一个sentinel对同一个master两次failover之间的间隔时间。</span><br><span class="line">#2. 当一个slave从一个错误的master那里同步数据开始计算时间。直到slave被纠正为向正确的master那里同步数据时。</span><br><span class="line">#3.当想要取消一个正在进行的failover所需要的时间。 </span><br><span class="line">#4.当进行failover时，配置所有slaves指向新的master所需的最大时间。不过，即使过了这个超时，slaves依然会被正确配置为指向master，但是就不按parallel-syncs所配置的规则来了</span><br><span class="line"># 默认三分钟</span><br><span class="line"># sentinel failover-timeout &lt;master-name&gt; &lt;milliseconds&gt;</span><br><span class="line">sentinel failover-timeout mymaster 180000</span><br><span class="line"></span><br><span class="line"># SCRIPTS EXECUTION</span><br><span class="line">#配置当某一事件发生时所需要执行的脚本，可以通过脚本来通知管理员，例如当系统运行不正常时发邮件通知相关人员。</span><br><span class="line">#对于脚本的运行结果有以下规则：</span><br><span class="line">#若脚本执行后返回1，那么该脚本稍后将会被再次执行，重复次数目前默认为10</span><br><span class="line">#若脚本执行后返回2，或者比2更高的一个返回值，脚本将不会重复执行。</span><br><span class="line">#如果脚本在执行过程中由于收到系统中断信号被终止了，则同返回值为1时的行为相同。</span><br><span class="line">#一个脚本的最大执行时间为60s，如果超过这个时间，脚本将会被一个SIGKILL信号终止，之后重新执行。</span><br><span class="line">#通知型脚本:当sentinel有任何警告级别的事件发生时（比如说redis实例的主观失效和客观失效等等），将会去调用这个脚本，这时这个脚本应该通过邮件，SMS等方式去通知系统管理员关于系统不正常运行的信息。调用该脚本时，将传给脚本两个参数，一个是事件的类型，一个是事件的描述。如果sentinel.conf配置文件中配置了这个脚本路径，那么必须保证这个脚本存在于这个路径，并且是可执行的，否则sentinel无法正常启动成功。</span><br><span class="line"></span><br><span class="line">#通知脚本</span><br><span class="line"># shell编程</span><br><span class="line"># sentinel notification-script &lt;master-name&gt; &lt;script-path&gt;</span><br><span class="line">sentinel notification-script mymaster /var/redis/notify.sh</span><br><span class="line"></span><br><span class="line"># 客户端重新配置主节点参数脚本</span><br><span class="line"># 当一个master由于failover而发生改变时，这个脚本将会被调用，通知相关的客户端关于master地址已经发生改变的信息。</span><br><span class="line"># 以下参数将会在调用脚本时传给脚本:</span><br><span class="line"># &lt;master-name&gt; &lt;role&gt; &lt;state&gt; &lt;from-ip&gt; &lt;from-port&gt; &lt;to-ip&gt; &lt;to-port&gt;</span><br><span class="line"># 目前&lt;state&gt;总是“failover”,</span><br><span class="line"># &lt;role&gt;是“leader”或者“observer”中的一个。</span><br><span class="line"># 参数 from-ip, from-port, to-ip, to-port是用来和旧的master和新的master(即旧的slave)通信的</span><br><span class="line"># 这个脚本应该是通用的，能被多次调用，不是针对性的。</span><br><span class="line"># sentinel client-reconfig-script &lt;master-name&gt; &lt;script-path&gt;</span><br><span class="line">sentinel client-reconfig-script mymaster /var/redis/reconfig.sh # 一般都是由运维来配置！</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+
+
+
+
+<h2 id="哨兵模式优缺点："><a href="#哨兵模式优缺点：" class="headerlink" title="哨兵模式优缺点："></a>哨兵模式优缺点：</h2><p>哨兵模式<br>优点︰<br>1、哨兵集群，基于主从复制模式，所有的主从配置优点，它全有2、主从可以切接，故障可以转移﹐系统的可用性就会史好3、哨兵模式就是主从模式的升级，手动到自动，更加建壮!缺点:</p>
+<ol>
+<li>Redis不好啊在。扩容的,集群容量一旦到达上限，在线扩容就十分麻烦!2、实现哨兵模式的配置只实是很麻烦的，里面有很多选择!</li>
+</ol>
+]]></content>
+      <categories>
+        <category>redis</category>
+      </categories>
+      <tags>
+        <tag>数据库</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>Redis的三大特殊类型</title>
     <url>/2022/05/21/Redis%E7%9A%84%E4%B8%89%E5%A4%A7%E7%89%B9%E6%AE%8A%E7%B1%BB%E5%9E%8B/</url>
     <content><![CDATA[<h2 id="Redis的三大特殊类型"><a href="#Redis的三大特殊类型" class="headerlink" title="Redis的三大特殊类型"></a>Redis的三大特殊类型</h2><h2 id="geospatial地理位置"><a href="#geospatial地理位置" class="headerlink" title="geospatial地理位置"></a>geospatial地理位置</h2><p>使用场景：朋友定位，附近的人，打车距离计数</p>
@@ -178,175 +250,6 @@
       <tags>
         <tag>数据库</tag>
         <tag>数据类型</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>Redis哨兵模式</title>
-    <url>/2022/05/23/Redis%E5%93%A8%E5%85%B5%E6%A8%A1%E5%BC%8F/</url>
-    <content><![CDATA[<h1 id="Redis哨兵模式"><a href="#Redis哨兵模式" class="headerlink" title="Redis哨兵模式"></a>Redis哨兵模式</h1><p><strong>介绍：</strong></p>
-<p>主从切换技术的方法是:当主服务器宕机后，需要手动把一台从服务器切换为主服务器，这就需要人工干预，费事费力，还会造成一段时间内服务不可用。这不是一种推荐的方式，更多时候，我们优先考虑哨兵模式。Redis从2.8开始正式提供了Sentinel (哨兵）架构来解决这个问题。</p>
-<p>谋朝篡位的自动版，能够后台监控主机是否故障，如果故障了根据投票数<strong>自动将从库转换为主库</strong>。</p>
-<p>哨兵模式是一种特殊的模式，首先Redis提供了哨兵的命令，哨兵是一个独立的进程，作为进程，它会独立运行。其原理是<strong>哨兵通过发送命令,等待Redis服务器响应，从而监控运行的多个Redis实例。</strong></p>
-<p><img src="https://s2.loli.net/2022/02/23/SJBvaebKFPW6Lxs.png" alt="image-20220223160951455"></p>
-<p>这里的哨兵有两个作用<br>·通过发送命令，让Redis服务器返回监控其运行状态，包括主服务器和从服务器。<br>·当哨兵监测到master宕机，会自动将slave切换成master，然后通过发布订阅模式通知其他的从服务器，修改配置文件，让它<br>们切换主机。<br>然而一个哨兵进程对Redis服务器进行监控，可能会出现问题，为此，我们可以使用多个哨兵进行监控。各个哨兵之间还会进行监控，这样就形成了多哨兵模式。</p>
-<p><img src="https://s2.loli.net/2022/02/23/cSP9LAlOKHjoTfX.png" alt="image-20220223161321009"></p>
-<p>假设主服务器宕机，哨兵1先检测到这个结果，系统并不会马上进行failover过程，仅仅是哨兵1主观的认为主服务器不可用，这个现象成为<strong>主观下线</strong>。当后面的哨兵也检测到主服务器不可用，并且数量达到一定值时，那么哨兵之间就会进行一次投票，投票的结果由一个哨兵发起，进行failover[故障转移]操作。切换成功后，就会通过发布订阅模式，让各个哨兵把自己监控的从服务器实现切换主机,这个过程称为<strong>客观下线</strong>。</p>
-<h2 id="测试："><a href="#测试：" class="headerlink" title="测试："></a>测试：</h2><p>创建一个哨兵的一个配置文件，文件名随意：sentinel.conf </p>
-<p>配置文件：这里我就配置简单点</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">sentinel monitor mymaster 127.0.0.1 6379 1</span><br></pre></td></tr></table></figure>
-
-
-
-<p><strong>正常的一主二从:</strong></p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line"># Replication</span><br><span class="line">role:master</span><br><span class="line">connected_slaves:2</span><br><span class="line">slave0:ip=127.0.0.1,port=6362,state=online,offset=141888,lag=1</span><br><span class="line">slave1:ip=127.0.0.1,port=6361,state=online,offset=141888,lag=1</span><br></pre></td></tr></table></figure>
-
-
-
-<p><strong>启动哨兵模式：</strong></p>
-<p><img src="https://s2.loli.net/2022/02/23/7OSxgQsbL6nyFRi.png" alt="image-20220223165032216"></p>
-<p>命令：redis-sentinel  选用的配置文件，如果是哨兵集群就需要多个配置文件</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">[root@VM-4-12-centos StudyHardConfig]# redis-sentinel sentinel.conf </span><br><span class="line">742116:X 23 Feb 2022 16:29:48.399 # oO0OoO0OoO0Oo Redis is starting oO0OoO0OoO0Oo</span><br><span class="line">742116:X 23 Feb 2022 16:29:48.399 # Redis version=6.0.6, bits=64, commit=00000000, modified=0, pid=742116, just started</span><br><span class="line">742116:X 23 Feb 2022 16:29:48.399 # Configuration loaded</span><br><span class="line">                _._                                                  </span><br><span class="line">           _.-``__ &#x27;&#x27;-._                                             </span><br><span class="line">      _.-``    `.  `_.  &#x27;&#x27;-._           Redis 6.0.6 (00000000/0) 64 bit</span><br><span class="line">  .-`` .-```.  ```\/    _.,_ &#x27;&#x27;-._                                   </span><br><span class="line"> (    &#x27;      ,       .-`  | `,    )     Running in sentinel mode</span><br><span class="line"> |`-._`-...-` __...-.``-._|&#x27;` _.-&#x27;|     Port: 26379   #哨兵端口</span><br><span class="line"> |    `-._   `._    /     _.-&#x27;    |     PID: 742116  </span><br><span class="line">  `-._    `-._  `-./  _.-&#x27;    _.-&#x27;                                   </span><br><span class="line"> |`-._`-._    `-.__.-&#x27;    _.-&#x27;_.-&#x27;|                                  </span><br><span class="line"> |    `-._`-._        _.-&#x27;_.-&#x27;    |           http://redis.io        </span><br><span class="line">  `-._    `-._`-.__.-&#x27;_.-&#x27;    _.-&#x27;                                   </span><br><span class="line"> |`-._`-._    `-.__.-&#x27;    _.-&#x27;_.-&#x27;|                                  </span><br><span class="line"> |    `-._`-._        _.-&#x27;_.-&#x27;    |                                  </span><br><span class="line">  `-._    `-._`-.__.-&#x27;_.-&#x27;    _.-&#x27;                                   </span><br><span class="line">      `-._    `-.__.-&#x27;    _.-&#x27;                                       </span><br><span class="line">          `-._        _.-&#x27;                                           </span><br><span class="line">              `-.__.-&#x27;                                               </span><br><span class="line"></span><br><span class="line">742116:X 23 Feb 2022 16:29:48.404 # Sentinel ID is d0592a16972e6c88a456c5c2969cf4141a0e2f07</span><br><span class="line">742116:X 23 Feb 2022 16:29:48.404 # +monitor master mymaster 127.0.0.1 6360 quorum 1</span><br><span class="line">#侦测到两个从节点，并表明主节点是谁，现在主节点表明的6360这个端口的redis</span><br><span class="line">742116:X 23 Feb 2022 16:29:48.404 * +slave slave 127.0.0.1:6362 127.0.0.1 6362 @ mymaster 127.0.0.1 6360</span><br><span class="line">742116:X 23 Feb 2022 16:29:48.408 * +slave slave 127.0.0.1:6361 127.0.0.1 6361 @ mymaster 127.0.0.1 6360</span><br><span class="line"></span><br></pre></td></tr></table></figure>
-
-
-
-<p><strong>断供主节点，让哨兵自动选择一个从节点当主节点：</strong> </p>
-<p>如果master节点断开了，这个时候就会从 从机中随机选择一个服务器（根据一个投票算法）</p>
-<p>哨兵打印的新信息：</p>
-<p>这里投票，选择6362当主节点</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">Feb 2022 16:37:29.007 # +sdown master mymaster 127.0.0.1 6360</span><br><span class="line">742116:X 23 Feb 2022 16:37:29.007 # +odown master mymaster 127.0.0.1 6360 #quorum 1/1</span><br><span class="line">742116:X 23 Feb 2022 16:37:29.007 # +new-epoch 1</span><br><span class="line">742116:X 23 Feb 2022 16:37:29.007 # +try-failover master mymaster 127.0.0.1 6360</span><br><span class="line">742116:X 23 Feb 2022 16:37:29.011 # +vote-for-leader d0592a16972e6c88a456c5c2969cf4141a0e2f07 1</span><br><span class="line">742116:X 23 Feb 2022 16:37:29.011 # +elected-leader master mymaster 127.0.0.1 6360</span><br><span class="line">742116:X 23 Feb 2022 16:37:29.011 # +failover-state-select-slave master mymaster 127.0.0.1 6360</span><br><span class="line">742116:X 23 Feb 2022 16:37:29.066 # +selected-slave slave 127.0.0.1:6362 127.0.0.1 6362 @ mymaster 127.0.0.1 6360</span><br><span class="line">742116:X 23 Feb 2022 16:37:29.066 * +failover-state-send-slaveof-noone slave 127.0.0.1:6362 127.0.0.1 6362 @ mymaster 127.0.0.1 6360</span><br><span class="line">742116:X 23 Feb 2022 16:37:29.138 * +failover-state-wait-promotion slave 127.0.0.1:6362 127.0.0.1 6362 @ mymaster 127.0.0.1 6360</span><br><span class="line">742116:X 23 Feb 2022 16:37:29.419 # +promoted-slave slave 127.0.0.1:6362 127.0.0.1 6362 @ mymaster 127.0.0.1 6360</span><br><span class="line">742116:X 23 Feb 2022 16:37:29.420 # +failover-state-reconf-slaves master mymaster 127.0.0.1 6360</span><br><span class="line">742116:X 23 Feb 2022 16:37:29.498 * +slave-reconf-sent slave 127.0.0.1:6361 127.0.0.1 6361 @ mymaster 127.0.0.1 6360</span><br><span class="line">742116:X 23 Feb 2022 16:37:30.445 * +slave-reconf-inprog slave 127.0.0.1:6361 127.0.0.1 6361 @ mymaster 127.0.0.1 6360</span><br><span class="line">742116:X 23 Feb 2022 16:37:30.445 * +slave-reconf-done slave 127.0.0.1:6361 127.0.0.1 6361 @ mymaster 127.0.0.1 6360</span><br><span class="line">742116:X 23 Feb 2022 16:37:30.529 # +failover-end master mymaster 127.0.0.1 6360  #故障切换主线</span><br><span class="line">742116:X 23 Feb 2022 16:37:30.529 # +switch-master mymaster 127.0.0.1 6360 127.0.0.1 6362   #这里依旧选择了6362来当主节点</span><br><span class="line">742116:X 23 Feb 2022 16:37:30.529 * +slave slave 127.0.0.1:6361 127.0.0.1 6361 @ mymaster 127.0.0.1 6362</span><br><span class="line">742116:X 23 Feb 2022 16:37:30.529 * +slave slave 127.0.0.1:6360 127.0.0.1 6360 @ mymaster 127.0.0.1 6362</span><br><span class="line">742116:X 23 Feb 2022 16:38:00.593 # +sdown slave 127.0.0.1:6360 127.0.0.1 6360 @ mymaster 127.0.0.1 6362</span><br><span class="line"></span><br></pre></td></tr></table></figure>
-
-
-
-<p>我们来看看6362信息：</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">127.0.0.1:6362&gt;  SLAVEOF 127.0.0.1 6360</span><br><span class="line">OK Already connected to specified master</span><br><span class="line">127.0.0.1:6362&gt; info replication</span><br><span class="line"># Replication</span><br><span class="line">role:master   		#身份依旧是主节点了</span><br><span class="line">connected_slaves:1</span><br><span class="line">slave0:ip=127.0.0.1,port=6361,state=online,offset=191774,lag=1</span><br><span class="line">master_replid:01fa8e86c3fa6a51f5c111e46ef4e8622d062f23</span><br><span class="line">master_replid2:8009003a269bcd5e8af84c76891fc4bdc72dbf10</span><br><span class="line">master_repl_offset:191774</span><br><span class="line">second_repl_offset:170703</span><br><span class="line">repl_backlog_active:1</span><br><span class="line">repl_backlog_size:1048576</span><br><span class="line">repl_backlog_first_byte_offset:1</span><br><span class="line">repl_backlog_histlen:191774</span><br><span class="line">127.0.0.1:6362&gt; </span><br><span class="line"></span><br></pre></td></tr></table></figure>
-
-
-
-<p>如果这时6360这个节点重启呢？</p>
-<p>​	如果主机此时回来了，只能归并到新的主机下，当做从机，这就是哨兵模式的规则!</p>
-<p>​	6362：  可以看到 它变成从节点，哨兵也同样会打印信息，我就不打出来了</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">127.0.0.1:6362&gt; info replication</span><br><span class="line"># Replication</span><br><span class="line">role:master</span><br><span class="line">connected_slaves:2</span><br><span class="line">slave0:ip=127.0.0.1,port=6361,state=online,offset=198720,lag=1</span><br><span class="line">slave1:ip=127.0.0.1,port=6360,state=online,offset=198720,lag=0</span><br><span class="line">master_replid:01fa8e86c3fa6a51f5c111e46ef4e8622d062f23</span><br><span class="line">master_replid2:8009003a269bcd5e8af84c76891fc4bdc72dbf10</span><br><span class="line">master_repl_offset:198720</span><br><span class="line">second_repl_offset:170703</span><br><span class="line">repl_backlog_active:1</span><br><span class="line">repl_backlog_size:1048576</span><br><span class="line">repl_backlog_first_byte_offset:1</span><br><span class="line">repl_backlog_histlen:198720</span><br><span class="line">127.0.0.1:6362&gt; </span><br><span class="line"></span><br></pre></td></tr></table></figure>
-
-
-
-
-
-
-
-<p><strong>全部配置信息：</strong></p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line"># Example sentinel.conf</span><br><span class="line"># 哨兵sentinel实例运行的端口 默认26379</span><br><span class="line">port 26379</span><br><span class="line"></span><br><span class="line"># 哨兵sentinel的工作目录</span><br><span class="line">dir /tmp</span><br><span class="line"></span><br><span class="line"># 哨兵sentinel监控的redis主节点的 ip port</span><br><span class="line"># master-name 可以自己命名的主节点名字 只能由字母A-z、数字0-9 、这三个字符&quot;.-_&quot;组成。</span><br><span class="line"># quorum 配置多少个sentinel哨兵统一认为master主节点失联 那么这时客观上认为主节点失联了</span><br><span class="line"># sentinel monitor &lt;master-name&gt; &lt;ip&gt; &lt;redis-port&gt; &lt;quorum&gt;</span><br><span class="line">sentinel monitor mymaster 127.0.0.1 6379 2</span><br><span class="line"></span><br><span class="line"># 当在Redis实例中开启了requirepass foobared 授权密码 这样所有连接Redis实例的客户端都要提供密码</span><br><span class="line"># 设置哨兵sentinel 连接主从的密码 注意必须为主从设置一样的验证密码</span><br><span class="line"># sentinel auth-pass &lt;master-name&gt; &lt;password&gt;</span><br><span class="line">sentinel auth-pass mymaster MySUPER--secret-0123passw0rd</span><br><span class="line"></span><br><span class="line"># 指定多少毫秒之后 主节点没有应答哨兵sentinel 此时 哨兵主观上认为主节点下线 默认30秒</span><br><span class="line"># sentinel down-after-milliseconds &lt;master-name&gt; &lt;milliseconds&gt;</span><br><span class="line">sentinel down-after-milliseconds mymaster 30000</span><br><span class="line"></span><br><span class="line"># 这个配置项指定了在发生failover主备切换时最多可以有多少个slave同时对新的master进行 同步，这个数字越小，完成failover所需的时间就越长，但是如果这个数字越大，就意味着越 多的slave因为replication而不可用。可以通过将这个值设为 1 来保证每次只有一个slave 处于不能处理命令请求的状态。</span><br><span class="line"># sentinel parallel-syncs &lt;master-name&gt; &lt;numslaves&gt;</span><br><span class="line">sentinel parallel-syncs mymaster 1</span><br><span class="line"></span><br><span class="line"># 故障转移的超时时间 failover-timeout 可以用在以下这些方面：</span><br><span class="line">#1. 同一个sentinel对同一个master两次failover之间的间隔时间。</span><br><span class="line">#2. 当一个slave从一个错误的master那里同步数据开始计算时间。直到slave被纠正为向正确的master那里同步数据时。</span><br><span class="line">#3.当想要取消一个正在进行的failover所需要的时间。 </span><br><span class="line">#4.当进行failover时，配置所有slaves指向新的master所需的最大时间。不过，即使过了这个超时，slaves依然会被正确配置为指向master，但是就不按parallel-syncs所配置的规则来了</span><br><span class="line"># 默认三分钟</span><br><span class="line"># sentinel failover-timeout &lt;master-name&gt; &lt;milliseconds&gt;</span><br><span class="line">sentinel failover-timeout mymaster 180000</span><br><span class="line"></span><br><span class="line"># SCRIPTS EXECUTION</span><br><span class="line">#配置当某一事件发生时所需要执行的脚本，可以通过脚本来通知管理员，例如当系统运行不正常时发邮件通知相关人员。</span><br><span class="line">#对于脚本的运行结果有以下规则：</span><br><span class="line">#若脚本执行后返回1，那么该脚本稍后将会被再次执行，重复次数目前默认为10</span><br><span class="line">#若脚本执行后返回2，或者比2更高的一个返回值，脚本将不会重复执行。</span><br><span class="line">#如果脚本在执行过程中由于收到系统中断信号被终止了，则同返回值为1时的行为相同。</span><br><span class="line">#一个脚本的最大执行时间为60s，如果超过这个时间，脚本将会被一个SIGKILL信号终止，之后重新执行。</span><br><span class="line">#通知型脚本:当sentinel有任何警告级别的事件发生时（比如说redis实例的主观失效和客观失效等等），将会去调用这个脚本，这时这个脚本应该通过邮件，SMS等方式去通知系统管理员关于系统不正常运行的信息。调用该脚本时，将传给脚本两个参数，一个是事件的类型，一个是事件的描述。如果sentinel.conf配置文件中配置了这个脚本路径，那么必须保证这个脚本存在于这个路径，并且是可执行的，否则sentinel无法正常启动成功。</span><br><span class="line"></span><br><span class="line">#通知脚本</span><br><span class="line"># shell编程</span><br><span class="line"># sentinel notification-script &lt;master-name&gt; &lt;script-path&gt;</span><br><span class="line">sentinel notification-script mymaster /var/redis/notify.sh</span><br><span class="line"></span><br><span class="line"># 客户端重新配置主节点参数脚本</span><br><span class="line"># 当一个master由于failover而发生改变时，这个脚本将会被调用，通知相关的客户端关于master地址已经发生改变的信息。</span><br><span class="line"># 以下参数将会在调用脚本时传给脚本:</span><br><span class="line"># &lt;master-name&gt; &lt;role&gt; &lt;state&gt; &lt;from-ip&gt; &lt;from-port&gt; &lt;to-ip&gt; &lt;to-port&gt;</span><br><span class="line"># 目前&lt;state&gt;总是“failover”,</span><br><span class="line"># &lt;role&gt;是“leader”或者“observer”中的一个。</span><br><span class="line"># 参数 from-ip, from-port, to-ip, to-port是用来和旧的master和新的master(即旧的slave)通信的</span><br><span class="line"># 这个脚本应该是通用的，能被多次调用，不是针对性的。</span><br><span class="line"># sentinel client-reconfig-script &lt;master-name&gt; &lt;script-path&gt;</span><br><span class="line">sentinel client-reconfig-script mymaster /var/redis/reconfig.sh # 一般都是由运维来配置！</span><br><span class="line"></span><br></pre></td></tr></table></figure>
-
-
-
-
-
-<h2 id="哨兵模式优缺点："><a href="#哨兵模式优缺点：" class="headerlink" title="哨兵模式优缺点："></a>哨兵模式优缺点：</h2><p>哨兵模式<br>优点︰<br>1、哨兵集群，基于主从复制模式，所有的主从配置优点，它全有2、主从可以切接，故障可以转移﹐系统的可用性就会史好3、哨兵模式就是主从模式的升级，手动到自动，更加建壮!缺点:</p>
-<ol>
-<li>Redis不好啊在。扩容的,集群容量一旦到达上限，在线扩容就十分麻烦!2、实现哨兵模式的配置只实是很麻烦的，里面有很多选择!</li>
-</ol>
-]]></content>
-      <categories>
-        <category>redis</category>
-      </categories>
-      <tags>
-        <tag>数据库</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>redis的五大数据类型</title>
-    <url>/2022/05/21/redis%E7%9A%84%E4%BA%94%E5%A4%A7%E6%95%B0%E6%8D%AE%E7%B1%BB%E5%9E%8B/</url>
-    <content><![CDATA[<h2 id="Redis简单了解与5大数据类型"><a href="#Redis简单了解与5大数据类型" class="headerlink" title="Redis简单了解与5大数据类型"></a>Redis简单了解与5大数据类型</h2><h2 id="Redis是单线程的"><a href="#Redis是单线程的" class="headerlink" title="Redis是单线程的"></a>Redis是单线程的</h2><p>Redis是很快的，官方表示，Redis是基于内存操作，cpu并不是Redis性能瓶颈，Redis的瓶颈是根据机器和网络带宽。</p>
-<p>Redis是C语言写的，官方提供的数据为 100000+ 的Qps，完成不比同样是使用key-value的Memecahe差！</p>
-<h2 id="Redis为什么单线程还那么快？"><a href="#Redis为什么单线程还那么快？" class="headerlink" title="Redis为什么单线程还那么快？"></a>Redis为什么单线程还那么快？</h2><p>1，高性能的服务器不一定是多线程的 2，多线程不一定比单线程效率高！</p>
-<p>redis是将所有的数据全部放置内存中的，所以使用单线程去操作效率就是最高的，多线程cpu上下文切换耗时，对于内存系统来说，如果没有上下文切换效率就是最高的，多次读写都在一个cpu上的，在内存情况下，这个就是最佳方案</p>
-<p>redis一共有16个数据库 默认使用第0个</p>
-<h2 id="5大数据类型"><a href="#5大数据类型" class="headerlink" title="5大数据类型"></a>5大数据类型</h2><p>不区分大小写</p>
-<h3 id="String-的一些命令"><a href="#String-的一些命令" class="headerlink" title="String 的一些命令"></a>String 的一些命令</h3><figure class="highlight java"><table><tr><td class="code"><pre><span class="line">select <span class="number">1</span> #改变数字可切换数据库</span><br><span class="line">keys *  #查看当前数据库使用的key</span><br><span class="line">set key value  #向数据库填充kv键值对数据</span><br><span class="line">get key  #获取指定key的value</span><br><span class="line">flushall  #清空全部 会将其他库的也清除</span><br><span class="line">flushdb   #清空单前数据库</span><br><span class="line">EXISTS key  #判断当前key是否存在 存在返回<span class="number">1</span> 否者<span class="number">0</span></span><br><span class="line">move key <span class="number">1</span> #将指定的key键值对移动到指定的数据库</span><br><span class="line">EXPIRE key <span class="number">10</span>  #将指定key在指定的时间过期 <span class="number">10</span>为<span class="number">10</span>秒</span><br><span class="line">ttl key  #查看指定的key还剩余多少存活时间 -<span class="number">1</span>为永久存活 -<span class="number">2</span>为死亡</span><br><span class="line">type key  #查看当前key的数据类型</span><br><span class="line">APPEND key content  #追加指定key的value的内容 content为追加内容 </span><br><span class="line">STRLEN key  #查看指定key的value长度</span><br><span class="line">incr key  #可以为指定的key自增</span><br><span class="line">decr key #为指定的key减<span class="number">1</span></span><br><span class="line">INCRBY key i  #为指定的key 加上 i个（数字）</span><br><span class="line">DECRBY key i  #为指定的key 减 i (数字)</span><br><span class="line">GETRANGE key s e  #截取指定长度字符串 ，该方法区间（ &#125;</span><br><span class="line">GETRANGE key i -<span class="number">1</span>  #结尾为-<span class="number">1</span>可以查看全部字符串 和 get一样</span><br><span class="line">SETRANGE key s content  #替换指定位置开始的字符串 输入几个就替换几个</span><br><span class="line">setex key time value  #创建或修改一个键值对，并设置过期时间</span><br><span class="line">setnx key value  #创建一个键值对 、当如何已经有这个键值对了就会创建失败</span><br><span class="line">mset key value [k v...]  #可一次设置多个，kv键值对</span><br><span class="line">mget key [key...]  #一次获取多个value</span><br><span class="line">msetnx key value [k v...]  #可一次设置多个，kv键值对，但要满足原子性，同时成功，同时失败</span><br><span class="line">getset key value  #读取并修改 先读，可以用于更新新内容</span><br></pre></td></tr></table></figure>
-
-<h3 id="List"><a href="#List" class="headerlink" title="List"></a>List</h3><p>list可以当作链表来看，左右都可以插入</p>
-<p>可控制向左向右添加后移出，是需要开头加 L（左） 或 R（右），List的命令以L开头，除控制左右外，可存在重复值</p>
-<p>添加后内容顺序为 54321</p>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line">LPUSH key element [element...] #tianj或创建并添加值</span><br><span class="line">LRANGE key s e  ;#查看List的数据 从s开始 到e结束的位置</span><br><span class="line">LPOP #移出左第一个，（左右可调节）</span><br><span class="line">LINDEX key index   #根据下标查看值，必须大写，只能从左</span><br><span class="line">LLEN key   #获取指定list的长度</span><br><span class="line">LREM key count value  #移出指定的内容，并且可以设置移出几个</span><br><span class="line">ltrim key start stop  #通过下标截取要的部分 不在区间的则都移出</span><br><span class="line">rpoplpush key1 key2  #移出key1中最右的第一个并添加到key2的左边第一个</span><br><span class="line">lset key index value  #可修改list中指定下标的value，如果不存在列表就会报错</span><br><span class="line">LINSERT key before|after pivot element #向指定key里的value的前或后插入内容。 pivot key里的内容 element 插入的内容</span><br></pre></td></tr></table></figure>
-
-
-
-<h3 id="Set"><a href="#Set" class="headerlink" title="Set"></a>Set</h3><p>set的命令都是以s开头的 set中的值是无需不能重复的</p>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line">sadd key value  #创建或添加</span><br><span class="line">SMEMBERS key  #查看set中的元素</span><br><span class="line">SISMEMBER key value  #判断当前set中是否有当前value</span><br><span class="line">scard setkey  #获取当前set的个数</span><br><span class="line">srem setkey element[element..]  #移出指定的值</span><br><span class="line">SRANDMEMBER setkey 【count】  #在指定的key中随机获取count个元素</span><br><span class="line">SPOP setkey 【count】  #随机移除count个元素</span><br><span class="line">SMOVE setkey1 setkey2 value  #将setkey1的value移出到setkey2中</span><br><span class="line">SINTER key [key...]  #获取选中key的交集，要都有的才会显示</span><br><span class="line">SUNION key [key...] #获取选中的并集，不会输出重复的 #并集解释：若A和B是集合，则A和B并集是有所有A的元素和所有B的元素，而没有其他元素的集合。A和B的并集通常写作 <span class="string">&quot;A∪B&quot;</span>，读作“A并B”</span><br></pre></td></tr></table></figure>
-
-
-
-<h3 id="Hash"><a href="#Hash" class="headerlink" title="Hash"></a>Hash</h3><p>Hash类型为key-（key-value） 所有的hash命令是以h开头的</p>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line">hset key field value [field value...]  #创建Hash</span><br><span class="line">#示例：hset hash field1 value1 ；key（hash）-value（field1-value1）</span><br><span class="line">#注意：低版本一次填充多个需要使用hmset命令</span><br><span class="line">hget key field   #获取field value值，需要两个key的值</span><br><span class="line">hmget key field [field...]  #获取多个 field ，高版本可能没有这个命令，而是直接使用hset</span><br><span class="line">hdel key field [field...]  #删除指定的field，</span><br><span class="line">hgetall key    #查看当前key中的value（k-v键值对都会显示）</span><br><span class="line">HEXISTS key field   #查询hash中是否存在指定的key</span><br><span class="line">hkeys key     #查看hash中所有的key</span><br><span class="line">hvals key     #查看hasg中所有的value</span><br><span class="line">HINCRBY key field i    #为指定key中的field 的value进行相加，可以加负数，这样就是相减</span><br><span class="line">hsetnx key field value #如果field存在则无需，不存在创建</span><br></pre></td></tr></table></figure>
-
-
-
-<h3 id="Zset"><a href="#Zset" class="headerlink" title="Zset"></a>Zset</h3><p>有序集合，，从小到大</p>
-<p>在set的基础上加了一个值， zadd k score v ,多了个score多了了，可以用于表示</p>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line">zadd key sroce value [...]  #添加zset</span><br><span class="line">zrange key start stop  #查看指定key数据范围</span><br><span class="line">ZRANGEBYSCORE key min max [WITHSCORCES] [LIMIT offset ount]   #用于指定key筛选排序  min可以使用-inf 意思为负无限制，max使用+inf 正无限，获取score包含在他们的区间值</span><br><span class="line">ZREVRANGEBYSCORE key max min [WITHSCORCES] [LIMIT offset ount]  #上面排正序，这个是倒叙</span><br><span class="line">zrem key member [member...]   #使用要删除的value并移除</span><br><span class="line">ZCARD key   #查询当前集合key有多少个值</span><br><span class="line">ZCOUNT key min max #获取指定key的指定区间内有多个个值</span><br></pre></td></tr></table></figure>
-
-
-
-<h2 id="官网地址"><a href="#官网地址" class="headerlink" title="官网地址"></a>官网地址</h2><p>一切以官网为准 <a href="http://www.redis.cn/" title="Redis官网">Redis官网</a></p>
-]]></content>
-      <categories>
-        <category>redis</category>
-      </categories>
-      <tags>
-        <tag>数据库</tag>
-        <tag>数据类型</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>redis总笔记</title>
-    <url>/2022/05/21/redis%E6%80%BB%E7%AC%94%E8%AE%B0/</url>
-    <content><![CDATA[<p>这个博主的redis会比较详细，可以去观看它的，还有可以去看看它的视频</p>
-<p>博主：狂神说</p>
-<p><a href="https://www.cnblogs.com/meditation5201314/p/14882992.htm">https://www.cnblogs.com/meditation5201314/p/14882992.htm</a></p>
-<p><strong>发布订阅简单使用：</strong></p>
-<p><img src="https://s2.loli.net/2022/02/21/CilvKd8sFBtSJo9.png" alt="image-20220221140950917"></p>
-]]></content>
-      <tags>
-        <tag>优秀文章</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>redis的安装</title>
-    <url>/2022/05/21/redis%E7%9A%84%E5%AE%89%E8%A3%85/</url>
-    <content><![CDATA[<h2 id="安装Redis"><a href="#安装Redis" class="headerlink" title="安装Redis"></a>安装Redis</h2><h2 id="如何安装redis"><a href="#如何安装redis" class="headerlink" title="如何安装redis"></a>如何安装redis</h2><p>先去redis的官网下安装redis： <a href="http://www.redis.cn/">Redis中文官网</a></p>
-<p>redis不推荐在windos上安装</p>
-<p>CentOS7以上 安装方法： 安装ridis前需要先安装：gcc</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">yum -y install gcc</span><br><span class="line">yum -y install gcc-c++</span><br></pre></td></tr></table></figure>
-
-<p>安装好gcc后解压你的Redis安装包</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">tar -zxvf Reids安装包   #gz为后缀的</span><br></pre></td></tr></table></figure>
-
-<p>解压好后进入到redis里make编译</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">cd rieds</span><br><span class="line">make   #编译</span><br><span class="line">make install  #安装确认一下 也可以不执行</span><br></pre></td></tr></table></figure>
-
-<p>到这就安装完成了！</p>
-<p>我们可以去看下我们安装的程序：</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">cd /usr/local/bin</span><br></pre></td></tr></table></figure>
-
-<p>我们自己安装的程序都会在里面！</p>
-<p>我们可以在这里创建一个文件夹存放我们配置文件，这里我们创建一个存放Redis的配置文件，以后修改也是修改这里的配置文件而不修改软件里的，可以确保安全性：</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">mkdir SHconfig</span><br><span class="line">cp /opt/Redis/redis-6.0.6/redis.conf SHconfig</span><br></pre></td></tr></table></figure>
-
-<p>redis默认不是后台启动的，需要修改配置文件：</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">vim redis.conf</span><br><span class="line">将daemonize no 改为 daemonize yes</span><br><span class="line">设置密码</span><br><span class="line">requirepass foobared</span><br><span class="line">requirepass 123   指定密码123</span><br><span class="line">设置完密码后每次登录操作需要使用auth进行登录才能使用</span><br><span class="line">[root@VM-4-12-centos StudyHardConfig]# redis-cli</span><br><span class="line">127.0.0.1:6379&gt; set key1 q</span><br><span class="line">(error) NOAUTH Authentication required.</span><br><span class="line">127.0.0.1:6379&gt; auth 031215</span><br><span class="line">OK</span><br><span class="line">127.0.0.1:6379&gt; set key1 v1</span><br><span class="line">OK</span><br></pre></td></tr></table></figure>
-
-
-
-<h2 id="启动Redis："><a href="#启动Redis：" class="headerlink" title="启动Redis："></a>启动Redis：</h2><h3 id="在安装目录下执行："><a href="#在安装目录下执行：" class="headerlink" title="在安装目录下执行："></a>在安装目录下执行：</h3><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">redis-server shconfig/redis.conf #后面的参数是表示选用的配置文件</span><br></pre></td></tr></table></figure>
-
-<h3 id="在安装目录下测试连接并退出："><a href="#在安装目录下测试连接并退出：" class="headerlink" title="在安装目录下测试连接并退出："></a>在安装目录下测试连接并退出：</h3><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">[root@VM-4-12-centos bin]# redis-cli -p 6379 #连接</span><br><span class="line">127.0.0.1:6379&gt; ping</span><br><span class="line">PONG</span><br><span class="line">127.0.0.1:6379&gt; set name studyhard</span><br><span class="line">OK</span><br><span class="line">127.0.0.1:6379&gt; get name</span><br><span class="line">&quot;studyhard&quot;</span><br><span class="line">127.0.0.1:6379&gt; keys *</span><br><span class="line">1) &quot;name&quot;</span><br><span class="line">127.0.0.1:6379&gt; shutdown #关闭reids</span><br><span class="line">not connected&gt; exit   #退出</span><br></pre></td></tr></table></figure>
-
-<h2 id="当然还有更简单的方法"><a href="#当然还有更简单的方法" class="headerlink" title="当然还有更简单的方法"></a>当然还有更简单的方法</h2><p>使用宝塔面板~~ 十分的快捷</p>
-]]></content>
-      <categories>
-        <category>redis</category>
-      </categories>
-      <tags>
-        <tag>安装</tag>
       </tags>
   </entry>
   <entry>
@@ -1715,161 +1618,100 @@ public String NullPointerExceptionHandler(Model model, Exception e) &#123;
       </tags>
   </entry>
   <entry>
-    <title>redis的持久化</title>
-    <url>/2022/05/20/redis%E7%9A%84%E6%8C%81%E4%B9%85%E5%8C%96/</url>
-    <content><![CDATA[<h1 id="Redis的持久化"><a href="#Redis的持久化" class="headerlink" title="Redis的持久化"></a>Redis的持久化</h1><p>redis是内存数据库，如果数据不持久化，当程序关闭时将会丢失数据，所以Redis提供了持久化</p>
-<h3 id="RDB"><a href="#RDB" class="headerlink" title="RDB"></a>RDB</h3><p><strong>什么是RDB？</strong></p>
-<p><img src="https://s2.loli.net/2022/02/20/IeEx1JmZS82vk9s.png" alt="image-20220220232522977"></p>
-<p>在指定的时间间隔内将内存中的数据集快照写入磁盘，也就是行话讲的Snapshot快照，它恢复时是将快照文件直接读到内存里。Redis会单独创建 ( fork )一个子进程来进行持久化，会先将数据写入到一个临时文件中，待持久化过程都结束了，再用这个临时文件替换上次持久化好的文件。整个过程中，主进程是不进行任何IO操作的。这就确保了极高的性能。如果需要进行大规模数据的恢复，且对于数据恢复的完整性不是非常敏感，那RDB方式要比AOF方式更加的高效。RDB的缺点是最后一次持久化后的数据可能丢失。我们默认的就是RDB，一般情况不需要修改这个配置！</p>
-<p>在生成环境我们将会对这个文件进行备份</p>
-<p><strong>缺点：</strong></p>
-<p>如果在最后一次宕机了，就没有办法去持久化了，需要一定的时间间隔</p>
-<p>在创建frok进程的时候，会占用一定的空间</p>
-<p><strong>优点：</strong></p>
-<p>RDB比AOF更加的高效，适合大规模恢复数据</p>
-<p>RDB保存的文件是dump.rdb   ，在配置文件中有讲，都是在配置文件中设置的</p>
-<p><strong>持久化触发机制：</strong></p>
-<p>注意：kill的情况下不会触发</p>
-<p>1,save的规则满足的情况下会触发rdb规则</p>
-<p>2,执行flushall命令也会触发rdb规则</p>
-<p>3,当退出redis时也会触发rdb规则   </p>
-<p>会生成一个dump.rdb文件，redis在重启时会读取文件，恢复数据，如果删除，关闭后就不会有之前的数据了</p>
-<p><strong>如恢复rdb文件：</strong></p>
-<p>只需要将rdb文件放置redis启动目录下，</p>
-<p>dump.rdb放在redis-server同级目录</p>
-<h2 id="AOF"><a href="#AOF" class="headerlink" title="AOF"></a>AOF</h2><p>它会将我们所有的命令记录下来，history，恢复的时候就会把这个文件全部执行一遍！</p>
-<p><strong>在redis4.0以后支持混合模式，rdb与aof同时开启会优先aof</strong></p>
-<p><img src="https://s2.loli.net/2022/02/20/r1N7HEity9OXqdA.png" alt="image-20220220233046582"></p>
-<p>以日志的形式来记录每个写操作，将Redis执行过的所有指令记录下来(读操作不记录），只许追加文件但不可以改写文件，redis启动之初会读取该文件重新构建数据，换言之，redis重启的话就根据日志文件的内容将写指令从前到后执行一次以完成数据的恢复工作</p>
-<p><strong>默认不开AOF，需要去配置文件中手动开启</strong></p>
-<p><strong>Aof保存的是appendonly.aof 文件</strong></p>
-<p>文件同样可以在配置文件中修改:</p>
-<p>&#x2F;&#x2F;The name of the append only file (default: “appendonly.aof”)</p>
-<p>​	appendfilename “appendonly.aof”</p>
-<p><strong>当我们开启时输入了命令后就会生成aod文件：</strong></p>
-<p><img src="https://s2.loli.net/2022/02/21/lDiAuKGo345PORI.png" alt="image-20220221100633418"></p>
-<p><strong>文件的内容为：</strong></p>
-<p><img src="https://s2.loli.net/2022/02/22/DGtZmALfOyTziFh.png" alt="image-20220222225551886"></p>
-<p>这个文件是能破坏的，破坏后启动redis会报错 ，但是系统会生成一个备用文件，我们可以使用它来修改appendonly.aof</p>
-<p>破坏后登录：</p>
-<p><img src="https://s2.loli.net/2022/02/21/JuwqZhENCfp9LIn.png" alt="image-20220221102935481"></p>
-<p>破坏后是可以使用这个文件进行恢复的</p>
-<p><img src="https://s2.loli.net/2022/02/21/X4TEjb1n5VfL2Fk.png" alt="image-20220221103321224"></p>
-<p>使用命令：redis-check-aof –fix appendonly.aof  进行恢复，恢复后 就能正常登录了</p>
-<p>注意：要在appendonly.aof文件位置使用该命令</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">[root@VM-4-12-centos ~]# redis-check-aof --fix appendonly.aof</span><br><span class="line">Cannot open file: appendonly.aof</span><br><span class="line">[root@VM-4-12-centos ~]# cd /usr/local/bin</span><br><span class="line">[root@VM-4-12-centos bin]# redis-check-aof --fix appendonly.aof</span><br><span class="line">0x              3c: Expected \r\n, got: 7765</span><br><span class="line">AOF analyzed: size=143, ok_up_to=52, diff=91</span><br><span class="line">This will shrink the AOF from 143 bytes, with 91 bytes, to 52 bytes</span><br><span class="line">Continue? [y/N]: y</span><br><span class="line">Successfully truncated AOF</span><br><span class="line">[root@VM-4-12-centos bin]# </span><br></pre></td></tr></table></figure>
+    <title>redis的五大数据类型</title>
+    <url>/2022/05/21/redis%E7%9A%84%E4%BA%94%E5%A4%A7%E6%95%B0%E6%8D%AE%E7%B1%BB%E5%9E%8B/</url>
+    <content><![CDATA[<h2 id="Redis简单了解与5大数据类型"><a href="#Redis简单了解与5大数据类型" class="headerlink" title="Redis简单了解与5大数据类型"></a>Redis简单了解与5大数据类型</h2><h2 id="Redis是单线程的"><a href="#Redis是单线程的" class="headerlink" title="Redis是单线程的"></a>Redis是单线程的</h2><p>Redis是很快的，官方表示，Redis是基于内存操作，cpu并不是Redis性能瓶颈，Redis的瓶颈是根据机器和网络带宽。</p>
+<p>Redis是C语言写的，官方提供的数据为 100000+ 的Qps，完成不比同样是使用key-value的Memecahe差！</p>
+<h2 id="Redis为什么单线程还那么快？"><a href="#Redis为什么单线程还那么快？" class="headerlink" title="Redis为什么单线程还那么快？"></a>Redis为什么单线程还那么快？</h2><p>1，高性能的服务器不一定是多线程的 2，多线程不一定比单线程效率高！</p>
+<p>redis是将所有的数据全部放置内存中的，所以使用单线程去操作效率就是最高的，多线程cpu上下文切换耗时，对于内存系统来说，如果没有上下文切换效率就是最高的，多次读写都在一个cpu上的，在内存情况下，这个就是最佳方案</p>
+<p>redis一共有16个数据库 默认使用第0个</p>
+<h2 id="5大数据类型"><a href="#5大数据类型" class="headerlink" title="5大数据类型"></a>5大数据类型</h2><p>不区分大小写</p>
+<h3 id="String-的一些命令"><a href="#String-的一些命令" class="headerlink" title="String 的一些命令"></a>String 的一些命令</h3><figure class="highlight java"><table><tr><td class="code"><pre><span class="line">select <span class="number">1</span> #改变数字可切换数据库</span><br><span class="line">keys *  #查看当前数据库使用的key</span><br><span class="line">set key value  #向数据库填充kv键值对数据</span><br><span class="line">get key  #获取指定key的value</span><br><span class="line">flushall  #清空全部 会将其他库的也清除</span><br><span class="line">flushdb   #清空单前数据库</span><br><span class="line">EXISTS key  #判断当前key是否存在 存在返回<span class="number">1</span> 否者<span class="number">0</span></span><br><span class="line">move key <span class="number">1</span> #将指定的key键值对移动到指定的数据库</span><br><span class="line">EXPIRE key <span class="number">10</span>  #将指定key在指定的时间过期 <span class="number">10</span>为<span class="number">10</span>秒</span><br><span class="line">ttl key  #查看指定的key还剩余多少存活时间 -<span class="number">1</span>为永久存活 -<span class="number">2</span>为死亡</span><br><span class="line">type key  #查看当前key的数据类型</span><br><span class="line">APPEND key content  #追加指定key的value的内容 content为追加内容 </span><br><span class="line">STRLEN key  #查看指定key的value长度</span><br><span class="line">incr key  #可以为指定的key自增</span><br><span class="line">decr key #为指定的key减<span class="number">1</span></span><br><span class="line">INCRBY key i  #为指定的key 加上 i个（数字）</span><br><span class="line">DECRBY key i  #为指定的key 减 i (数字)</span><br><span class="line">GETRANGE key s e  #截取指定长度字符串 ，该方法区间（ &#125;</span><br><span class="line">GETRANGE key i -<span class="number">1</span>  #结尾为-<span class="number">1</span>可以查看全部字符串 和 get一样</span><br><span class="line">SETRANGE key s content  #替换指定位置开始的字符串 输入几个就替换几个</span><br><span class="line">setex key time value  #创建或修改一个键值对，并设置过期时间</span><br><span class="line">setnx key value  #创建一个键值对 、当如何已经有这个键值对了就会创建失败</span><br><span class="line">mset key value [k v...]  #可一次设置多个，kv键值对</span><br><span class="line">mget key [key...]  #一次获取多个value</span><br><span class="line">msetnx key value [k v...]  #可一次设置多个，kv键值对，但要满足原子性，同时成功，同时失败</span><br><span class="line">getset key value  #读取并修改 先读，可以用于更新新内容</span><br></pre></td></tr></table></figure>
 
+<h3 id="List"><a href="#List" class="headerlink" title="List"></a>List</h3><p>list可以当作链表来看，左右都可以插入</p>
+<p>可控制向左向右添加后移出，是需要开头加 L（左） 或 R（右），List的命令以L开头，除控制左右外，可存在重复值</p>
+<p>添加后内容顺序为 54321</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line">LPUSH key element [element...] #tianj或创建并添加值</span><br><span class="line">LRANGE key s e  ;#查看List的数据 从s开始 到e结束的位置</span><br><span class="line">LPOP #移出左第一个，（左右可调节）</span><br><span class="line">LINDEX key index   #根据下标查看值，必须大写，只能从左</span><br><span class="line">LLEN key   #获取指定list的长度</span><br><span class="line">LREM key count value  #移出指定的内容，并且可以设置移出几个</span><br><span class="line">ltrim key start stop  #通过下标截取要的部分 不在区间的则都移出</span><br><span class="line">rpoplpush key1 key2  #移出key1中最右的第一个并添加到key2的左边第一个</span><br><span class="line">lset key index value  #可修改list中指定下标的value，如果不存在列表就会报错</span><br><span class="line">LINSERT key before|after pivot element #向指定key里的value的前或后插入内容。 pivot key里的内容 element 插入的内容</span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="Set"><a href="#Set" class="headerlink" title="Set"></a>Set</h3><p>set的命令都是以s开头的 set中的值是无需不能重复的</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line">sadd key value  #创建或添加</span><br><span class="line">SMEMBERS key  #查看set中的元素</span><br><span class="line">SISMEMBER key value  #判断当前set中是否有当前value</span><br><span class="line">scard setkey  #获取当前set的个数</span><br><span class="line">srem setkey element[element..]  #移出指定的值</span><br><span class="line">SRANDMEMBER setkey 【count】  #在指定的key中随机获取count个元素</span><br><span class="line">SPOP setkey 【count】  #随机移除count个元素</span><br><span class="line">SMOVE setkey1 setkey2 value  #将setkey1的value移出到setkey2中</span><br><span class="line">SINTER key [key...]  #获取选中key的交集，要都有的才会显示</span><br><span class="line">SUNION key [key...] #获取选中的并集，不会输出重复的 #并集解释：若A和B是集合，则A和B并集是有所有A的元素和所有B的元素，而没有其他元素的集合。A和B的并集通常写作 <span class="string">&quot;A∪B&quot;</span>，读作“A并B”</span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="Hash"><a href="#Hash" class="headerlink" title="Hash"></a>Hash</h3><p>Hash类型为key-（key-value） 所有的hash命令是以h开头的</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line">hset key field value [field value...]  #创建Hash</span><br><span class="line">#示例：hset hash field1 value1 ；key（hash）-value（field1-value1）</span><br><span class="line">#注意：低版本一次填充多个需要使用hmset命令</span><br><span class="line">hget key field   #获取field value值，需要两个key的值</span><br><span class="line">hmget key field [field...]  #获取多个 field ，高版本可能没有这个命令，而是直接使用hset</span><br><span class="line">hdel key field [field...]  #删除指定的field，</span><br><span class="line">hgetall key    #查看当前key中的value（k-v键值对都会显示）</span><br><span class="line">HEXISTS key field   #查询hash中是否存在指定的key</span><br><span class="line">hkeys key     #查看hash中所有的key</span><br><span class="line">hvals key     #查看hasg中所有的value</span><br><span class="line">HINCRBY key field i    #为指定key中的field 的value进行相加，可以加负数，这样就是相减</span><br><span class="line">hsetnx key field value #如果field存在则无需，不存在创建</span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="Zset"><a href="#Zset" class="headerlink" title="Zset"></a>Zset</h3><p>有序集合，，从小到大</p>
+<p>在set的基础上加了一个值， zadd k score v ,多了个score多了了，可以用于表示</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line">zadd key sroce value [...]  #添加zset</span><br><span class="line">zrange key start stop  #查看指定key数据范围</span><br><span class="line">ZRANGEBYSCORE key min max [WITHSCORCES] [LIMIT offset ount]   #用于指定key筛选排序  min可以使用-inf 意思为负无限制，max使用+inf 正无限，获取score包含在他们的区间值</span><br><span class="line">ZREVRANGEBYSCORE key max min [WITHSCORCES] [LIMIT offset ount]  #上面排正序，这个是倒叙</span><br><span class="line">zrem key member [member...]   #使用要删除的value并移除</span><br><span class="line">ZCARD key   #查询当前集合key有多少个值</span><br><span class="line">ZCOUNT key min max #获取指定key的指定区间内有多个个值</span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="官网地址"><a href="#官网地址" class="headerlink" title="官网地址"></a>官网地址</h2><p>一切以官网为准 <a href="http://www.redis.cn/" title="Redis官网">Redis官网</a></p>
 ]]></content>
       <categories>
         <category>redis</category>
       </categories>
       <tags>
         <tag>数据库</tag>
+        <tag>数据类型</tag>
       </tags>
   </entry>
   <entry>
-    <title>redis集群（主从复制）</title>
-    <url>/2022/05/21/redis%E9%9B%86%E7%BE%A4%EF%BC%88%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6%EF%BC%89/</url>
-    <content><![CDATA[<h1 id="Redis主从复制："><a href="#Redis主从复制：" class="headerlink" title="Redis主从复制："></a>Redis主从复制：</h1><h2 id="Redis主从复制概念"><a href="#Redis主从复制概念" class="headerlink" title="Redis主从复制概念"></a>Redis主从复制概念</h2><p>主从复制,是指将一台Redis服务器的数据，复制到其他的Redis服务器。前者称为主节点(master&#x2F;leader)，后者称为从节点(slave&#x2F;follower);数据的复制是单向的，只能由主节点到从节点。Master以写为主，Slave以读为主。</p>
-<p>默认情况下，每台Redis服务器都是主节点;且一个主节点可以有多个从节点(或没有从节点)，但一个从节点只能有一个主节点。主从复制的作用主要包括:</p>
-<p>1、数据冗余:主从复制实现了数据的热备份,是持久化之外的一种数据冗余方式。</p>
-<p>2、故障恢复:当主节点出现问题时，可以由从节点提供服务，实现快速的故障恢复;实际上是一种服务的冗余。</p>
-<p>3、负载均衡:在主从复制的基础上，配合读写分离，可以由主节点提供写服务，由从节点提供读服务（即写Redis数据时应用连教主节点，读Redis数据时应用连接从节点)，分担服务器负载;尤其是在写少读多的场景下，通过多个从节点分担读负载，可以大大提高Redis服务器的并发量。</p>
-<p>4、高可用(集群)基石:除了上述作用以外，主从复制还是哨兵和集群能够实施的基础，因此说主从复制是Redis高可用的基础.<br>一般来说，要将Redis运用于工程项目中，只使用一台Redis是万万不能的（宕机），原因如下:</p>
-<p>​	1、从结构上，单个Redis服务器会发生单点故障，并且一台服务器需要处理所有的请求负载，压力较大;<br>​	</p>
-<p>​	2、从容量上，单个Redis服务器内存容量有限，就算一台Redis服务器内存容量为256G，也不能将所有内存用作Redis存储内存，一般来说，单台Redis最大使用	内存不应该超过20G。</p>
-<p>​	电商网站上的商品，一般都是一次上传，无数次浏览的，说专业点也就是”多读少写”。对于这种场景，我们可以使如下这种架构:</p>
-<p>​	这是一主三从</p>
-<p><img src="https://s2.loli.net/2022/02/21/UTkJjV2ZfAeiNrE.png" alt="image-20220221153646023"></p>
-<p>​	 3、负载均衡:在主从复制的基础上，配合读写分离，可以由主节点提供写服务，由从节点提供读服务（即写Redis数据时应用连教主节点，读Redis数据时应用连	接 从节点)，分担服务器负载;尤其是在写少读多的场景下，通过多个从节点分担读负载，可以大大提高Redis服务器的并发量。</p>
-<h2 id="一主二从："><a href="#一主二从：" class="headerlink" title="一主二从："></a>一主二从：</h2><p>由于没有多个服务器，就在本机上多开几个redis，当端口什么都不一样，如果在一台服务器是测试：</p>
-<p>在一个主机上测试需要多个配置文件，并且配置文件需要修改</p>
-<p>port     端口</p>
-<p>pidfile   名字</p>
-<p>log   log文件名字</p>
-<p>dump.rdb   名字</p>
-<p>如果开了aof还需要修改aof的配置</p>
-<p>开启三个服务</p>
-<p><strong>查看当前redis</strong></p>
-<p><img src="https://s2.loli.net/2022/02/21/g2UXIiE6lrMvcG5.png" alt="image-20220221235035363"></p>
-<p><strong>默认情况下，每台redis服务器都是主节点</strong>；一般情况下我们只需要配置从机就可以了！</p>
-<p><strong>设置从机:</strong></p>
-<p>注意，认主需要在从机是去认，而不是主机</p>
-<p>我们需要在redis中去设置主机是谁，也就是认老大。假设  主为（6360），二从为（61，62）；</p>
-<p>使用命令：SLAVEOF    IP   端口   ；这就是找谁当老大，这里只演示连接一个，另一个自己去连</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">127.0.0.1:6362&gt; SLAVEOF 127.0.0.1 6360</span><br><span class="line">OK</span><br><span class="line">127.0.0.1:6362&gt; info replication</span><br><span class="line"># Replication</span><br><span class="line">role:slave      #角色从 master  变成了 slave</span><br><span class="line">master_host:127.0.0.1    #主机IP</span><br><span class="line">master_port:6360		#主机端口</span><br><span class="line">master_link_status:up</span><br><span class="line">master_last_io_seconds_ago:6</span><br><span class="line">master_sync_in_progress:0</span><br><span class="line">slave_repl_offset:28</span><br><span class="line">slave_priority:100</span><br><span class="line">slave_read_only:1</span><br><span class="line">connected_slaves:0</span><br><span class="line">master_replid:7f946868186fe88c13209f6a40cb8a41349df88c</span><br><span class="line">master_replid2:0000000000000000000000000000000000000000</span><br><span class="line">master_repl_offset:28</span><br><span class="line">second_repl_offset:-1</span><br><span class="line">repl_backlog_active:1</span><br><span class="line">repl_backlog_size:1048576</span><br><span class="line">repl_backlog_first_byte_offset:1</span><br><span class="line">repl_backlog_histlen:28</span><br><span class="line">127.0.0.1:6362&gt; </span><br><span class="line"></span><br></pre></td></tr></table></figure>
+    <title>redis的安装</title>
+    <url>/2022/05/21/redis%E7%9A%84%E5%AE%89%E8%A3%85/</url>
+    <content><![CDATA[<h2 id="安装Redis"><a href="#安装Redis" class="headerlink" title="安装Redis"></a>安装Redis</h2><h2 id="如何安装redis"><a href="#如何安装redis" class="headerlink" title="如何安装redis"></a>如何安装redis</h2><p>先去redis的官网下安装redis： <a href="http://www.redis.cn/">Redis中文官网</a></p>
+<p>redis不推荐在windos上安装</p>
+<p>CentOS7以上 安装方法： 安装ridis前需要先安装：gcc</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">yum -y install gcc</span><br><span class="line">yum -y install gcc-c++</span><br></pre></td></tr></table></figure>
+
+<p>安装好gcc后解压你的Redis安装包</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">tar -zxvf Reids安装包   #gz为后缀的</span><br></pre></td></tr></table></figure>
+
+<p>解压好后进入到redis里make编译</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">cd rieds</span><br><span class="line">make   #编译</span><br><span class="line">make install  #安装确认一下 也可以不执行</span><br></pre></td></tr></table></figure>
+
+<p>到这就安装完成了！</p>
+<p>我们可以去看下我们安装的程序：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">cd /usr/local/bin</span><br></pre></td></tr></table></figure>
+
+<p>我们自己安装的程序都会在里面！</p>
+<p>我们可以在这里创建一个文件夹存放我们配置文件，这里我们创建一个存放Redis的配置文件，以后修改也是修改这里的配置文件而不修改软件里的，可以确保安全性：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">mkdir SHconfig</span><br><span class="line">cp /opt/Redis/redis-6.0.6/redis.conf SHconfig</span><br></pre></td></tr></table></figure>
+
+<p>redis默认不是后台启动的，需要修改配置文件：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">vim redis.conf</span><br><span class="line">将daemonize no 改为 daemonize yes</span><br><span class="line">设置密码</span><br><span class="line">requirepass foobared</span><br><span class="line">requirepass 123   指定密码123</span><br><span class="line">设置完密码后每次登录操作需要使用auth进行登录才能使用</span><br><span class="line">[root@VM-4-12-centos StudyHardConfig]# redis-cli</span><br><span class="line">127.0.0.1:6379&gt; set key1 q</span><br><span class="line">(error) NOAUTH Authentication required.</span><br><span class="line">127.0.0.1:6379&gt; auth 031215</span><br><span class="line">OK</span><br><span class="line">127.0.0.1:6379&gt; set key1 v1</span><br><span class="line">OK</span><br></pre></td></tr></table></figure>
 
 
 
-<p><strong>查看下主机的身份信息:</strong></p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">127.0.0.1:6360&gt; info replication</span><br><span class="line"># Replication</span><br><span class="line">role:master    #角色</span><br><span class="line">connected_slaves:2   #从机数量</span><br><span class="line">slave0:ip=127.0.0.1,port=6362,state=online,offset=630,lag=0   #从机基本信息</span><br><span class="line">slave1:ip=127.0.0.1,port=6361,state=online,offset=630,lag=1   #从机基本信息</span><br><span class="line">master_replid:7f946868186fe88c13209f6a40cb8a41349df88c</span><br><span class="line">master_replid2:0000000000000000000000000000000000000000</span><br><span class="line">master_repl_offset:630</span><br><span class="line">second_repl_offset:-1</span><br><span class="line">repl_backlog_active:1</span><br><span class="line">repl_backlog_size:1048576</span><br><span class="line">repl_backlog_first_byte_offset:1</span><br><span class="line">repl_backlog_histlen:630</span><br><span class="line">127.0.0.1:6360&gt; </span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<h2 id="启动Redis："><a href="#启动Redis：" class="headerlink" title="启动Redis："></a>启动Redis：</h2><h3 id="在安装目录下执行："><a href="#在安装目录下执行：" class="headerlink" title="在安装目录下执行："></a>在安装目录下执行：</h3><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">redis-server shconfig/redis.conf #后面的参数是表示选用的配置文件</span><br></pre></td></tr></table></figure>
 
+<h3 id="在安装目录下测试连接并退出："><a href="#在安装目录下测试连接并退出：" class="headerlink" title="在安装目录下测试连接并退出："></a>在安装目录下测试连接并退出：</h3><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">[root@VM-4-12-centos bin]# redis-cli -p 6379 #连接</span><br><span class="line">127.0.0.1:6379&gt; ping</span><br><span class="line">PONG</span><br><span class="line">127.0.0.1:6379&gt; set name studyhard</span><br><span class="line">OK</span><br><span class="line">127.0.0.1:6379&gt; get name</span><br><span class="line">&quot;studyhard&quot;</span><br><span class="line">127.0.0.1:6379&gt; keys *</span><br><span class="line">1) &quot;name&quot;</span><br><span class="line">127.0.0.1:6379&gt; shutdown #关闭reids</span><br><span class="line">not connected&gt; exit   #退出</span><br></pre></td></tr></table></figure>
 
-
-
-
-<p><strong>读写与特殊情况演示：</strong></p>
-<p>主机复制些，而从机负责读，尽管主机宕机，从机依旧可以继续读到数据，</p>
-<p><strong>使用主机写：</strong></p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">127.0.0.1:6360&gt; set key 1</span><br><span class="line">OK       #成功</span><br><span class="line"></span><br></pre></td></tr></table></figure>
-
-
-
-<p><strong>使用从机读：</strong></p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">127.0.0.1:6362&gt; get key</span><br><span class="line">&quot;1&quot;    #成功</span><br><span class="line"></span><br></pre></td></tr></table></figure>
-
-
-
-<p><strong>使用从机写：</strong></p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">127.0.0.1:6362&gt; set key1 v1</span><br><span class="line">(error) READONLY You can&#x27;t write against a read only replica.     #不能对只读从机写</span><br><span class="line"></span><br></pre></td></tr></table></figure>
-
-
-
-<p><strong>关闭主机  从机是否还能进行读：</strong></p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">[root@VM-4-12-centos ~]# ps -ef|grep redis     #现在么有主机6360了</span><br><span class="line">root      304584  304199  0 11:38 pts/1    00:00:00 redis-cli -p 6361</span><br><span class="line">root      304652  304153  0 11:38 pts/0    00:00:00 redis-cli -p 6362</span><br><span class="line">root      312884  304314  0 12:11 pts/2    00:00:00 grep --color=auto redis</span><br><span class="line">root     4193030       1  0 Feb21 ?        00:00:47 redis-server 0.0.0.0:6361</span><br><span class="line">root     4193050       1  0 Feb21 ?        00:00:47 redis-server 0.0.0.0:6362</span><br><span class="line">[root@VM-4-12-centos ~]# </span><br><span class="line"></span><br></pre></td></tr></table></figure>
-
-
-
-<p><strong>关闭主机情况下进行读：</strong></p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">127.0.0.1:6362&gt; get key</span><br><span class="line">&quot;1&quot;   #依旧成功</span><br></pre></td></tr></table></figure>
-
-
-
-<p><strong>主机关闭后的角色基本信息</strong></p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">127.0.0.1:6362&gt; info replication</span><br><span class="line"># Replication</span><br><span class="line">role:slave</span><br><span class="line">master_host:127.0.0.1</span><br><span class="line">master_port:6360</span><br><span class="line">master_link_status:down</span><br><span class="line">master_last_io_seconds_ago:-1</span><br><span class="line">master_sync_in_progress:0</span><br><span class="line">slave_repl_offset:1396</span><br><span class="line">master_link_down_since_seconds:125</span><br><span class="line">slave_priority:100</span><br><span class="line">slave_read_only:1</span><br><span class="line">connected_slaves:0</span><br><span class="line">master_replid:7f946868186fe88c13209f6a40cb8a41349df88c</span><br><span class="line">master_replid2:0000000000000000000000000000000000000000</span><br><span class="line">master_repl_offset:1396</span><br><span class="line">second_repl_offset:-1</span><br><span class="line">repl_backlog_active:1</span><br><span class="line">repl_backlog_size:1048576</span><br><span class="line">repl_backlog_first_byte_offset:1</span><br><span class="line">repl_backlog_histlen:1396</span><br></pre></td></tr></table></figure>
-
-
-
-<p><strong>主机重启后写的值是否还能被从机读取到</strong></p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">#主机</span><br><span class="line">[root@VM-4-12-centos ~]# redis-server /usr/local/bin/StudyHardConfig/redis60.conf </span><br><span class="line">[root@VM-4-12-centos ~]# redis-cli -p 6360</span><br><span class="line">127.0.0.1:6360&gt; ping</span><br><span class="line">PONG</span><br><span class="line">127.0.0.1:6360&gt; set key3 v3</span><br><span class="line">OK</span><br><span class="line">127.0.0.1:6360&gt; </span><br><span class="line"></span><br></pre></td></tr></table></figure>
-
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">#从机  依旧可以读取到</span><br><span class="line">127.0.0.1:6362&gt; get key3</span><br><span class="line">&quot;v3&quot;       #成功</span><br><span class="line"></span><br></pre></td></tr></table></figure>
-
-
-
-<p><strong>从机关机的情况下</strong></p>
-<p>可看出从机必须连接主机后才能拿到数据，并且关机后会恢复成主机</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">[root@VM-4-12-centos ~]# ps -ef|grep redis</span><br><span class="line">root      304652  304153  0 11:38 pts/0    00:00:00 redis-cli -p 6362</span><br><span class="line">root      313867       1  0 12:15 ?        00:00:01 redis-server 0.0.0.0:6360</span><br><span class="line">root      313941  304314  0 12:15 pts/2    00:00:00 redis-cli -p 6360</span><br><span class="line">root      318505  304199  0 12:33 pts/1    00:00:00 grep --color=auto redis</span><br><span class="line">root     4193050       1  0 Feb21 ?        00:00:48 redis-server 0.0.0.0:6362</span><br><span class="line">[root@VM-4-12-centos ~]# redis-server /usr/local/bin/StudyHardConfig/redis61.conf </span><br><span class="line">[root@VM-4-12-centos ~]# redis-cli -p 6361</span><br><span class="line">127.0.0.1:6361&gt; ping</span><br><span class="line">PONG</span><br><span class="line">127.0.0.1:6361&gt; get key</span><br><span class="line">(nil)</span><br><span class="line">127.0.0.1:6361&gt; keys *</span><br><span class="line">(empty array)</span><br><span class="line">127.0.0.1:6361&gt; info replication</span><br><span class="line"># Replication</span><br><span class="line">role:master</span><br><span class="line">connected_slaves:0</span><br><span class="line">master_replid:f8962d2e0a43dc37e21770cc7a27e3b7664dbb72</span><br><span class="line">master_replid2:0000000000000000000000000000000000000000</span><br><span class="line">master_repl_offset:0</span><br><span class="line">second_repl_offset:-1</span><br><span class="line">repl_backlog_active:0</span><br><span class="line">repl_backlog_size:1048576</span><br><span class="line">repl_backlog_first_byte_offset:0</span><br><span class="line">repl_backlog_histlen:0</span><br><span class="line">127.0.0.1:6361&gt; SLAVEOF 127.0.0.1 6360</span><br><span class="line">OK</span><br><span class="line">127.0.0.1:6361&gt; keys *</span><br><span class="line">1) &quot;key3&quot;</span><br><span class="line">127.0.0.1:6361&gt; get key3</span><br><span class="line">&quot;v3&quot;</span><br><span class="line">127.0.0.1:6361&gt; </span><br><span class="line"></span><br></pre></td></tr></table></figure>
-
-
-
-
-
-
-
-<p>注意：这种命令行的主从设置是一次性的，关机后就会恢复成主机，想要永久设置需要去配置文件中配置；</p>
-<p>#replicaof <masterip> <masterport>      &#x2F;&#x2F;在配置文件中将该配置注释去掉，并填写上主机的ip 与端口</p>
-<p>如果主机有密码：</p>
-<p>#masterauth <master-password>        &#x2F;&#x2F;在配置文件中将该配置注释去掉，并填写主机密码</p>
-<p><strong>主从复制原理</strong></p>
-<p>Slave启动成功连接到master后会发送一个sync同步命令<br>Master接到命令，启动后台的存盘进程，同时收集所有接收到的用于修改数据集命令，在后台进程执行完毕之后，master将传送整个数据文件到slave，并完成一次完全同步。<br>全量复制:而slave服务在接收到数据库文件数据后,将其存盘并加载到内存中。增量复制:Master继续将新的所有收集到的修改命令依次传给slave，完成同步<br>但是只要是重新连接master，一次完全同步(全量复制）将被自动执行!我们的数据一定可以在从机中看到!</p>
-<p>还有一种主从方式，</p>
-<p>a  – b  – c   这种连接方式，a宕机了我们可以手动将b选为老大，</p>
-<p>命令：SLAVEOF no one   ； 这样将原来是从节点的redis改为主节点</p>
-<p>这里都是手动的；而哨兵模式就是自动选取老大</p>
+<h2 id="当然还有更简单的方法"><a href="#当然还有更简单的方法" class="headerlink" title="当然还有更简单的方法"></a>当然还有更简单的方法</h2><p>使用宝塔面板~~ 十分的快捷</p>
+]]></content>
+      <categories>
+        <category>redis</category>
+      </categories>
+      <tags>
+        <tag>安装</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>redis总笔记</title>
+    <url>/2022/05/21/redis%E6%80%BB%E7%AC%94%E8%AE%B0/</url>
+    <content><![CDATA[<p>这个博主的redis会比较详细，可以去观看它的，还有可以去看看它的视频</p>
+<p>博主：狂神说</p>
+<p><a href="https://www.cnblogs.com/meditation5201314/p/14882992.htm">https://www.cnblogs.com/meditation5201314/p/14882992.htm</a></p>
+<p><strong>发布订阅简单使用：</strong></p>
+<p><img src="https://s2.loli.net/2022/02/21/CilvKd8sFBtSJo9.png" alt="image-20220221140950917"></p>
 ]]></content>
       <tags>
-        <tag>集群</tag>
+        <tag>优秀文章</tag>
       </tags>
   </entry>
   <entry>
@@ -1916,21 +1758,6 @@ public String NullPointerExceptionHandler(Model model, Exception e) &#123;
       <tags>
         <tag>数据库</tag>
       </tags>
-  </entry>
-  <entry>
-    <title>博客技术总结</title>
-    <url>/2022/05/14/%E5%8D%9A%E5%AE%A2%E6%8A%80%E6%9C%AF%E6%80%BB%E7%BB%93/</url>
-    <content><![CDATA[<h1 id="1-技术介绍"><a href="#1-技术介绍" class="headerlink" title="1.技术介绍"></a>1.技术介绍</h1><p>前端：vue + vuex + vue-router + axios + vuetify + element + echarts</p>
-<p>后端：SpringBoot + nginx + SpringSecurity + Swagger2 + MyBatisPlus + Mysql + Redis + elasticsearch + rabbitMQ + MaxWell</p>
-<h1 id="2-运行环境"><a href="#2-运行环境" class="headerlink" title="2.运行环境"></a>2.运行环境</h1><p>开发工具：IDEA</p>
-<p>服务器：阿里云1核2G CentOS8.0以上</p>
-<p>对象存储：阿里云OSS</p>
-<p>全站cdn加速</p>
-<p>cos对象储存</p>
-<p>全站https</p>
-<h1 id="3-项目总结"><a href="#3-项目总结" class="headerlink" title="3.项目总结"></a>3.项目总结</h1><p>此次对博客进行了全方位的升级，前端技术点和后端技术点相比第一，二版提升了不少。</p>
-<p>加入了许多动画过渡效果，并考虑到了一些用户细节（深色模式，图片预览，等），评论加入了表情和分页，提升了用户体验，。后台文章编辑器换为MarkDown，语法更加简洁，新增了草稿箱和自动保存文章等功能。</p>
-]]></content>
   </entry>
   <entry>
     <title>SpringBootSecurity</title>
@@ -2499,5 +2326,178 @@ public CorsConfigurationSource corsConfigurationSource()&#123;
       <tags>
         <tag>安全框架</tag>
       </tags>
+  </entry>
+  <entry>
+    <title>redis的持久化</title>
+    <url>/2022/05/20/redis%E7%9A%84%E6%8C%81%E4%B9%85%E5%8C%96/</url>
+    <content><![CDATA[<h1 id="Redis的持久化"><a href="#Redis的持久化" class="headerlink" title="Redis的持久化"></a>Redis的持久化</h1><p>redis是内存数据库，如果数据不持久化，当程序关闭时将会丢失数据，所以Redis提供了持久化</p>
+<h3 id="RDB"><a href="#RDB" class="headerlink" title="RDB"></a>RDB</h3><p><strong>什么是RDB？</strong></p>
+<p><img src="https://s2.loli.net/2022/02/20/IeEx1JmZS82vk9s.png" alt="image-20220220232522977"></p>
+<p>在指定的时间间隔内将内存中的数据集快照写入磁盘，也就是行话讲的Snapshot快照，它恢复时是将快照文件直接读到内存里。Redis会单独创建 ( fork )一个子进程来进行持久化，会先将数据写入到一个临时文件中，待持久化过程都结束了，再用这个临时文件替换上次持久化好的文件。整个过程中，主进程是不进行任何IO操作的。这就确保了极高的性能。如果需要进行大规模数据的恢复，且对于数据恢复的完整性不是非常敏感，那RDB方式要比AOF方式更加的高效。RDB的缺点是最后一次持久化后的数据可能丢失。我们默认的就是RDB，一般情况不需要修改这个配置！</p>
+<p>在生成环境我们将会对这个文件进行备份</p>
+<p><strong>缺点：</strong></p>
+<p>如果在最后一次宕机了，就没有办法去持久化了，需要一定的时间间隔</p>
+<p>在创建frok进程的时候，会占用一定的空间</p>
+<p><strong>优点：</strong></p>
+<p>RDB比AOF更加的高效，适合大规模恢复数据</p>
+<p>RDB保存的文件是dump.rdb   ，在配置文件中有讲，都是在配置文件中设置的</p>
+<p><strong>持久化触发机制：</strong></p>
+<p>注意：kill的情况下不会触发</p>
+<p>1,save的规则满足的情况下会触发rdb规则</p>
+<p>2,执行flushall命令也会触发rdb规则</p>
+<p>3,当退出redis时也会触发rdb规则   </p>
+<p>会生成一个dump.rdb文件，redis在重启时会读取文件，恢复数据，如果删除，关闭后就不会有之前的数据了</p>
+<p><strong>如恢复rdb文件：</strong></p>
+<p>只需要将rdb文件放置redis启动目录下，</p>
+<p>dump.rdb放在redis-server同级目录</p>
+<h2 id="AOF"><a href="#AOF" class="headerlink" title="AOF"></a>AOF</h2><p>它会将我们所有的命令记录下来，history，恢复的时候就会把这个文件全部执行一遍！</p>
+<p><strong>在redis4.0以后支持混合模式，rdb与aof同时开启会优先aof</strong></p>
+<p><img src="https://s2.loli.net/2022/02/20/r1N7HEity9OXqdA.png" alt="image-20220220233046582"></p>
+<p>以日志的形式来记录每个写操作，将Redis执行过的所有指令记录下来(读操作不记录），只许追加文件但不可以改写文件，redis启动之初会读取该文件重新构建数据，换言之，redis重启的话就根据日志文件的内容将写指令从前到后执行一次以完成数据的恢复工作</p>
+<p><strong>默认不开AOF，需要去配置文件中手动开启</strong></p>
+<p><strong>Aof保存的是appendonly.aof 文件</strong></p>
+<p>文件同样可以在配置文件中修改:</p>
+<p>&#x2F;&#x2F;The name of the append only file (default: “appendonly.aof”)</p>
+<p>​	appendfilename “appendonly.aof”</p>
+<p><strong>当我们开启时输入了命令后就会生成aod文件：</strong></p>
+<p><img src="https://s2.loli.net/2022/02/21/lDiAuKGo345PORI.png" alt="image-20220221100633418"></p>
+<p><strong>文件的内容为：</strong></p>
+<p><img src="https://s2.loli.net/2022/02/22/DGtZmALfOyTziFh.png" alt="image-20220222225551886"></p>
+<p>这个文件是能破坏的，破坏后启动redis会报错 ，但是系统会生成一个备用文件，我们可以使用它来修改appendonly.aof</p>
+<p>破坏后登录：</p>
+<p><img src="https://s2.loli.net/2022/02/21/JuwqZhENCfp9LIn.png" alt="image-20220221102935481"></p>
+<p>破坏后是可以使用这个文件进行恢复的</p>
+<p><img src="https://s2.loli.net/2022/02/21/X4TEjb1n5VfL2Fk.png" alt="image-20220221103321224"></p>
+<p>使用命令：redis-check-aof –fix appendonly.aof  进行恢复，恢复后 就能正常登录了</p>
+<p>注意：要在appendonly.aof文件位置使用该命令</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">[root@VM-4-12-centos ~]# redis-check-aof --fix appendonly.aof</span><br><span class="line">Cannot open file: appendonly.aof</span><br><span class="line">[root@VM-4-12-centos ~]# cd /usr/local/bin</span><br><span class="line">[root@VM-4-12-centos bin]# redis-check-aof --fix appendonly.aof</span><br><span class="line">0x              3c: Expected \r\n, got: 7765</span><br><span class="line">AOF analyzed: size=143, ok_up_to=52, diff=91</span><br><span class="line">This will shrink the AOF from 143 bytes, with 91 bytes, to 52 bytes</span><br><span class="line">Continue? [y/N]: y</span><br><span class="line">Successfully truncated AOF</span><br><span class="line">[root@VM-4-12-centos bin]# </span><br></pre></td></tr></table></figure>
+
+]]></content>
+      <categories>
+        <category>redis</category>
+      </categories>
+      <tags>
+        <tag>数据库</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>redis集群（主从复制）</title>
+    <url>/2022/05/21/redis%E9%9B%86%E7%BE%A4%EF%BC%88%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6%EF%BC%89/</url>
+    <content><![CDATA[<h1 id="Redis主从复制："><a href="#Redis主从复制：" class="headerlink" title="Redis主从复制："></a>Redis主从复制：</h1><h2 id="Redis主从复制概念"><a href="#Redis主从复制概念" class="headerlink" title="Redis主从复制概念"></a>Redis主从复制概念</h2><p>主从复制,是指将一台Redis服务器的数据，复制到其他的Redis服务器。前者称为主节点(master&#x2F;leader)，后者称为从节点(slave&#x2F;follower);数据的复制是单向的，只能由主节点到从节点。Master以写为主，Slave以读为主。</p>
+<p>默认情况下，每台Redis服务器都是主节点;且一个主节点可以有多个从节点(或没有从节点)，但一个从节点只能有一个主节点。主从复制的作用主要包括:</p>
+<p>1、数据冗余:主从复制实现了数据的热备份,是持久化之外的一种数据冗余方式。</p>
+<p>2、故障恢复:当主节点出现问题时，可以由从节点提供服务，实现快速的故障恢复;实际上是一种服务的冗余。</p>
+<p>3、负载均衡:在主从复制的基础上，配合读写分离，可以由主节点提供写服务，由从节点提供读服务（即写Redis数据时应用连教主节点，读Redis数据时应用连接从节点)，分担服务器负载;尤其是在写少读多的场景下，通过多个从节点分担读负载，可以大大提高Redis服务器的并发量。</p>
+<p>4、高可用(集群)基石:除了上述作用以外，主从复制还是哨兵和集群能够实施的基础，因此说主从复制是Redis高可用的基础.<br>一般来说，要将Redis运用于工程项目中，只使用一台Redis是万万不能的（宕机），原因如下:</p>
+<p>​	1、从结构上，单个Redis服务器会发生单点故障，并且一台服务器需要处理所有的请求负载，压力较大;<br>​	</p>
+<p>​	2、从容量上，单个Redis服务器内存容量有限，就算一台Redis服务器内存容量为256G，也不能将所有内存用作Redis存储内存，一般来说，单台Redis最大使用	内存不应该超过20G。</p>
+<p>​	电商网站上的商品，一般都是一次上传，无数次浏览的，说专业点也就是”多读少写”。对于这种场景，我们可以使如下这种架构:</p>
+<p>​	这是一主三从</p>
+<p><img src="https://s2.loli.net/2022/02/21/UTkJjV2ZfAeiNrE.png" alt="image-20220221153646023"></p>
+<p>​	 3、负载均衡:在主从复制的基础上，配合读写分离，可以由主节点提供写服务，由从节点提供读服务（即写Redis数据时应用连教主节点，读Redis数据时应用连	接 从节点)，分担服务器负载;尤其是在写少读多的场景下，通过多个从节点分担读负载，可以大大提高Redis服务器的并发量。</p>
+<h2 id="一主二从："><a href="#一主二从：" class="headerlink" title="一主二从："></a>一主二从：</h2><p>由于没有多个服务器，就在本机上多开几个redis，当端口什么都不一样，如果在一台服务器是测试：</p>
+<p>在一个主机上测试需要多个配置文件，并且配置文件需要修改</p>
+<p>port     端口</p>
+<p>pidfile   名字</p>
+<p>log   log文件名字</p>
+<p>dump.rdb   名字</p>
+<p>如果开了aof还需要修改aof的配置</p>
+<p>开启三个服务</p>
+<p><strong>查看当前redis</strong></p>
+<p><img src="https://s2.loli.net/2022/02/21/g2UXIiE6lrMvcG5.png" alt="image-20220221235035363"></p>
+<p><strong>默认情况下，每台redis服务器都是主节点</strong>；一般情况下我们只需要配置从机就可以了！</p>
+<p><strong>设置从机:</strong></p>
+<p>注意，认主需要在从机是去认，而不是主机</p>
+<p>我们需要在redis中去设置主机是谁，也就是认老大。假设  主为（6360），二从为（61，62）；</p>
+<p>使用命令：SLAVEOF    IP   端口   ；这就是找谁当老大，这里只演示连接一个，另一个自己去连</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">127.0.0.1:6362&gt; SLAVEOF 127.0.0.1 6360</span><br><span class="line">OK</span><br><span class="line">127.0.0.1:6362&gt; info replication</span><br><span class="line"># Replication</span><br><span class="line">role:slave      #角色从 master  变成了 slave</span><br><span class="line">master_host:127.0.0.1    #主机IP</span><br><span class="line">master_port:6360		#主机端口</span><br><span class="line">master_link_status:up</span><br><span class="line">master_last_io_seconds_ago:6</span><br><span class="line">master_sync_in_progress:0</span><br><span class="line">slave_repl_offset:28</span><br><span class="line">slave_priority:100</span><br><span class="line">slave_read_only:1</span><br><span class="line">connected_slaves:0</span><br><span class="line">master_replid:7f946868186fe88c13209f6a40cb8a41349df88c</span><br><span class="line">master_replid2:0000000000000000000000000000000000000000</span><br><span class="line">master_repl_offset:28</span><br><span class="line">second_repl_offset:-1</span><br><span class="line">repl_backlog_active:1</span><br><span class="line">repl_backlog_size:1048576</span><br><span class="line">repl_backlog_first_byte_offset:1</span><br><span class="line">repl_backlog_histlen:28</span><br><span class="line">127.0.0.1:6362&gt; </span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+
+
+<p><strong>查看下主机的身份信息:</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">127.0.0.1:6360&gt; info replication</span><br><span class="line"># Replication</span><br><span class="line">role:master    #角色</span><br><span class="line">connected_slaves:2   #从机数量</span><br><span class="line">slave0:ip=127.0.0.1,port=6362,state=online,offset=630,lag=0   #从机基本信息</span><br><span class="line">slave1:ip=127.0.0.1,port=6361,state=online,offset=630,lag=1   #从机基本信息</span><br><span class="line">master_replid:7f946868186fe88c13209f6a40cb8a41349df88c</span><br><span class="line">master_replid2:0000000000000000000000000000000000000000</span><br><span class="line">master_repl_offset:630</span><br><span class="line">second_repl_offset:-1</span><br><span class="line">repl_backlog_active:1</span><br><span class="line">repl_backlog_size:1048576</span><br><span class="line">repl_backlog_first_byte_offset:1</span><br><span class="line">repl_backlog_histlen:630</span><br><span class="line">127.0.0.1:6360&gt; </span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+
+
+
+
+<p><strong>读写与特殊情况演示：</strong></p>
+<p>主机复制些，而从机负责读，尽管主机宕机，从机依旧可以继续读到数据，</p>
+<p><strong>使用主机写：</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">127.0.0.1:6360&gt; set key 1</span><br><span class="line">OK       #成功</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+
+
+<p><strong>使用从机读：</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">127.0.0.1:6362&gt; get key</span><br><span class="line">&quot;1&quot;    #成功</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+
+
+<p><strong>使用从机写：</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">127.0.0.1:6362&gt; set key1 v1</span><br><span class="line">(error) READONLY You can&#x27;t write against a read only replica.     #不能对只读从机写</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+
+
+<p><strong>关闭主机  从机是否还能进行读：</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">[root@VM-4-12-centos ~]# ps -ef|grep redis     #现在么有主机6360了</span><br><span class="line">root      304584  304199  0 11:38 pts/1    00:00:00 redis-cli -p 6361</span><br><span class="line">root      304652  304153  0 11:38 pts/0    00:00:00 redis-cli -p 6362</span><br><span class="line">root      312884  304314  0 12:11 pts/2    00:00:00 grep --color=auto redis</span><br><span class="line">root     4193030       1  0 Feb21 ?        00:00:47 redis-server 0.0.0.0:6361</span><br><span class="line">root     4193050       1  0 Feb21 ?        00:00:47 redis-server 0.0.0.0:6362</span><br><span class="line">[root@VM-4-12-centos ~]# </span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+
+
+<p><strong>关闭主机情况下进行读：</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">127.0.0.1:6362&gt; get key</span><br><span class="line">&quot;1&quot;   #依旧成功</span><br></pre></td></tr></table></figure>
+
+
+
+<p><strong>主机关闭后的角色基本信息</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">127.0.0.1:6362&gt; info replication</span><br><span class="line"># Replication</span><br><span class="line">role:slave</span><br><span class="line">master_host:127.0.0.1</span><br><span class="line">master_port:6360</span><br><span class="line">master_link_status:down</span><br><span class="line">master_last_io_seconds_ago:-1</span><br><span class="line">master_sync_in_progress:0</span><br><span class="line">slave_repl_offset:1396</span><br><span class="line">master_link_down_since_seconds:125</span><br><span class="line">slave_priority:100</span><br><span class="line">slave_read_only:1</span><br><span class="line">connected_slaves:0</span><br><span class="line">master_replid:7f946868186fe88c13209f6a40cb8a41349df88c</span><br><span class="line">master_replid2:0000000000000000000000000000000000000000</span><br><span class="line">master_repl_offset:1396</span><br><span class="line">second_repl_offset:-1</span><br><span class="line">repl_backlog_active:1</span><br><span class="line">repl_backlog_size:1048576</span><br><span class="line">repl_backlog_first_byte_offset:1</span><br><span class="line">repl_backlog_histlen:1396</span><br></pre></td></tr></table></figure>
+
+
+
+<p><strong>主机重启后写的值是否还能被从机读取到</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">#主机</span><br><span class="line">[root@VM-4-12-centos ~]# redis-server /usr/local/bin/StudyHardConfig/redis60.conf </span><br><span class="line">[root@VM-4-12-centos ~]# redis-cli -p 6360</span><br><span class="line">127.0.0.1:6360&gt; ping</span><br><span class="line">PONG</span><br><span class="line">127.0.0.1:6360&gt; set key3 v3</span><br><span class="line">OK</span><br><span class="line">127.0.0.1:6360&gt; </span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">#从机  依旧可以读取到</span><br><span class="line">127.0.0.1:6362&gt; get key3</span><br><span class="line">&quot;v3&quot;       #成功</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+
+
+<p><strong>从机关机的情况下</strong></p>
+<p>可看出从机必须连接主机后才能拿到数据，并且关机后会恢复成主机</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">[root@VM-4-12-centos ~]# ps -ef|grep redis</span><br><span class="line">root      304652  304153  0 11:38 pts/0    00:00:00 redis-cli -p 6362</span><br><span class="line">root      313867       1  0 12:15 ?        00:00:01 redis-server 0.0.0.0:6360</span><br><span class="line">root      313941  304314  0 12:15 pts/2    00:00:00 redis-cli -p 6360</span><br><span class="line">root      318505  304199  0 12:33 pts/1    00:00:00 grep --color=auto redis</span><br><span class="line">root     4193050       1  0 Feb21 ?        00:00:48 redis-server 0.0.0.0:6362</span><br><span class="line">[root@VM-4-12-centos ~]# redis-server /usr/local/bin/StudyHardConfig/redis61.conf </span><br><span class="line">[root@VM-4-12-centos ~]# redis-cli -p 6361</span><br><span class="line">127.0.0.1:6361&gt; ping</span><br><span class="line">PONG</span><br><span class="line">127.0.0.1:6361&gt; get key</span><br><span class="line">(nil)</span><br><span class="line">127.0.0.1:6361&gt; keys *</span><br><span class="line">(empty array)</span><br><span class="line">127.0.0.1:6361&gt; info replication</span><br><span class="line"># Replication</span><br><span class="line">role:master</span><br><span class="line">connected_slaves:0</span><br><span class="line">master_replid:f8962d2e0a43dc37e21770cc7a27e3b7664dbb72</span><br><span class="line">master_replid2:0000000000000000000000000000000000000000</span><br><span class="line">master_repl_offset:0</span><br><span class="line">second_repl_offset:-1</span><br><span class="line">repl_backlog_active:0</span><br><span class="line">repl_backlog_size:1048576</span><br><span class="line">repl_backlog_first_byte_offset:0</span><br><span class="line">repl_backlog_histlen:0</span><br><span class="line">127.0.0.1:6361&gt; SLAVEOF 127.0.0.1 6360</span><br><span class="line">OK</span><br><span class="line">127.0.0.1:6361&gt; keys *</span><br><span class="line">1) &quot;key3&quot;</span><br><span class="line">127.0.0.1:6361&gt; get key3</span><br><span class="line">&quot;v3&quot;</span><br><span class="line">127.0.0.1:6361&gt; </span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+
+
+
+
+
+
+<p>注意：这种命令行的主从设置是一次性的，关机后就会恢复成主机，想要永久设置需要去配置文件中配置；</p>
+<p>#replicaof <masterip> <masterport>      &#x2F;&#x2F;在配置文件中将该配置注释去掉，并填写上主机的ip 与端口</p>
+<p>如果主机有密码：</p>
+<p>#masterauth <master-password>        &#x2F;&#x2F;在配置文件中将该配置注释去掉，并填写主机密码</p>
+<p><strong>主从复制原理</strong></p>
+<p>Slave启动成功连接到master后会发送一个sync同步命令<br>Master接到命令，启动后台的存盘进程，同时收集所有接收到的用于修改数据集命令，在后台进程执行完毕之后，master将传送整个数据文件到slave，并完成一次完全同步。<br>全量复制:而slave服务在接收到数据库文件数据后,将其存盘并加载到内存中。增量复制:Master继续将新的所有收集到的修改命令依次传给slave，完成同步<br>但是只要是重新连接master，一次完全同步(全量复制）将被自动执行!我们的数据一定可以在从机中看到!</p>
+<p>还有一种主从方式，</p>
+<p>a  – b  – c   这种连接方式，a宕机了我们可以手动将b选为老大，</p>
+<p>命令：SLAVEOF no one   ； 这样将原来是从节点的redis改为主节点</p>
+<p>这里都是手动的；而哨兵模式就是自动选取老大</p>
+]]></content>
+      <tags>
+        <tag>集群</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>博客技术总结</title>
+    <url>/2022/05/14/%E5%8D%9A%E5%AE%A2%E6%8A%80%E6%9C%AF%E6%80%BB%E7%BB%93/</url>
+    <content><![CDATA[<h1 id="1-技术介绍"><a href="#1-技术介绍" class="headerlink" title="1.技术介绍"></a>1.技术介绍</h1><p>前端：vue + vuex + vue-router + axios + vuetify + element + echarts</p>
+<p>后端：SpringBoot + nginx + SpringSecurity + Swagger2 + MyBatisPlus + Mysql + Redis + elasticsearch + rabbitMQ + MaxWell</p>
+<h1 id="2-运行环境"><a href="#2-运行环境" class="headerlink" title="2.运行环境"></a>2.运行环境</h1><p>开发工具：IDEA</p>
+<p>服务器：阿里云1核2G CentOS8.0以上</p>
+<p>对象存储：阿里云OSS</p>
+<p>全站cdn加速</p>
+<p>cos对象储存</p>
+<p>全站https</p>
+<h1 id="3-项目总结"><a href="#3-项目总结" class="headerlink" title="3.项目总结"></a>3.项目总结</h1><p>此次对博客进行了全方位的升级，前端技术点和后端技术点相比第一，二版提升了不少。</p>
+<p>加入了许多动画过渡效果，并考虑到了一些用户细节（深色模式，图片预览，等），评论加入了表情和分页，提升了用户体验，。后台文章编辑器换为MarkDown，语法更加简洁，新增了草稿箱和自动保存文章等功能。</p>
+]]></content>
   </entry>
 </search>
