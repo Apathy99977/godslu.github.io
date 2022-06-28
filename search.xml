@@ -1,47 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <search>
   <entry>
-    <title>Linux快速入门</title>
-    <url>/2022/05/25/Linux%E5%BF%AB%E9%80%9F%E5%85%A5%E9%97%A8/</url>
-    <content><![CDATA[<p>前言：</p>
-<p>本教程是根据B站Up主狂神说记得笔记，有需要查看视频的小伙伴可以去看看狂神的视频，真的非常好！</p>
-<p>狂神说Linux视频地址：<a href="https://www.bilibili.com/video/BV187411y7hF?vd_source=ac95d1e4dae5cfd66da910c649ab5384">https://www.bilibili.com/video/BV187411y7hF?vd_source=ac95d1e4dae5cfd66da910c649ab5384</a></p>
-<h1 id="服务器相关知识"><a href="#服务器相关知识" class="headerlink" title="服务器相关知识"></a>服务器相关知识</h1><blockquote>
-<p>为什么程序员都需要一个自己的服务器？</p>
-</blockquote>
-<ol>
-<li>作为一个程序员，必须要学会发布自己的网站和项目!</li>
-<li>练习Linux操作</li>
-<li>把自己的远程仓库、远程数据库、远程tomcat等搭建在服务器上</li>
-<li>练习Linux进行任意的环境部署操作! 大部人都是Window下开发，不熟悉Linux</li>
-</ol>
-<blockquote>
-<p>如何购买服务器？</p>
-</blockquote>
-<p>新手可以先去阿里云领一个免费的服务器先用着</p>
-<p>阿里云新人服务器领取地址：<br><a href="https://imgtu.com/i/jFDbm6"><img src="https://s1.ax1x.com/2022/06/25/jFDbm6.jpg" alt="jFDbm6.jpg"></a><br>学生的话后期可以购买学生机，阿里云只有未满24周岁都可以享受学生机优惠</p>
-<p>优惠地址：<a href="https://www.aliyun.com/minisite/goods?userCode=0phtycgr">https://www.aliyun.com/minisite/goods?userCode=0phtycgr</a></p>
-<p>购买服务器时系统选择CentOS 推荐版本7.X，因为8.0之后改了好多命令，云盘的话选择40G就够用了，如下图所示：<br><a href="https://imgtu.com/i/jFDzpd"><img src="https://s1.ax1x.com/2022/06/25/jFDzpd.jpg" alt="jFDzpd.jpg"></a></p>
-<blockquote>
-<p>买完服务器之后该干什么？</p>
-</blockquote>
-<p>首先服务器就是一个远程的Linux</p>
-<ol>
-<li>在阿里云购买服务器需要开通安全组设置去进行端口的映射，比如8080或者3306<br><a href="https://imgtu.com/i/jFcwxH"><img src="https://s1.ax1x.com/2022/06/25/jFcwxH.jpg" alt="jFcwxH.jpg"></a></li>
-<li>获取服务器的公网ip地址，修改实例名称和密码，记住第一次修改需要重启，修改后就可以使用Xshell进行远程连接了</li>
-</ol>
-]]></content>
-      <categories>
-        <category>Linux</category>
-        <category>运维</category>
-      </categories>
-      <tags>
-        <tag>Linux</tag>
-        <tag>运维</tag>
-        <tag>教程</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>Redis事务</title>
     <url>/2022/05/21/Redis%E4%BA%8B%E5%8A%A1/</url>
     <content><![CDATA[<h2 id="Redis事务"><a href="#Redis事务" class="headerlink" title="Redis事务"></a>Redis事务</h2><p>Redis事务本质：一组命令的集合！一个事务中的所有命令都会被序列号，在事务执行过程中，会按照顺序执行！ 一次性，顺序性，排他性！执行一些列的命令！</p>
@@ -175,81 +134,16 @@
       </tags>
   </entry>
   <entry>
-    <title>Redis的三大特殊类型</title>
-    <url>/2022/05/21/Redis%E7%9A%84%E4%B8%89%E5%A4%A7%E7%89%B9%E6%AE%8A%E7%B1%BB%E5%9E%8B/</url>
-    <content><![CDATA[<h2 id="Redis的三大特殊类型"><a href="#Redis的三大特殊类型" class="headerlink" title="Redis的三大特殊类型"></a>Redis的三大特殊类型</h2><h2 id="geospatial地理位置"><a href="#geospatial地理位置" class="headerlink" title="geospatial地理位置"></a>geospatial地理位置</h2><p>使用场景：朋友定位，附近的人，打车距离计数</p>
-<p>Redis的Geo在Redis3.2版本就推出了</p>
-<p>查询经度纬度：<a href="https://www.toolnb.com/tools/gps.html">https://www.toolnb.com/tools/gps.html</a></p>
-<h3 id="相关命令："><a href="#相关命令：" class="headerlink" title="相关命令："></a>相关命令：</h3><h4 id="GEOADD（添加地理位置）"><a href="#GEOADD（添加地理位置）" class="headerlink" title="GEOADD（添加地理位置）"></a>GEOADD（添加地理位置）</h4><p>将指定的地理空间位置（经度、纬度、名称）添加到指定的key中 保存精度维度： 规则：南极北极不能添加，我们一般都是下载城市数据，使用java程序导入 参数：key-value（经度、纬度、名称）</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">127.0.0.1:6379&gt; geoadd china:city 116.405289 39.904987 beijin</span><br><span class="line">(integer) 1</span><br><span class="line">127.0.0.1:6379&gt; geoadd china:city 102.71 25.04 kunming</span><br><span class="line">(integer) 1</span><br><span class="line">127.0.0.1:6379&gt; geoadd china:city 115.89 28.67 nanchang</span><br><span class="line">(integer) 1</span><br><span class="line">127.0.0.1:6379&gt; geoadd china:city 121.47 31.23 shanghai</span><br><span class="line">(integer) 1</span><br><span class="line">127.0.0.1:6379&gt; geoadd china:city 120.15 30.28 hanzuo</span><br><span class="line">(integer) 1</span><br><span class="line">127.0.0.1:6379&gt; geoadd china:city 113.28 23.12 guanzuo</span><br><span class="line">(integer) 1</span><br><span class="line">127.0.0.1:6379&gt; geoadd china:city 104.06 30.65 chengdu 123.42 41.79 shenyang</span><br><span class="line">(integer) 2</span><br></pre></td></tr></table></figure>
-
-<h4 id="GEOPOS（读取存入的地理位置）"><a href="#GEOPOS（读取存入的地理位置）" class="headerlink" title="GEOPOS（读取存入的地理位置）"></a>GEOPOS（读取存入的地理位置）</h4><p>注意是直线距离</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">127.0.0.1:6379&gt; GEOPOS china:city beijin</span><br><span class="line">1) 1) &quot;116.40528827905654907&quot;</span><br><span class="line">   2) &quot;39.90498588819134085&quot;</span><br><span class="line">127.0.0.1:6379&gt; GEOPOS china:city beijin hanzuo</span><br><span class="line">1) 1) &quot;116.40528827905654907&quot;</span><br><span class="line">   2) &quot;39.90498588819134085&quot;</span><br><span class="line">2) 1) &quot;120.15000075101852417&quot;</span><br><span class="line">   2) &quot;30.2800007575645509&quot;</span><br><span class="line">127.0.0.1:6379&gt; </span><br></pre></td></tr></table></figure>
-
-<h4 id="GEODIST（返回两个维度之间的距离）"><a href="#GEODIST（返回两个维度之间的距离）" class="headerlink" title="GEODIST（返回两个维度之间的距离）"></a>GEODIST（返回两个维度之间的距离）</h4><p>127.0.0.1:6379&gt; GEODIST china:city beijin hanzuo km “1123.1795” 末尾是输入以那种发生计数距离，如显示km还是m GEOHASH</p>
-<h4 id="GEORADIUS（以给定的极度伟度为中心，找出给定半径的城市）"><a href="#GEORADIUS（以给定的极度伟度为中心，找出给定半径的城市）" class="headerlink" title="GEORADIUS（以给定的极度伟度为中心，找出给定半径的城市）"></a>GEORADIUS（以给定的极度伟度为中心，找出给定半径的城市）</h4><p>注意：找的是已在集合中的地理位置</p>
-<p>georadius key 精度 维度 距离 单位</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">127.0.0.1:6379&gt; georadius china:city 110 30 1000 km</span><br><span class="line">1) &quot;kunming&quot;</span><br><span class="line">2) &quot;chengdu&quot;</span><br><span class="line">3) &quot;guanzuo&quot;</span><br><span class="line">4) &quot;nanchang&quot;</span><br><span class="line">5) &quot;hanzuo&quot;</span><br></pre></td></tr></table></figure>
-
-
-
-<p>加上withdist会显示直线距离</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">127.0.0.1:6379&gt; georadius china:city 110 30 1000 km withdist</span><br><span class="line">1) 1) &quot;kunming&quot;</span><br><span class="line">   2) &quot;905.9321&quot;</span><br><span class="line">2) 1) &quot;chengdu&quot;</span><br><span class="line">   2) &quot;574.7802&quot;</span><br><span class="line">3) 1) &quot;guanzuo&quot;</span><br><span class="line">   2) &quot;831.7713&quot;</span><br><span class="line">4) 1) &quot;nanchang&quot;</span><br><span class="line">   2) &quot;589.8814&quot;</span><br><span class="line">5) 1) &quot;hanzuo&quot;</span><br><span class="line">   2) &quot;976.4868&quot;</span><br></pre></td></tr></table></figure>
-
-
-
-<p>加上withcoord 显示经度纬度</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">127.0.0.1:6379&gt; georadius china:city 110 30 1000 km withcoord</span><br><span class="line">1) 1) &quot;kunming&quot;</span><br><span class="line">   2) 1) &quot;102.70999878644943237&quot;</span><br><span class="line">      2) &quot;25.03999958679589355&quot;</span><br><span class="line">2) 1) &quot;chengdu&quot;</span><br><span class="line">   2) 1) &quot;104.05999749898910522&quot;</span><br><span class="line">      2) &quot;30.6499990746355806&quot;</span><br><span class="line">3) 1) &quot;guanzuo&quot;</span><br><span class="line">   2) 1) &quot;113.27999979257583618&quot;</span><br><span class="line">      2) &quot;23.1199990030198208&quot;</span><br><span class="line">4) 1) &quot;nanchang&quot;</span><br><span class="line">   2) 1) &quot;115.88999837636947632&quot;</span><br><span class="line">      2) &quot;28.66999910629679249&quot;</span><br><span class="line">5) 1) &quot;hanzuo&quot;</span><br><span class="line">   2) 1) &quot;120.15000075101852417&quot;</span><br><span class="line">      2) &quot;30.2800007575645509&quot;</span><br></pre></td></tr></table></figure>
-
-
-
-<p>加上count * 可以限制显示几个</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">127.0.0.1:6379&gt; georadius china:city 110 30 1000 km  count 2</span><br><span class="line">1) &quot;chengdu&quot;</span><br><span class="line">2) &quot;nanchang&quot;</span><br></pre></td></tr></table></figure>
-
-
-
-<p>withdist，withcoord，count *，在末尾可随意组合添加</p>
-<h4 id="GEORADIUSBYMEMBER（根据指定的城市，查询他的半径的元素）"><a href="#GEORADIUSBYMEMBER（根据指定的城市，查询他的半径的元素）" class="headerlink" title="GEORADIUSBYMEMBER（根据指定的城市，查询他的半径的元素）"></a>GEORADIUSBYMEMBER（根据指定的城市，查询他的半径的元素）</h4><p>使用集合中的元素查询</p>
-<p>普通查询：GEORADIUSBYMEMBER key 距离 单位</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">127.0.0.1:6379&gt; GEORADIUSBYMEMBER china:city beijin 1000 km  </span><br><span class="line">1) &quot;beijin&quot;</span><br><span class="line">2) &quot;shenyang&quot;</span><br></pre></td></tr></table></figure>
-
-
-
-<p>加上withdist会显示直线距离</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">127.0.0.1:6379&gt; GEORADIUSBYMEMBER china:city beijin 1000 km withdist</span><br><span class="line">1) 1) &quot;beijin&quot;</span><br><span class="line">   2) &quot;0.0000&quot;</span><br><span class="line">2) 1) &quot;shenyang&quot;</span><br><span class="line">   2) &quot;626.1044&quot;</span><br></pre></td></tr></table></figure>
-
-
-
-<p>加上withcoord 显示经度纬度</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">127.0.0.1:6379&gt; GEORADIUSBYMEMBER china:city beijin 1000 km withcoord</span><br><span class="line">1) 1) &quot;beijin&quot;</span><br><span class="line">   2) 1) &quot;116.40528827905654907&quot;</span><br><span class="line">      2) &quot;39.90498588819134085&quot;</span><br><span class="line">2) 1) &quot;shenyang&quot;</span><br><span class="line">   2) 1) &quot;123.41999977827072144&quot;</span><br><span class="line">      2) &quot;41.78999971580505246&quot;</span><br></pre></td></tr></table></figure>
-
-
-
-<p>加上count * 可以限制显示几个</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">127.0.0.1:6379&gt; GEORADIUSBYMEMBER china:city beijin 1000 km count 1</span><br><span class="line">1) &quot;beijin&quot;</span><br></pre></td></tr></table></figure>
-
-<p>withdist，withcoord，count *，在末尾可随意组合添加</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">127.0.0.1:6379&gt; GEORADIUSBYMEMBER china:city beijin 1500 km withcoord withdist count 2</span><br><span class="line">1) 1) &quot;beijin&quot;</span><br><span class="line">   2) &quot;0.0000&quot;</span><br><span class="line">   3) 1) &quot;116.40528827905654907&quot;</span><br><span class="line">      2) &quot;39.90498588819134085&quot;</span><br><span class="line">2) 1) &quot;shenyang&quot;</span><br><span class="line">   2) &quot;626.1044&quot;</span><br><span class="line">   3) 1) &quot;123.41999977827072144&quot;</span><br><span class="line">      2) &quot;41.78999971580505246&quot;</span><br></pre></td></tr></table></figure>
-
-
-
-<h4 id="GEOHASH（返回11个字符的Geohash字符串）"><a href="#GEOHASH（返回11个字符的Geohash字符串）" class="headerlink" title="GEOHASH（返回11个字符的Geohash字符串）"></a>GEOHASH（返回11个字符的Geohash字符串）</h4><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">127.0.0.1:6379&gt; GEOHASH china:city beijin </span><br><span class="line">1) &quot;wx4g0b7xru0&quot;</span><br></pre></td></tr></table></figure>
-
-<p>GEO底层的实现原来其实就是Zset,我们可以使用Zset命令来操作GEO 如： ZRANGE china:city 0 -1 #显示指定geo可以的数据 127.0.0.1:6379&gt; zrem china:city chengdu #删除</p>
-<h2 id="Hyperloglog"><a href="#Hyperloglog" class="headerlink" title="Hyperloglog"></a>Hyperloglog</h2><h3 id="介绍"><a href="#介绍" class="headerlink" title="介绍"></a>介绍</h3><p>Redis2.8.9版本就跟新了Hyperlogog数据结构！ Redis Htperloglog 基数统计的算法！ 优点：占用的内存是固定，只需要废12KB内存！如果要从内存角度来比较的话Hyperloglog首选！ <strong>网页的UV（一个人访问一个网站多次，但是还是算做一个人）</strong> 传统的方式，set保存用户的id，然后就可以统计set中的元素数量作为标准判断！（set不可重复） 这个方式如果保存大量的用户id，就会比较麻烦！我们的目的是为了计数，而不是保存用户id；（使用Hyperloglog会有0.18的错误率！统计UV任务，可以忽略不计，如果要精确则不可使用）</p>
-<h3 id="使用："><a href="#使用：" class="headerlink" title="使用："></a>使用：</h3><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">PFadd key element [element...]  #添加 将用户id存进去</span><br><span class="line">PFCOUNT key  #读取当前keu总数</span><br><span class="line">PFMERGE key3  key1  key2   #将key1和key2的数据合并到key3中，重复的会去除</span><br></pre></td></tr></table></figure>
-
-<h2 id="Bitmaps"><a href="#Bitmaps" class="headerlink" title="### Bitmaps"></a>### Bitmaps</h2><h3 id="介绍："><a href="#介绍：" class="headerlink" title="介绍："></a>介绍：</h3><p>Bitmaps位图，数据结构！都是操作二进制来进行记录，就只有0和1两个状态！</p>
-<p>使用场景：打卡，登录</p>
-<p>操作：</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">setbit key offset value  #setbit sign 1 0 末尾只能是0和1</span><br><span class="line">getbit key offset   #获取指定的offset的值</span><br><span class="line">bitcount key   #获取指定的key中有多少个1</span><br></pre></td></tr></table></figure>
+    <title>redis总笔记</title>
+    <url>/2022/05/21/redis%E6%80%BB%E7%AC%94%E8%AE%B0/</url>
+    <content><![CDATA[<p>这个博主的redis会比较详细，可以去观看它的，还有可以去看看它的视频</p>
+<p>博主：狂神说</p>
+<p><a href="https://www.cnblogs.com/meditation5201314/p/14882992.htm">https://www.cnblogs.com/meditation5201314/p/14882992.htm</a></p>
+<p><strong>发布订阅简单使用：</strong></p>
+<p><img src="https://s2.loli.net/2022/02/21/CilvKd8sFBtSJo9.png" alt="image-20220221140950917"></p>
 ]]></content>
-      <categories>
-        <category>redis</category>
-      </categories>
       <tags>
-        <tag>数据库</tag>
-        <tag>数据类型</tag>
+        <tag>优秀文章</tag>
       </tags>
   </entry>
   <entry>
@@ -1894,16 +1788,122 @@
       </tags>
   </entry>
   <entry>
-    <title>redis总笔记</title>
-    <url>/2022/05/21/redis%E6%80%BB%E7%AC%94%E8%AE%B0/</url>
-    <content><![CDATA[<p>这个博主的redis会比较详细，可以去观看它的，还有可以去看看它的视频</p>
-<p>博主：狂神说</p>
-<p><a href="https://www.cnblogs.com/meditation5201314/p/14882992.htm">https://www.cnblogs.com/meditation5201314/p/14882992.htm</a></p>
-<p><strong>发布订阅简单使用：</strong></p>
-<p><img src="https://s2.loli.net/2022/02/21/CilvKd8sFBtSJo9.png" alt="image-20220221140950917"></p>
+    <title>Linux快速入门</title>
+    <url>/2022/05/25/Linux%E5%BF%AB%E9%80%9F%E5%85%A5%E9%97%A8/</url>
+    <content><![CDATA[<p>前言：</p>
+<p>本教程是根据B站Up主狂神说记得笔记，有需要查看视频的小伙伴可以去看看狂神的视频，真的非常好！</p>
+<p>狂神说Linux视频地址：<a href="https://www.bilibili.com/video/BV187411y7hF?vd_source=ac95d1e4dae5cfd66da910c649ab5384">https://www.bilibili.com/video/BV187411y7hF?vd_source=ac95d1e4dae5cfd66da910c649ab5384</a></p>
+<h1 id="服务器相关知识"><a href="#服务器相关知识" class="headerlink" title="服务器相关知识"></a>服务器相关知识</h1><blockquote>
+<p>为什么程序员都需要一个自己的服务器？</p>
+</blockquote>
+<ol>
+<li>作为一个程序员，必须要学会发布自己的网站和项目!</li>
+<li>练习Linux操作</li>
+<li>把自己的远程仓库、远程数据库、远程tomcat等搭建在服务器上</li>
+<li>练习Linux进行任意的环境部署操作! 大部人都是Window下开发，不熟悉Linux</li>
+</ol>
+<blockquote>
+<p>如何购买服务器？</p>
+</blockquote>
+<p>新手可以先去阿里云领一个免费的服务器先用着</p>
+<p>阿里云新人服务器领取地址：<br><a href="https://imgtu.com/i/jFDbm6"><img src="https://s1.ax1x.com/2022/06/25/jFDbm6.jpg" alt="jFDbm6.jpg"></a><br>学生的话后期可以购买学生机，阿里云只有未满24周岁都可以享受学生机优惠</p>
+<p>优惠地址：<a href="https://www.aliyun.com/minisite/goods?userCode=0phtycgr">https://www.aliyun.com/minisite/goods?userCode=0phtycgr</a></p>
+<p>购买服务器时系统选择CentOS 推荐版本7.X，因为8.0之后改了好多命令，云盘的话选择40G就够用了，如下图所示：<br><a href="https://imgtu.com/i/jFDzpd"><img src="https://s1.ax1x.com/2022/06/25/jFDzpd.jpg" alt="jFDzpd.jpg"></a></p>
+<blockquote>
+<p>买完服务器之后该干什么？</p>
+</blockquote>
+<p>首先服务器就是一个远程的Linux</p>
+<ol>
+<li>在阿里云购买服务器需要开通安全组设置去进行端口的映射，比如8080或者3306<br><a href="https://imgtu.com/i/jFcwxH"><img src="https://s1.ax1x.com/2022/06/25/jFcwxH.jpg" alt="jFcwxH.jpg"></a></li>
+<li>获取服务器的公网ip地址，修改实例名称和密码，记住第一次修改需要重启，修改后就可以使用Xshell进行远程连接了</li>
+</ol>
 ]]></content>
+      <categories>
+        <category>Linux</category>
+        <category>运维</category>
+      </categories>
       <tags>
-        <tag>优秀文章</tag>
+        <tag>Linux</tag>
+        <tag>运维</tag>
+        <tag>教程</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Redis的三大特殊类型</title>
+    <url>/2022/05/21/Redis%E7%9A%84%E4%B8%89%E5%A4%A7%E7%89%B9%E6%AE%8A%E7%B1%BB%E5%9E%8B/</url>
+    <content><![CDATA[<h2 id="Redis的三大特殊类型"><a href="#Redis的三大特殊类型" class="headerlink" title="Redis的三大特殊类型"></a>Redis的三大特殊类型</h2><h2 id="geospatial地理位置"><a href="#geospatial地理位置" class="headerlink" title="geospatial地理位置"></a>geospatial地理位置</h2><p>使用场景：朋友定位，附近的人，打车距离计数</p>
+<p>Redis的Geo在Redis3.2版本就推出了</p>
+<p>查询经度纬度：<a href="https://www.toolnb.com/tools/gps.html">https://www.toolnb.com/tools/gps.html</a></p>
+<h3 id="相关命令："><a href="#相关命令：" class="headerlink" title="相关命令："></a>相关命令：</h3><h4 id="GEOADD（添加地理位置）"><a href="#GEOADD（添加地理位置）" class="headerlink" title="GEOADD（添加地理位置）"></a>GEOADD（添加地理位置）</h4><p>将指定的地理空间位置（经度、纬度、名称）添加到指定的key中 保存精度维度： 规则：南极北极不能添加，我们一般都是下载城市数据，使用java程序导入 参数：key-value（经度、纬度、名称）</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">127.0.0.1:6379&gt; geoadd china:city 116.405289 39.904987 beijin</span><br><span class="line">(integer) 1</span><br><span class="line">127.0.0.1:6379&gt; geoadd china:city 102.71 25.04 kunming</span><br><span class="line">(integer) 1</span><br><span class="line">127.0.0.1:6379&gt; geoadd china:city 115.89 28.67 nanchang</span><br><span class="line">(integer) 1</span><br><span class="line">127.0.0.1:6379&gt; geoadd china:city 121.47 31.23 shanghai</span><br><span class="line">(integer) 1</span><br><span class="line">127.0.0.1:6379&gt; geoadd china:city 120.15 30.28 hanzuo</span><br><span class="line">(integer) 1</span><br><span class="line">127.0.0.1:6379&gt; geoadd china:city 113.28 23.12 guanzuo</span><br><span class="line">(integer) 1</span><br><span class="line">127.0.0.1:6379&gt; geoadd china:city 104.06 30.65 chengdu 123.42 41.79 shenyang</span><br><span class="line">(integer) 2</span><br></pre></td></tr></table></figure>
+
+<h4 id="GEOPOS（读取存入的地理位置）"><a href="#GEOPOS（读取存入的地理位置）" class="headerlink" title="GEOPOS（读取存入的地理位置）"></a>GEOPOS（读取存入的地理位置）</h4><p>注意是直线距离</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">127.0.0.1:6379&gt; GEOPOS china:city beijin</span><br><span class="line">1) 1) &quot;116.40528827905654907&quot;</span><br><span class="line">   2) &quot;39.90498588819134085&quot;</span><br><span class="line">127.0.0.1:6379&gt; GEOPOS china:city beijin hanzuo</span><br><span class="line">1) 1) &quot;116.40528827905654907&quot;</span><br><span class="line">   2) &quot;39.90498588819134085&quot;</span><br><span class="line">2) 1) &quot;120.15000075101852417&quot;</span><br><span class="line">   2) &quot;30.2800007575645509&quot;</span><br><span class="line">127.0.0.1:6379&gt; </span><br></pre></td></tr></table></figure>
+
+<h4 id="GEODIST（返回两个维度之间的距离）"><a href="#GEODIST（返回两个维度之间的距离）" class="headerlink" title="GEODIST（返回两个维度之间的距离）"></a>GEODIST（返回两个维度之间的距离）</h4><p>127.0.0.1:6379&gt; GEODIST china:city beijin hanzuo km “1123.1795” 末尾是输入以那种发生计数距离，如显示km还是m GEOHASH</p>
+<h4 id="GEORADIUS（以给定的极度伟度为中心，找出给定半径的城市）"><a href="#GEORADIUS（以给定的极度伟度为中心，找出给定半径的城市）" class="headerlink" title="GEORADIUS（以给定的极度伟度为中心，找出给定半径的城市）"></a>GEORADIUS（以给定的极度伟度为中心，找出给定半径的城市）</h4><p>注意：找的是已在集合中的地理位置</p>
+<p>georadius key 精度 维度 距离 单位</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">127.0.0.1:6379&gt; georadius china:city 110 30 1000 km</span><br><span class="line">1) &quot;kunming&quot;</span><br><span class="line">2) &quot;chengdu&quot;</span><br><span class="line">3) &quot;guanzuo&quot;</span><br><span class="line">4) &quot;nanchang&quot;</span><br><span class="line">5) &quot;hanzuo&quot;</span><br></pre></td></tr></table></figure>
+
+
+
+<p>加上withdist会显示直线距离</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">127.0.0.1:6379&gt; georadius china:city 110 30 1000 km withdist</span><br><span class="line">1) 1) &quot;kunming&quot;</span><br><span class="line">   2) &quot;905.9321&quot;</span><br><span class="line">2) 1) &quot;chengdu&quot;</span><br><span class="line">   2) &quot;574.7802&quot;</span><br><span class="line">3) 1) &quot;guanzuo&quot;</span><br><span class="line">   2) &quot;831.7713&quot;</span><br><span class="line">4) 1) &quot;nanchang&quot;</span><br><span class="line">   2) &quot;589.8814&quot;</span><br><span class="line">5) 1) &quot;hanzuo&quot;</span><br><span class="line">   2) &quot;976.4868&quot;</span><br></pre></td></tr></table></figure>
+
+
+
+<p>加上withcoord 显示经度纬度</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">127.0.0.1:6379&gt; georadius china:city 110 30 1000 km withcoord</span><br><span class="line">1) 1) &quot;kunming&quot;</span><br><span class="line">   2) 1) &quot;102.70999878644943237&quot;</span><br><span class="line">      2) &quot;25.03999958679589355&quot;</span><br><span class="line">2) 1) &quot;chengdu&quot;</span><br><span class="line">   2) 1) &quot;104.05999749898910522&quot;</span><br><span class="line">      2) &quot;30.6499990746355806&quot;</span><br><span class="line">3) 1) &quot;guanzuo&quot;</span><br><span class="line">   2) 1) &quot;113.27999979257583618&quot;</span><br><span class="line">      2) &quot;23.1199990030198208&quot;</span><br><span class="line">4) 1) &quot;nanchang&quot;</span><br><span class="line">   2) 1) &quot;115.88999837636947632&quot;</span><br><span class="line">      2) &quot;28.66999910629679249&quot;</span><br><span class="line">5) 1) &quot;hanzuo&quot;</span><br><span class="line">   2) 1) &quot;120.15000075101852417&quot;</span><br><span class="line">      2) &quot;30.2800007575645509&quot;</span><br></pre></td></tr></table></figure>
+
+
+
+<p>加上count * 可以限制显示几个</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">127.0.0.1:6379&gt; georadius china:city 110 30 1000 km  count 2</span><br><span class="line">1) &quot;chengdu&quot;</span><br><span class="line">2) &quot;nanchang&quot;</span><br></pre></td></tr></table></figure>
+
+
+
+<p>withdist，withcoord，count *，在末尾可随意组合添加</p>
+<h4 id="GEORADIUSBYMEMBER（根据指定的城市，查询他的半径的元素）"><a href="#GEORADIUSBYMEMBER（根据指定的城市，查询他的半径的元素）" class="headerlink" title="GEORADIUSBYMEMBER（根据指定的城市，查询他的半径的元素）"></a>GEORADIUSBYMEMBER（根据指定的城市，查询他的半径的元素）</h4><p>使用集合中的元素查询</p>
+<p>普通查询：GEORADIUSBYMEMBER key 距离 单位</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">127.0.0.1:6379&gt; GEORADIUSBYMEMBER china:city beijin 1000 km  </span><br><span class="line">1) &quot;beijin&quot;</span><br><span class="line">2) &quot;shenyang&quot;</span><br></pre></td></tr></table></figure>
+
+
+
+<p>加上withdist会显示直线距离</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">127.0.0.1:6379&gt; GEORADIUSBYMEMBER china:city beijin 1000 km withdist</span><br><span class="line">1) 1) &quot;beijin&quot;</span><br><span class="line">   2) &quot;0.0000&quot;</span><br><span class="line">2) 1) &quot;shenyang&quot;</span><br><span class="line">   2) &quot;626.1044&quot;</span><br></pre></td></tr></table></figure>
+
+
+
+<p>加上withcoord 显示经度纬度</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">127.0.0.1:6379&gt; GEORADIUSBYMEMBER china:city beijin 1000 km withcoord</span><br><span class="line">1) 1) &quot;beijin&quot;</span><br><span class="line">   2) 1) &quot;116.40528827905654907&quot;</span><br><span class="line">      2) &quot;39.90498588819134085&quot;</span><br><span class="line">2) 1) &quot;shenyang&quot;</span><br><span class="line">   2) 1) &quot;123.41999977827072144&quot;</span><br><span class="line">      2) &quot;41.78999971580505246&quot;</span><br></pre></td></tr></table></figure>
+
+
+
+<p>加上count * 可以限制显示几个</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">127.0.0.1:6379&gt; GEORADIUSBYMEMBER china:city beijin 1000 km count 1</span><br><span class="line">1) &quot;beijin&quot;</span><br></pre></td></tr></table></figure>
+
+<p>withdist，withcoord，count *，在末尾可随意组合添加</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">127.0.0.1:6379&gt; GEORADIUSBYMEMBER china:city beijin 1500 km withcoord withdist count 2</span><br><span class="line">1) 1) &quot;beijin&quot;</span><br><span class="line">   2) &quot;0.0000&quot;</span><br><span class="line">   3) 1) &quot;116.40528827905654907&quot;</span><br><span class="line">      2) &quot;39.90498588819134085&quot;</span><br><span class="line">2) 1) &quot;shenyang&quot;</span><br><span class="line">   2) &quot;626.1044&quot;</span><br><span class="line">   3) 1) &quot;123.41999977827072144&quot;</span><br><span class="line">      2) &quot;41.78999971580505246&quot;</span><br></pre></td></tr></table></figure>
+
+
+
+<h4 id="GEOHASH（返回11个字符的Geohash字符串）"><a href="#GEOHASH（返回11个字符的Geohash字符串）" class="headerlink" title="GEOHASH（返回11个字符的Geohash字符串）"></a>GEOHASH（返回11个字符的Geohash字符串）</h4><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">127.0.0.1:6379&gt; GEOHASH china:city beijin </span><br><span class="line">1) &quot;wx4g0b7xru0&quot;</span><br></pre></td></tr></table></figure>
+
+<p>GEO底层的实现原来其实就是Zset,我们可以使用Zset命令来操作GEO 如： ZRANGE china:city 0 -1 #显示指定geo可以的数据 127.0.0.1:6379&gt; zrem china:city chengdu #删除</p>
+<h2 id="Hyperloglog"><a href="#Hyperloglog" class="headerlink" title="Hyperloglog"></a>Hyperloglog</h2><h3 id="介绍"><a href="#介绍" class="headerlink" title="介绍"></a>介绍</h3><p>Redis2.8.9版本就跟新了Hyperlogog数据结构！ Redis Htperloglog 基数统计的算法！ 优点：占用的内存是固定，只需要废12KB内存！如果要从内存角度来比较的话Hyperloglog首选！ <strong>网页的UV（一个人访问一个网站多次，但是还是算做一个人）</strong> 传统的方式，set保存用户的id，然后就可以统计set中的元素数量作为标准判断！（set不可重复） 这个方式如果保存大量的用户id，就会比较麻烦！我们的目的是为了计数，而不是保存用户id；（使用Hyperloglog会有0.18的错误率！统计UV任务，可以忽略不计，如果要精确则不可使用）</p>
+<h3 id="使用："><a href="#使用：" class="headerlink" title="使用："></a>使用：</h3><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">PFadd key element [element...]  #添加 将用户id存进去</span><br><span class="line">PFCOUNT key  #读取当前keu总数</span><br><span class="line">PFMERGE key3  key1  key2   #将key1和key2的数据合并到key3中，重复的会去除</span><br></pre></td></tr></table></figure>
+
+<h2 id="Bitmaps"><a href="#Bitmaps" class="headerlink" title="### Bitmaps"></a>### Bitmaps</h2><h3 id="介绍："><a href="#介绍：" class="headerlink" title="介绍："></a>介绍：</h3><p>Bitmaps位图，数据结构！都是操作二进制来进行记录，就只有0和1两个状态！</p>
+<p>使用场景：打卡，登录</p>
+<p>操作：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">setbit key offset value  #setbit sign 1 0 末尾只能是0和1</span><br><span class="line">getbit key offset   #获取指定的offset的值</span><br><span class="line">bitcount key   #获取指定的key中有多少个1</span><br></pre></td></tr></table></figure>
+]]></content>
+      <categories>
+        <category>redis</category>
+      </categories>
+      <tags>
+        <tag>数据库</tag>
+        <tag>数据类型</tag>
       </tags>
   </entry>
   <entry>
@@ -1988,6 +1988,164 @@
       </categories>
       <tags>
         <tag>安装</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>redis集群（主从复制）</title>
+    <url>/2022/05/21/redis%E9%9B%86%E7%BE%A4%EF%BC%88%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6%EF%BC%89/</url>
+    <content><![CDATA[<h1 id="Redis主从复制："><a href="#Redis主从复制：" class="headerlink" title="Redis主从复制："></a>Redis主从复制：</h1><h2 id="Redis主从复制概念"><a href="#Redis主从复制概念" class="headerlink" title="Redis主从复制概念"></a>Redis主从复制概念</h2><p>主从复制,是指将一台Redis服务器的数据，复制到其他的Redis服务器。前者称为主节点(master&#x2F;leader)，后者称为从节点(slave&#x2F;follower);数据的复制是单向的，只能由主节点到从节点。Master以写为主，Slave以读为主。</p>
+<p>默认情况下，每台Redis服务器都是主节点;且一个主节点可以有多个从节点(或没有从节点)，但一个从节点只能有一个主节点。主从复制的作用主要包括:</p>
+<p>1、数据冗余:主从复制实现了数据的热备份,是持久化之外的一种数据冗余方式。</p>
+<p>2、故障恢复:当主节点出现问题时，可以由从节点提供服务，实现快速的故障恢复;实际上是一种服务的冗余。</p>
+<p>3、负载均衡:在主从复制的基础上，配合读写分离，可以由主节点提供写服务，由从节点提供读服务（即写Redis数据时应用连教主节点，读Redis数据时应用连接从节点)，分担服务器负载;尤其是在写少读多的场景下，通过多个从节点分担读负载，可以大大提高Redis服务器的并发量。</p>
+<p>4、高可用(集群)基石:除了上述作用以外，主从复制还是哨兵和集群能够实施的基础，因此说主从复制是Redis高可用的基础.<br>一般来说，要将Redis运用于工程项目中，只使用一台Redis是万万不能的（宕机），原因如下:</p>
+<p>​	1、从结构上，单个Redis服务器会发生单点故障，并且一台服务器需要处理所有的请求负载，压力较大;<br>​	</p>
+<p>​	2、从容量上，单个Redis服务器内存容量有限，就算一台Redis服务器内存容量为256G，也不能将所有内存用作Redis存储内存，一般来说，单台Redis最大使用	内存不应该超过20G。</p>
+<p>​	电商网站上的商品，一般都是一次上传，无数次浏览的，说专业点也就是”多读少写”。对于这种场景，我们可以使如下这种架构:</p>
+<p>​	这是一主三从</p>
+<p><img src="https://s2.loli.net/2022/02/21/UTkJjV2ZfAeiNrE.png" alt="image-20220221153646023"></p>
+<p>​	 3、负载均衡:在主从复制的基础上，配合读写分离，可以由主节点提供写服务，由从节点提供读服务（即写Redis数据时应用连教主节点，读Redis数据时应用连	接 从节点)，分担服务器负载;尤其是在写少读多的场景下，通过多个从节点分担读负载，可以大大提高Redis服务器的并发量。</p>
+<h2 id="一主二从："><a href="#一主二从：" class="headerlink" title="一主二从："></a>一主二从：</h2><p>由于没有多个服务器，就在本机上多开几个redis，当端口什么都不一样，如果在一台服务器是测试：</p>
+<p>在一个主机上测试需要多个配置文件，并且配置文件需要修改</p>
+<p>port     端口</p>
+<p>pidfile   名字</p>
+<p>log   log文件名字</p>
+<p>dump.rdb   名字</p>
+<p>如果开了aof还需要修改aof的配置</p>
+<p>开启三个服务</p>
+<p><strong>查看当前redis</strong></p>
+<p><img src="https://s2.loli.net/2022/02/21/g2UXIiE6lrMvcG5.png" alt="image-20220221235035363"></p>
+<p><strong>默认情况下，每台redis服务器都是主节点</strong>；一般情况下我们只需要配置从机就可以了！</p>
+<p><strong>设置从机:</strong></p>
+<p>注意，认主需要在从机是去认，而不是主机</p>
+<p>我们需要在redis中去设置主机是谁，也就是认老大。假设  主为（6360），二从为（61，62）；</p>
+<p>使用命令：SLAVEOF    IP   端口   ；这就是找谁当老大，这里只演示连接一个，另一个自己去连</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">127.0.0.1:6362&gt; SLAVEOF 127.0.0.1 6360</span><br><span class="line">OK</span><br><span class="line">127.0.0.1:6362&gt; info replication</span><br><span class="line"># Replication</span><br><span class="line">role:slave      #角色从 master  变成了 slave</span><br><span class="line">master_host:127.0.0.1    #主机IP</span><br><span class="line">master_port:6360		#主机端口</span><br><span class="line">master_link_status:up</span><br><span class="line">master_last_io_seconds_ago:6</span><br><span class="line">master_sync_in_progress:0</span><br><span class="line">slave_repl_offset:28</span><br><span class="line">slave_priority:100</span><br><span class="line">slave_read_only:1</span><br><span class="line">connected_slaves:0</span><br><span class="line">master_replid:7f946868186fe88c13209f6a40cb8a41349df88c</span><br><span class="line">master_replid2:0000000000000000000000000000000000000000</span><br><span class="line">master_repl_offset:28</span><br><span class="line">second_repl_offset:-1</span><br><span class="line">repl_backlog_active:1</span><br><span class="line">repl_backlog_size:1048576</span><br><span class="line">repl_backlog_first_byte_offset:1</span><br><span class="line">repl_backlog_histlen:28</span><br><span class="line">127.0.0.1:6362&gt; </span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+
+
+<p><strong>查看下主机的身份信息:</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">127.0.0.1:6360&gt; info replication</span><br><span class="line"># Replication</span><br><span class="line">role:master    #角色</span><br><span class="line">connected_slaves:2   #从机数量</span><br><span class="line">slave0:ip=127.0.0.1,port=6362,state=online,offset=630,lag=0   #从机基本信息</span><br><span class="line">slave1:ip=127.0.0.1,port=6361,state=online,offset=630,lag=1   #从机基本信息</span><br><span class="line">master_replid:7f946868186fe88c13209f6a40cb8a41349df88c</span><br><span class="line">master_replid2:0000000000000000000000000000000000000000</span><br><span class="line">master_repl_offset:630</span><br><span class="line">second_repl_offset:-1</span><br><span class="line">repl_backlog_active:1</span><br><span class="line">repl_backlog_size:1048576</span><br><span class="line">repl_backlog_first_byte_offset:1</span><br><span class="line">repl_backlog_histlen:630</span><br><span class="line">127.0.0.1:6360&gt; </span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+
+
+
+
+<p><strong>读写与特殊情况演示：</strong></p>
+<p>主机复制些，而从机负责读，尽管主机宕机，从机依旧可以继续读到数据，</p>
+<p><strong>使用主机写：</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">127.0.0.1:6360&gt; set key 1</span><br><span class="line">OK       #成功</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+
+
+<p><strong>使用从机读：</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">127.0.0.1:6362&gt; get key</span><br><span class="line">&quot;1&quot;    #成功</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+
+
+<p><strong>使用从机写：</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">127.0.0.1:6362&gt; set key1 v1</span><br><span class="line">(error) READONLY You can&#x27;t write against a read only replica.     #不能对只读从机写</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+
+
+<p><strong>关闭主机  从机是否还能进行读：</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">[root@VM-4-12-centos ~]# ps -ef|grep redis     #现在么有主机6360了</span><br><span class="line">root      304584  304199  0 11:38 pts/1    00:00:00 redis-cli -p 6361</span><br><span class="line">root      304652  304153  0 11:38 pts/0    00:00:00 redis-cli -p 6362</span><br><span class="line">root      312884  304314  0 12:11 pts/2    00:00:00 grep --color=auto redis</span><br><span class="line">root     4193030       1  0 Feb21 ?        00:00:47 redis-server 0.0.0.0:6361</span><br><span class="line">root     4193050       1  0 Feb21 ?        00:00:47 redis-server 0.0.0.0:6362</span><br><span class="line">[root@VM-4-12-centos ~]# </span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+
+
+<p><strong>关闭主机情况下进行读：</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">127.0.0.1:6362&gt; get key</span><br><span class="line">&quot;1&quot;   #依旧成功</span><br></pre></td></tr></table></figure>
+
+
+
+<p><strong>主机关闭后的角色基本信息</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">127.0.0.1:6362&gt; info replication</span><br><span class="line"># Replication</span><br><span class="line">role:slave</span><br><span class="line">master_host:127.0.0.1</span><br><span class="line">master_port:6360</span><br><span class="line">master_link_status:down</span><br><span class="line">master_last_io_seconds_ago:-1</span><br><span class="line">master_sync_in_progress:0</span><br><span class="line">slave_repl_offset:1396</span><br><span class="line">master_link_down_since_seconds:125</span><br><span class="line">slave_priority:100</span><br><span class="line">slave_read_only:1</span><br><span class="line">connected_slaves:0</span><br><span class="line">master_replid:7f946868186fe88c13209f6a40cb8a41349df88c</span><br><span class="line">master_replid2:0000000000000000000000000000000000000000</span><br><span class="line">master_repl_offset:1396</span><br><span class="line">second_repl_offset:-1</span><br><span class="line">repl_backlog_active:1</span><br><span class="line">repl_backlog_size:1048576</span><br><span class="line">repl_backlog_first_byte_offset:1</span><br><span class="line">repl_backlog_histlen:1396</span><br></pre></td></tr></table></figure>
+
+
+
+<p><strong>主机重启后写的值是否还能被从机读取到</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">#主机</span><br><span class="line">[root@VM-4-12-centos ~]# redis-server /usr/local/bin/StudyHardConfig/redis60.conf </span><br><span class="line">[root@VM-4-12-centos ~]# redis-cli -p 6360</span><br><span class="line">127.0.0.1:6360&gt; ping</span><br><span class="line">PONG</span><br><span class="line">127.0.0.1:6360&gt; set key3 v3</span><br><span class="line">OK</span><br><span class="line">127.0.0.1:6360&gt; </span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">#从机  依旧可以读取到</span><br><span class="line">127.0.0.1:6362&gt; get key3</span><br><span class="line">&quot;v3&quot;       #成功</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+
+
+<p><strong>从机关机的情况下</strong></p>
+<p>可看出从机必须连接主机后才能拿到数据，并且关机后会恢复成主机</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">[root@VM-4-12-centos ~]# ps -ef|grep redis</span><br><span class="line">root      304652  304153  0 11:38 pts/0    00:00:00 redis-cli -p 6362</span><br><span class="line">root      313867       1  0 12:15 ?        00:00:01 redis-server 0.0.0.0:6360</span><br><span class="line">root      313941  304314  0 12:15 pts/2    00:00:00 redis-cli -p 6360</span><br><span class="line">root      318505  304199  0 12:33 pts/1    00:00:00 grep --color=auto redis</span><br><span class="line">root     4193050       1  0 Feb21 ?        00:00:48 redis-server 0.0.0.0:6362</span><br><span class="line">[root@VM-4-12-centos ~]# redis-server /usr/local/bin/StudyHardConfig/redis61.conf </span><br><span class="line">[root@VM-4-12-centos ~]# redis-cli -p 6361</span><br><span class="line">127.0.0.1:6361&gt; ping</span><br><span class="line">PONG</span><br><span class="line">127.0.0.1:6361&gt; get key</span><br><span class="line">(nil)</span><br><span class="line">127.0.0.1:6361&gt; keys *</span><br><span class="line">(empty array)</span><br><span class="line">127.0.0.1:6361&gt; info replication</span><br><span class="line"># Replication</span><br><span class="line">role:master</span><br><span class="line">connected_slaves:0</span><br><span class="line">master_replid:f8962d2e0a43dc37e21770cc7a27e3b7664dbb72</span><br><span class="line">master_replid2:0000000000000000000000000000000000000000</span><br><span class="line">master_repl_offset:0</span><br><span class="line">second_repl_offset:-1</span><br><span class="line">repl_backlog_active:0</span><br><span class="line">repl_backlog_size:1048576</span><br><span class="line">repl_backlog_first_byte_offset:0</span><br><span class="line">repl_backlog_histlen:0</span><br><span class="line">127.0.0.1:6361&gt; SLAVEOF 127.0.0.1 6360</span><br><span class="line">OK</span><br><span class="line">127.0.0.1:6361&gt; keys *</span><br><span class="line">1) &quot;key3&quot;</span><br><span class="line">127.0.0.1:6361&gt; get key3</span><br><span class="line">&quot;v3&quot;</span><br><span class="line">127.0.0.1:6361&gt; </span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+
+
+
+
+
+
+<p>注意：这种命令行的主从设置是一次性的，关机后就会恢复成主机，想要永久设置需要去配置文件中配置；</p>
+<p>#replicaof <masterip> <masterport>      &#x2F;&#x2F;在配置文件中将该配置注释去掉，并填写上主机的ip 与端口</p>
+<p>如果主机有密码：</p>
+<p>#masterauth <master-password>        &#x2F;&#x2F;在配置文件中将该配置注释去掉，并填写主机密码</p>
+<p><strong>主从复制原理</strong></p>
+<p>Slave启动成功连接到master后会发送一个sync同步命令<br>Master接到命令，启动后台的存盘进程，同时收集所有接收到的用于修改数据集命令，在后台进程执行完毕之后，master将传送整个数据文件到slave，并完成一次完全同步。<br>全量复制:而slave服务在接收到数据库文件数据后,将其存盘并加载到内存中。增量复制:Master继续将新的所有收集到的修改命令依次传给slave，完成同步<br>但是只要是重新连接master，一次完全同步(全量复制）将被自动执行!我们的数据一定可以在从机中看到!</p>
+<p>还有一种主从方式，</p>
+<p>a  – b  – c   这种连接方式，a宕机了我们可以手动将b选为老大，</p>
+<p>命令：SLAVEOF no one   ； 这样将原来是从节点的redis改为主节点</p>
+<p>这里都是手动的；而哨兵模式就是自动选取老大</p>
+]]></content>
+      <tags>
+        <tag>集群</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>redis的持久化</title>
+    <url>/2022/05/20/redis%E7%9A%84%E6%8C%81%E4%B9%85%E5%8C%96/</url>
+    <content><![CDATA[<h1 id="Redis的持久化"><a href="#Redis的持久化" class="headerlink" title="Redis的持久化"></a>Redis的持久化</h1><p>redis是内存数据库，如果数据不持久化，当程序关闭时将会丢失数据，所以Redis提供了持久化</p>
+<h3 id="RDB"><a href="#RDB" class="headerlink" title="RDB"></a>RDB</h3><p><strong>什么是RDB？</strong></p>
+<p><img src="https://s2.loli.net/2022/02/20/IeEx1JmZS82vk9s.png" alt="image-20220220232522977"></p>
+<p>在指定的时间间隔内将内存中的数据集快照写入磁盘，也就是行话讲的Snapshot快照，它恢复时是将快照文件直接读到内存里。Redis会单独创建 ( fork )一个子进程来进行持久化，会先将数据写入到一个临时文件中，待持久化过程都结束了，再用这个临时文件替换上次持久化好的文件。整个过程中，主进程是不进行任何IO操作的。这就确保了极高的性能。如果需要进行大规模数据的恢复，且对于数据恢复的完整性不是非常敏感，那RDB方式要比AOF方式更加的高效。RDB的缺点是最后一次持久化后的数据可能丢失。我们默认的就是RDB，一般情况不需要修改这个配置！</p>
+<p>在生成环境我们将会对这个文件进行备份</p>
+<p><strong>缺点：</strong></p>
+<p>如果在最后一次宕机了，就没有办法去持久化了，需要一定的时间间隔</p>
+<p>在创建frok进程的时候，会占用一定的空间</p>
+<p><strong>优点：</strong></p>
+<p>RDB比AOF更加的高效，适合大规模恢复数据</p>
+<p>RDB保存的文件是dump.rdb   ，在配置文件中有讲，都是在配置文件中设置的</p>
+<p><strong>持久化触发机制：</strong></p>
+<p>注意：kill的情况下不会触发</p>
+<p>1,save的规则满足的情况下会触发rdb规则</p>
+<p>2,执行flushall命令也会触发rdb规则</p>
+<p>3,当退出redis时也会触发rdb规则   </p>
+<p>会生成一个dump.rdb文件，redis在重启时会读取文件，恢复数据，如果删除，关闭后就不会有之前的数据了</p>
+<p><strong>如恢复rdb文件：</strong></p>
+<p>只需要将rdb文件放置redis启动目录下，</p>
+<p>dump.rdb放在redis-server同级目录</p>
+<h2 id="AOF"><a href="#AOF" class="headerlink" title="AOF"></a>AOF</h2><p>它会将我们所有的命令记录下来，history，恢复的时候就会把这个文件全部执行一遍！</p>
+<p><strong>在redis4.0以后支持混合模式，rdb与aof同时开启会优先aof</strong></p>
+<p><img src="https://s2.loli.net/2022/02/20/r1N7HEity9OXqdA.png" alt="image-20220220233046582"></p>
+<p>以日志的形式来记录每个写操作，将Redis执行过的所有指令记录下来(读操作不记录），只许追加文件但不可以改写文件，redis启动之初会读取该文件重新构建数据，换言之，redis重启的话就根据日志文件的内容将写指令从前到后执行一次以完成数据的恢复工作</p>
+<p><strong>默认不开AOF，需要去配置文件中手动开启</strong></p>
+<p><strong>Aof保存的是appendonly.aof 文件</strong></p>
+<p>文件同样可以在配置文件中修改:</p>
+<p>&#x2F;&#x2F;The name of the append only file (default: “appendonly.aof”)</p>
+<p>​	appendfilename “appendonly.aof”</p>
+<p><strong>当我们开启时输入了命令后就会生成aod文件：</strong></p>
+<p><img src="https://s2.loli.net/2022/02/21/lDiAuKGo345PORI.png" alt="image-20220221100633418"></p>
+<p><strong>文件的内容为：</strong></p>
+<p><img src="https://s2.loli.net/2022/02/22/DGtZmALfOyTziFh.png" alt="image-20220222225551886"></p>
+<p>这个文件是能破坏的，破坏后启动redis会报错 ，但是系统会生成一个备用文件，我们可以使用它来修改appendonly.aof</p>
+<p>破坏后登录：</p>
+<p><img src="https://s2.loli.net/2022/02/21/JuwqZhENCfp9LIn.png" alt="image-20220221102935481"></p>
+<p>破坏后是可以使用这个文件进行恢复的</p>
+<p><img src="https://s2.loli.net/2022/02/21/X4TEjb1n5VfL2Fk.png" alt="image-20220221103321224"></p>
+<p>使用命令：redis-check-aof –fix appendonly.aof  进行恢复，恢复后 就能正常登录了</p>
+<p>注意：要在appendonly.aof文件位置使用该命令</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">[root@VM-4-12-centos ~]# redis-check-aof --fix appendonly.aof</span><br><span class="line">Cannot open file: appendonly.aof</span><br><span class="line">[root@VM-4-12-centos ~]# cd /usr/local/bin</span><br><span class="line">[root@VM-4-12-centos bin]# redis-check-aof --fix appendonly.aof</span><br><span class="line">0x              3c: Expected \r\n, got: 7765</span><br><span class="line">AOF analyzed: size=143, ok_up_to=52, diff=91</span><br><span class="line">This will shrink the AOF from 143 bytes, with 91 bytes, to 52 bytes</span><br><span class="line">Continue? [y/N]: y</span><br><span class="line">Successfully truncated AOF</span><br><span class="line">[root@VM-4-12-centos bin]# </span><br></pre></td></tr></table></figure>
+
+]]></content>
+      <categories>
+        <category>redis</category>
+      </categories>
+      <tags>
+        <tag>数据库</tag>
       </tags>
   </entry>
   <entry>
@@ -2601,164 +2759,6 @@ public CorsConfigurationSource corsConfigurationSource()&#123;
       </categories>
       <tags>
         <tag>数据库</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>redis的持久化</title>
-    <url>/2022/05/20/redis%E7%9A%84%E6%8C%81%E4%B9%85%E5%8C%96/</url>
-    <content><![CDATA[<h1 id="Redis的持久化"><a href="#Redis的持久化" class="headerlink" title="Redis的持久化"></a>Redis的持久化</h1><p>redis是内存数据库，如果数据不持久化，当程序关闭时将会丢失数据，所以Redis提供了持久化</p>
-<h3 id="RDB"><a href="#RDB" class="headerlink" title="RDB"></a>RDB</h3><p><strong>什么是RDB？</strong></p>
-<p><img src="https://s2.loli.net/2022/02/20/IeEx1JmZS82vk9s.png" alt="image-20220220232522977"></p>
-<p>在指定的时间间隔内将内存中的数据集快照写入磁盘，也就是行话讲的Snapshot快照，它恢复时是将快照文件直接读到内存里。Redis会单独创建 ( fork )一个子进程来进行持久化，会先将数据写入到一个临时文件中，待持久化过程都结束了，再用这个临时文件替换上次持久化好的文件。整个过程中，主进程是不进行任何IO操作的。这就确保了极高的性能。如果需要进行大规模数据的恢复，且对于数据恢复的完整性不是非常敏感，那RDB方式要比AOF方式更加的高效。RDB的缺点是最后一次持久化后的数据可能丢失。我们默认的就是RDB，一般情况不需要修改这个配置！</p>
-<p>在生成环境我们将会对这个文件进行备份</p>
-<p><strong>缺点：</strong></p>
-<p>如果在最后一次宕机了，就没有办法去持久化了，需要一定的时间间隔</p>
-<p>在创建frok进程的时候，会占用一定的空间</p>
-<p><strong>优点：</strong></p>
-<p>RDB比AOF更加的高效，适合大规模恢复数据</p>
-<p>RDB保存的文件是dump.rdb   ，在配置文件中有讲，都是在配置文件中设置的</p>
-<p><strong>持久化触发机制：</strong></p>
-<p>注意：kill的情况下不会触发</p>
-<p>1,save的规则满足的情况下会触发rdb规则</p>
-<p>2,执行flushall命令也会触发rdb规则</p>
-<p>3,当退出redis时也会触发rdb规则   </p>
-<p>会生成一个dump.rdb文件，redis在重启时会读取文件，恢复数据，如果删除，关闭后就不会有之前的数据了</p>
-<p><strong>如恢复rdb文件：</strong></p>
-<p>只需要将rdb文件放置redis启动目录下，</p>
-<p>dump.rdb放在redis-server同级目录</p>
-<h2 id="AOF"><a href="#AOF" class="headerlink" title="AOF"></a>AOF</h2><p>它会将我们所有的命令记录下来，history，恢复的时候就会把这个文件全部执行一遍！</p>
-<p><strong>在redis4.0以后支持混合模式，rdb与aof同时开启会优先aof</strong></p>
-<p><img src="https://s2.loli.net/2022/02/20/r1N7HEity9OXqdA.png" alt="image-20220220233046582"></p>
-<p>以日志的形式来记录每个写操作，将Redis执行过的所有指令记录下来(读操作不记录），只许追加文件但不可以改写文件，redis启动之初会读取该文件重新构建数据，换言之，redis重启的话就根据日志文件的内容将写指令从前到后执行一次以完成数据的恢复工作</p>
-<p><strong>默认不开AOF，需要去配置文件中手动开启</strong></p>
-<p><strong>Aof保存的是appendonly.aof 文件</strong></p>
-<p>文件同样可以在配置文件中修改:</p>
-<p>&#x2F;&#x2F;The name of the append only file (default: “appendonly.aof”)</p>
-<p>​	appendfilename “appendonly.aof”</p>
-<p><strong>当我们开启时输入了命令后就会生成aod文件：</strong></p>
-<p><img src="https://s2.loli.net/2022/02/21/lDiAuKGo345PORI.png" alt="image-20220221100633418"></p>
-<p><strong>文件的内容为：</strong></p>
-<p><img src="https://s2.loli.net/2022/02/22/DGtZmALfOyTziFh.png" alt="image-20220222225551886"></p>
-<p>这个文件是能破坏的，破坏后启动redis会报错 ，但是系统会生成一个备用文件，我们可以使用它来修改appendonly.aof</p>
-<p>破坏后登录：</p>
-<p><img src="https://s2.loli.net/2022/02/21/JuwqZhENCfp9LIn.png" alt="image-20220221102935481"></p>
-<p>破坏后是可以使用这个文件进行恢复的</p>
-<p><img src="https://s2.loli.net/2022/02/21/X4TEjb1n5VfL2Fk.png" alt="image-20220221103321224"></p>
-<p>使用命令：redis-check-aof –fix appendonly.aof  进行恢复，恢复后 就能正常登录了</p>
-<p>注意：要在appendonly.aof文件位置使用该命令</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">[root@VM-4-12-centos ~]# redis-check-aof --fix appendonly.aof</span><br><span class="line">Cannot open file: appendonly.aof</span><br><span class="line">[root@VM-4-12-centos ~]# cd /usr/local/bin</span><br><span class="line">[root@VM-4-12-centos bin]# redis-check-aof --fix appendonly.aof</span><br><span class="line">0x              3c: Expected \r\n, got: 7765</span><br><span class="line">AOF analyzed: size=143, ok_up_to=52, diff=91</span><br><span class="line">This will shrink the AOF from 143 bytes, with 91 bytes, to 52 bytes</span><br><span class="line">Continue? [y/N]: y</span><br><span class="line">Successfully truncated AOF</span><br><span class="line">[root@VM-4-12-centos bin]# </span><br></pre></td></tr></table></figure>
-
-]]></content>
-      <categories>
-        <category>redis</category>
-      </categories>
-      <tags>
-        <tag>数据库</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>redis集群（主从复制）</title>
-    <url>/2022/05/21/redis%E9%9B%86%E7%BE%A4%EF%BC%88%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6%EF%BC%89/</url>
-    <content><![CDATA[<h1 id="Redis主从复制："><a href="#Redis主从复制：" class="headerlink" title="Redis主从复制："></a>Redis主从复制：</h1><h2 id="Redis主从复制概念"><a href="#Redis主从复制概念" class="headerlink" title="Redis主从复制概念"></a>Redis主从复制概念</h2><p>主从复制,是指将一台Redis服务器的数据，复制到其他的Redis服务器。前者称为主节点(master&#x2F;leader)，后者称为从节点(slave&#x2F;follower);数据的复制是单向的，只能由主节点到从节点。Master以写为主，Slave以读为主。</p>
-<p>默认情况下，每台Redis服务器都是主节点;且一个主节点可以有多个从节点(或没有从节点)，但一个从节点只能有一个主节点。主从复制的作用主要包括:</p>
-<p>1、数据冗余:主从复制实现了数据的热备份,是持久化之外的一种数据冗余方式。</p>
-<p>2、故障恢复:当主节点出现问题时，可以由从节点提供服务，实现快速的故障恢复;实际上是一种服务的冗余。</p>
-<p>3、负载均衡:在主从复制的基础上，配合读写分离，可以由主节点提供写服务，由从节点提供读服务（即写Redis数据时应用连教主节点，读Redis数据时应用连接从节点)，分担服务器负载;尤其是在写少读多的场景下，通过多个从节点分担读负载，可以大大提高Redis服务器的并发量。</p>
-<p>4、高可用(集群)基石:除了上述作用以外，主从复制还是哨兵和集群能够实施的基础，因此说主从复制是Redis高可用的基础.<br>一般来说，要将Redis运用于工程项目中，只使用一台Redis是万万不能的（宕机），原因如下:</p>
-<p>​	1、从结构上，单个Redis服务器会发生单点故障，并且一台服务器需要处理所有的请求负载，压力较大;<br>​	</p>
-<p>​	2、从容量上，单个Redis服务器内存容量有限，就算一台Redis服务器内存容量为256G，也不能将所有内存用作Redis存储内存，一般来说，单台Redis最大使用	内存不应该超过20G。</p>
-<p>​	电商网站上的商品，一般都是一次上传，无数次浏览的，说专业点也就是”多读少写”。对于这种场景，我们可以使如下这种架构:</p>
-<p>​	这是一主三从</p>
-<p><img src="https://s2.loli.net/2022/02/21/UTkJjV2ZfAeiNrE.png" alt="image-20220221153646023"></p>
-<p>​	 3、负载均衡:在主从复制的基础上，配合读写分离，可以由主节点提供写服务，由从节点提供读服务（即写Redis数据时应用连教主节点，读Redis数据时应用连	接 从节点)，分担服务器负载;尤其是在写少读多的场景下，通过多个从节点分担读负载，可以大大提高Redis服务器的并发量。</p>
-<h2 id="一主二从："><a href="#一主二从：" class="headerlink" title="一主二从："></a>一主二从：</h2><p>由于没有多个服务器，就在本机上多开几个redis，当端口什么都不一样，如果在一台服务器是测试：</p>
-<p>在一个主机上测试需要多个配置文件，并且配置文件需要修改</p>
-<p>port     端口</p>
-<p>pidfile   名字</p>
-<p>log   log文件名字</p>
-<p>dump.rdb   名字</p>
-<p>如果开了aof还需要修改aof的配置</p>
-<p>开启三个服务</p>
-<p><strong>查看当前redis</strong></p>
-<p><img src="https://s2.loli.net/2022/02/21/g2UXIiE6lrMvcG5.png" alt="image-20220221235035363"></p>
-<p><strong>默认情况下，每台redis服务器都是主节点</strong>；一般情况下我们只需要配置从机就可以了！</p>
-<p><strong>设置从机:</strong></p>
-<p>注意，认主需要在从机是去认，而不是主机</p>
-<p>我们需要在redis中去设置主机是谁，也就是认老大。假设  主为（6360），二从为（61，62）；</p>
-<p>使用命令：SLAVEOF    IP   端口   ；这就是找谁当老大，这里只演示连接一个，另一个自己去连</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">127.0.0.1:6362&gt; SLAVEOF 127.0.0.1 6360</span><br><span class="line">OK</span><br><span class="line">127.0.0.1:6362&gt; info replication</span><br><span class="line"># Replication</span><br><span class="line">role:slave      #角色从 master  变成了 slave</span><br><span class="line">master_host:127.0.0.1    #主机IP</span><br><span class="line">master_port:6360		#主机端口</span><br><span class="line">master_link_status:up</span><br><span class="line">master_last_io_seconds_ago:6</span><br><span class="line">master_sync_in_progress:0</span><br><span class="line">slave_repl_offset:28</span><br><span class="line">slave_priority:100</span><br><span class="line">slave_read_only:1</span><br><span class="line">connected_slaves:0</span><br><span class="line">master_replid:7f946868186fe88c13209f6a40cb8a41349df88c</span><br><span class="line">master_replid2:0000000000000000000000000000000000000000</span><br><span class="line">master_repl_offset:28</span><br><span class="line">second_repl_offset:-1</span><br><span class="line">repl_backlog_active:1</span><br><span class="line">repl_backlog_size:1048576</span><br><span class="line">repl_backlog_first_byte_offset:1</span><br><span class="line">repl_backlog_histlen:28</span><br><span class="line">127.0.0.1:6362&gt; </span><br><span class="line"></span><br></pre></td></tr></table></figure>
-
-
-
-<p><strong>查看下主机的身份信息:</strong></p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">127.0.0.1:6360&gt; info replication</span><br><span class="line"># Replication</span><br><span class="line">role:master    #角色</span><br><span class="line">connected_slaves:2   #从机数量</span><br><span class="line">slave0:ip=127.0.0.1,port=6362,state=online,offset=630,lag=0   #从机基本信息</span><br><span class="line">slave1:ip=127.0.0.1,port=6361,state=online,offset=630,lag=1   #从机基本信息</span><br><span class="line">master_replid:7f946868186fe88c13209f6a40cb8a41349df88c</span><br><span class="line">master_replid2:0000000000000000000000000000000000000000</span><br><span class="line">master_repl_offset:630</span><br><span class="line">second_repl_offset:-1</span><br><span class="line">repl_backlog_active:1</span><br><span class="line">repl_backlog_size:1048576</span><br><span class="line">repl_backlog_first_byte_offset:1</span><br><span class="line">repl_backlog_histlen:630</span><br><span class="line">127.0.0.1:6360&gt; </span><br><span class="line"></span><br></pre></td></tr></table></figure>
-
-
-
-
-
-<p><strong>读写与特殊情况演示：</strong></p>
-<p>主机复制些，而从机负责读，尽管主机宕机，从机依旧可以继续读到数据，</p>
-<p><strong>使用主机写：</strong></p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">127.0.0.1:6360&gt; set key 1</span><br><span class="line">OK       #成功</span><br><span class="line"></span><br></pre></td></tr></table></figure>
-
-
-
-<p><strong>使用从机读：</strong></p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">127.0.0.1:6362&gt; get key</span><br><span class="line">&quot;1&quot;    #成功</span><br><span class="line"></span><br></pre></td></tr></table></figure>
-
-
-
-<p><strong>使用从机写：</strong></p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">127.0.0.1:6362&gt; set key1 v1</span><br><span class="line">(error) READONLY You can&#x27;t write against a read only replica.     #不能对只读从机写</span><br><span class="line"></span><br></pre></td></tr></table></figure>
-
-
-
-<p><strong>关闭主机  从机是否还能进行读：</strong></p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">[root@VM-4-12-centos ~]# ps -ef|grep redis     #现在么有主机6360了</span><br><span class="line">root      304584  304199  0 11:38 pts/1    00:00:00 redis-cli -p 6361</span><br><span class="line">root      304652  304153  0 11:38 pts/0    00:00:00 redis-cli -p 6362</span><br><span class="line">root      312884  304314  0 12:11 pts/2    00:00:00 grep --color=auto redis</span><br><span class="line">root     4193030       1  0 Feb21 ?        00:00:47 redis-server 0.0.0.0:6361</span><br><span class="line">root     4193050       1  0 Feb21 ?        00:00:47 redis-server 0.0.0.0:6362</span><br><span class="line">[root@VM-4-12-centos ~]# </span><br><span class="line"></span><br></pre></td></tr></table></figure>
-
-
-
-<p><strong>关闭主机情况下进行读：</strong></p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">127.0.0.1:6362&gt; get key</span><br><span class="line">&quot;1&quot;   #依旧成功</span><br></pre></td></tr></table></figure>
-
-
-
-<p><strong>主机关闭后的角色基本信息</strong></p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">127.0.0.1:6362&gt; info replication</span><br><span class="line"># Replication</span><br><span class="line">role:slave</span><br><span class="line">master_host:127.0.0.1</span><br><span class="line">master_port:6360</span><br><span class="line">master_link_status:down</span><br><span class="line">master_last_io_seconds_ago:-1</span><br><span class="line">master_sync_in_progress:0</span><br><span class="line">slave_repl_offset:1396</span><br><span class="line">master_link_down_since_seconds:125</span><br><span class="line">slave_priority:100</span><br><span class="line">slave_read_only:1</span><br><span class="line">connected_slaves:0</span><br><span class="line">master_replid:7f946868186fe88c13209f6a40cb8a41349df88c</span><br><span class="line">master_replid2:0000000000000000000000000000000000000000</span><br><span class="line">master_repl_offset:1396</span><br><span class="line">second_repl_offset:-1</span><br><span class="line">repl_backlog_active:1</span><br><span class="line">repl_backlog_size:1048576</span><br><span class="line">repl_backlog_first_byte_offset:1</span><br><span class="line">repl_backlog_histlen:1396</span><br></pre></td></tr></table></figure>
-
-
-
-<p><strong>主机重启后写的值是否还能被从机读取到</strong></p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">#主机</span><br><span class="line">[root@VM-4-12-centos ~]# redis-server /usr/local/bin/StudyHardConfig/redis60.conf </span><br><span class="line">[root@VM-4-12-centos ~]# redis-cli -p 6360</span><br><span class="line">127.0.0.1:6360&gt; ping</span><br><span class="line">PONG</span><br><span class="line">127.0.0.1:6360&gt; set key3 v3</span><br><span class="line">OK</span><br><span class="line">127.0.0.1:6360&gt; </span><br><span class="line"></span><br></pre></td></tr></table></figure>
-
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">#从机  依旧可以读取到</span><br><span class="line">127.0.0.1:6362&gt; get key3</span><br><span class="line">&quot;v3&quot;       #成功</span><br><span class="line"></span><br></pre></td></tr></table></figure>
-
-
-
-<p><strong>从机关机的情况下</strong></p>
-<p>可看出从机必须连接主机后才能拿到数据，并且关机后会恢复成主机</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">[root@VM-4-12-centos ~]# ps -ef|grep redis</span><br><span class="line">root      304652  304153  0 11:38 pts/0    00:00:00 redis-cli -p 6362</span><br><span class="line">root      313867       1  0 12:15 ?        00:00:01 redis-server 0.0.0.0:6360</span><br><span class="line">root      313941  304314  0 12:15 pts/2    00:00:00 redis-cli -p 6360</span><br><span class="line">root      318505  304199  0 12:33 pts/1    00:00:00 grep --color=auto redis</span><br><span class="line">root     4193050       1  0 Feb21 ?        00:00:48 redis-server 0.0.0.0:6362</span><br><span class="line">[root@VM-4-12-centos ~]# redis-server /usr/local/bin/StudyHardConfig/redis61.conf </span><br><span class="line">[root@VM-4-12-centos ~]# redis-cli -p 6361</span><br><span class="line">127.0.0.1:6361&gt; ping</span><br><span class="line">PONG</span><br><span class="line">127.0.0.1:6361&gt; get key</span><br><span class="line">(nil)</span><br><span class="line">127.0.0.1:6361&gt; keys *</span><br><span class="line">(empty array)</span><br><span class="line">127.0.0.1:6361&gt; info replication</span><br><span class="line"># Replication</span><br><span class="line">role:master</span><br><span class="line">connected_slaves:0</span><br><span class="line">master_replid:f8962d2e0a43dc37e21770cc7a27e3b7664dbb72</span><br><span class="line">master_replid2:0000000000000000000000000000000000000000</span><br><span class="line">master_repl_offset:0</span><br><span class="line">second_repl_offset:-1</span><br><span class="line">repl_backlog_active:0</span><br><span class="line">repl_backlog_size:1048576</span><br><span class="line">repl_backlog_first_byte_offset:0</span><br><span class="line">repl_backlog_histlen:0</span><br><span class="line">127.0.0.1:6361&gt; SLAVEOF 127.0.0.1 6360</span><br><span class="line">OK</span><br><span class="line">127.0.0.1:6361&gt; keys *</span><br><span class="line">1) &quot;key3&quot;</span><br><span class="line">127.0.0.1:6361&gt; get key3</span><br><span class="line">&quot;v3&quot;</span><br><span class="line">127.0.0.1:6361&gt; </span><br><span class="line"></span><br></pre></td></tr></table></figure>
-
-
-
-
-
-
-
-<p>注意：这种命令行的主从设置是一次性的，关机后就会恢复成主机，想要永久设置需要去配置文件中配置；</p>
-<p>#replicaof <masterip> <masterport>      &#x2F;&#x2F;在配置文件中将该配置注释去掉，并填写上主机的ip 与端口</p>
-<p>如果主机有密码：</p>
-<p>#masterauth <master-password>        &#x2F;&#x2F;在配置文件中将该配置注释去掉，并填写主机密码</p>
-<p><strong>主从复制原理</strong></p>
-<p>Slave启动成功连接到master后会发送一个sync同步命令<br>Master接到命令，启动后台的存盘进程，同时收集所有接收到的用于修改数据集命令，在后台进程执行完毕之后，master将传送整个数据文件到slave，并完成一次完全同步。<br>全量复制:而slave服务在接收到数据库文件数据后,将其存盘并加载到内存中。增量复制:Master继续将新的所有收集到的修改命令依次传给slave，完成同步<br>但是只要是重新连接master，一次完全同步(全量复制）将被自动执行!我们的数据一定可以在从机中看到!</p>
-<p>还有一种主从方式，</p>
-<p>a  – b  – c   这种连接方式，a宕机了我们可以手动将b选为老大，</p>
-<p>命令：SLAVEOF no one   ； 这样将原来是从节点的redis改为主节点</p>
-<p>这里都是手动的；而哨兵模式就是自动选取老大</p>
-]]></content>
-      <tags>
-        <tag>集群</tag>
       </tags>
   </entry>
   <entry>
