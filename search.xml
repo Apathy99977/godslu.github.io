@@ -1,6 +1,529 @@
 <?xml version="1.0" encoding="utf-8"?>
 <search>
   <entry>
+    <title>Linux快速入门</title>
+    <url>/2022/05/25/Linux%E5%BF%AB%E9%80%9F%E5%85%A5%E9%97%A8/</url>
+    <content><![CDATA[<p>前言：</p>
+<p>本教程是根据B站Up主狂神说记得笔记，有需要查看视频的小伙伴可以去看看狂神的视频，真的非常好！</p>
+<p>狂神说Linux视频地址：<a href="https://www.bilibili.com/video/BV187411y7hF?vd_source=ac95d1e4dae5cfd66da910c649ab5384">https://www.bilibili.com/video/BV187411y7hF?vd_source=ac95d1e4dae5cfd66da910c649ab5384</a></p>
+<h1 id="服务器相关知识"><a href="#服务器相关知识" class="headerlink" title="服务器相关知识"></a>服务器相关知识</h1><blockquote>
+<p>为什么程序员都需要一个自己的服务器？</p>
+</blockquote>
+<ol>
+<li>作为一个程序员，必须要学会发布自己的网站和项目!</li>
+<li>练习Linux操作</li>
+<li>把自己的远程仓库、远程数据库、远程tomcat等搭建在服务器上</li>
+<li>练习Linux进行任意的环境部署操作! 大部人都是Window下开发，不熟悉Linux</li>
+</ol>
+<blockquote>
+<p>如何购买服务器？</p>
+</blockquote>
+<p>新手可以先去阿里云领一个免费的服务器先用着</p>
+<p>阿里云新人服务器领取地址：<br><a href="https://imgtu.com/i/jFDbm6"><img src="https://s1.ax1x.com/2022/06/25/jFDbm6.jpg" alt="jFDbm6.jpg"></a><br>学生的话后期可以购买学生机，阿里云只有未满24周岁都可以享受学生机优惠</p>
+<p>优惠地址：<a href="https://www.aliyun.com/minisite/goods?userCode=0phtycgr">https://www.aliyun.com/minisite/goods?userCode=0phtycgr</a></p>
+<p>购买服务器时系统选择CentOS 推荐版本7.X，因为8.0之后改了好多命令，云盘的话选择40G就够用了，如下图所示：<br><a href="https://imgtu.com/i/jFDzpd"><img src="https://s1.ax1x.com/2022/06/25/jFDzpd.jpg" alt="jFDzpd.jpg"></a></p>
+<blockquote>
+<p>买完服务器之后该干什么？</p>
+</blockquote>
+<p>首先服务器就是一个远程的Linux</p>
+<ol>
+<li>在阿里云购买服务器需要开通安全组设置去进行端口的映射，比如8080或者3306<br><a href="https://imgtu.com/i/jFcwxH"><img src="https://s1.ax1x.com/2022/06/25/jFcwxH.jpg" alt="jFcwxH.jpg"></a></li>
+<li>获取服务器的公网ip地址，修改实例名称和密码，记住第一次修改需要重启，修改后就可以使用Xshell进行远程连接了</li>
+</ol>
+<p><a href="https://imgtu.com/i/jmFkJe"><img src="https://s1.ax1x.com/2022/06/28/jmFkJe.jpg" alt="jmFkJe.jpg"></a></p>
+<blockquote>
+<p>连接到服务器之后，我们就需要搭建环境了</p>
+</blockquote>
+<p>搭建环境有两种方式：</p>
+<p>1、傻瓜式(使用宝塔面板)</p>
+<p>安装网站：<a href="https://www.bt.cn/new/download.html">https://www.bt.cn/new/download.html</a></p>
+<p>切记安装前记得先在安全组中开发如下端口：</p>
+<p><a href="https://imgtu.com/i/jmFPIO"><img src="https://s1.ax1x.com/2022/06/28/jmFPIO.jpg" alt="jmFPIO.jpg"></a></p>
+<p>安装命令： </p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">yum install -y wget &amp;&amp; wget -O install.sh http://download.bt.cn/install/install_6.0.sh &amp;&amp; sh install.sh ed8484bec</span><br></pre></td></tr></table></figure>
+
+<p>下载完毕之后，就可以得到一个地址：宝塔的管理面板</p>
+<ul>
+<li>url：</li>
+<li>username：</li>
+<li>password：</li>
+</ul>
+<p><a href="https://imgtu.com/i/jmF9Z6"><img src="https://s1.ax1x.com/2022/06/28/jmF9Z6.jpg" alt="jmF9Z6.jpg"></a></p>
+<p><a href="https://imgtu.com/i/jmFCdK"><img src="https://s1.ax1x.com/2022/06/28/jmFCdK.jpg" alt="jmFCdK.jpg"></a></p>
+<blockquote>
+<p>自定义安装服务器环境</p>
+</blockquote>
+<p><a href="https://imgtu.com/i/jmFARH"><img src="https://s1.ax1x.com/2022/06/28/jmFARH.jpg" alt="jmFARH.jpg"></a></p>
+<blockquote>
+<p>一键部署应用</p>
+</blockquote>
+<p><a href="https://imgtu.com/i/jmFEzd"><img src="https://s1.ax1x.com/2022/06/28/jmFEzd.jpg" alt="jmFEzd.jpg"></a></p>
+<blockquote>
+<p>端口开启</p>
+</blockquote>
+<p><a href="https://imgtu.com/i/jmFZQA"><img src="https://s1.ax1x.com/2022/06/28/jmFZQA.jpg" alt="jmFZQA.jpg"></a></p>
+<blockquote>
+<p>放入网站进行访问</p>
+</blockquote>
+<p>比如TomCat就直接放到webapps目录下</p>
+<p>特殊的网站：开源项目，就安装自己的操作来</p>
+<p>注意：上传文件尽量使用XFTP</p>
+<blockquote>
+<p>SpringBoot项目怎么部署？</p>
+</blockquote>
+<p>打成war包或者jar包</p>
+<ul>
+<li>war包直接丢到Tomcat即可</li>
+<li>jar包直接用java-jar执行即可访问</li>
+</ul>
+<p>注意：网站如果访问失败，一定是防火墙问题，这个时候去检查Linux服务器和阿里云安全组面板</p>
+<p>2、命令式(原生)</p>
+<h1 id="Linux入门概述"><a href="#Linux入门概述" class="headerlink" title="Linux入门概述"></a>Linux入门概述</h1><h2 id="我们为什么要学习Linux"><a href="#我们为什么要学习Linux" class="headerlink" title="我们为什么要学习Linux?"></a>我们为什么要学习Linux?</h2><blockquote>
+<p>linux诞生了这么多年，以前还喊着如何能取代windows系统，现在这个口号已经小多了，任何事物发展都有其局限性都有其天花板。就如同在国内再搞一个社交软件取代腾讯一样，想想而已基本不可能，因为用户已经习惯于使用微信交流，不是说技术上实现不了解而是老百姓已经习惯了，想让他们不用，即使他们自己不用亲戚朋友还是要用，没有办法的事情。</p>
+<p>用习惯了windows操作系统，再让大家切换到别的操作系统基本上是不可能的事情，改变一个人已经养成的习惯太难。没有办法深入到普通老百姓的生活中，并不意味着linux就没有用武之地了。在服务器端，在开发领域linux倒是越来越受欢迎，很多程序员都觉得不懂点linux都觉得不好意思，linux在开源社区的地位依然岿然不动。</p>
+<p>尤其是作为一个后端程序员，是必须要掌握Linux的，因为这都成为了你找工作的基础门槛了，所以不得不学习！</p>
+</blockquote>
+<h2 id="Linux-简介"><a href="#Linux-简介" class="headerlink" title="Linux 简介"></a>Linux 简介</h2><blockquote>
+<p>Linux 内核最初只是由芬兰人林纳斯·托瓦兹（Linus Torvalds）在赫尔辛基大学上学时出于个人爱好而编写的。</p>
+<p>Linux 是一套免费使用和自由传播的类 Unix 操作系统，是一个基于 POSIX（可移植操作系统接口） 和 UNIX 的多用户、多任务、支持多线程和多 CPU 的操作系统。</p>
+<p>Linux 能运行主要的 UNIX 工具软件、应用程序和网络协议。它支持 32 位和 64 位硬件。Linux 继承了 Unix 以网络为核心的设计思想，是一个性能稳定的多用户网络操作系统。</p>
+</blockquote>
+<h2 id="Linux-发行版"><a href="#Linux-发行版" class="headerlink" title="Linux 发行版"></a>Linux 发行版</h2><blockquote>
+<p>Linux 的发行版说简单点就是将 Linux 内核与应用软件做一个打包</p>
+</blockquote>
+<p>Kali linux：做安全渗透测试使用的</p>
+<p><a href="https://imgtu.com/i/juu9oj"><img src="https://s1.ax1x.com/2022/06/30/juu9oj.png" alt="juu9oj.png"></a></p>
+<p>目前市面上较知名的发行版有：Ubuntu、RedHat、CentOS、Debian、Fedora、SuSE、OpenSUSE、Arch Linux、SolusOS 等。</p>
+<p><a href="https://imgtu.com/i/juupwQ"><img src="https://s1.ax1x.com/2022/06/30/juupwQ.png" alt="juupwQ.png"></a></p>
+<p>有条件使用Redhat的人可以考虑考一个红帽子工程师，可以让你在面试的时候更突出一点</p>
+<blockquote>
+<p>Linux应用领域</p>
+</blockquote>
+<p>今天各种场合都有使用各种 Linux 发行版，从嵌入式设备到超级计算机，并且在服务器领域确定了地位，通常服务器使用 LAMP（Linux + Apache + MySQL + PHP）或 LNMP（Linux + Nginx+ MySQL + PHP）组合。</p>
+<p>目前 Linux 不仅在家庭与企业中使用，并且在政府中也很受欢迎。</p>
+<ul>
+<li>巴西联邦政府由于支持 Linux 而世界闻名。</li>
+<li>有新闻报道俄罗斯军队自己制造的 Linux 发布版的，做为 G.H.ost 项目已经取得成果。</li>
+<li>印度的 Kerala 联邦计划在向全联邦的高中推广使用 Linux。</li>
+<li>中华人民共和国为取得技术独立，在龙芯处理器中排他性地使用 Linux。</li>
+<li>在西班牙的一些地区开发了自己的 Linux 发布版，并且在政府与教育领域广泛使用，如 Extremadura 地区的 gnuLinEx 和 Andalusia 地区的 Guadalinex。</li>
+<li>葡萄牙同样使用自己的 Linux 发布版 Caixa Mágica，用于 Magalh?es 笔记本电脑和 e-escola 政府软件。</li>
+<li>法国和德国同样开始逐步采用 Linux。</li>
+</ul>
+<blockquote>
+<p>Linux vs Windows</p>
+</blockquote>
+<p><a href="https://imgtu.com/i/juuPFs"><img src="https://s1.ax1x.com/2022/06/30/juuPFs.png" alt="juuPFs.png"></a></p>
+<h1 id="环境搭建"><a href="#环境搭建" class="headerlink" title="环境搭建"></a>环境搭建</h1><p>Linux 的安装，安装步骤比较繁琐，现在其实云服务器挺普遍的，价格也便宜，如果直接不想搭建，也可以直接买一台学习用用！</p>
+<blockquote>
+<p>安装CentOS（虚拟机安装，耗资源）</p>
+</blockquote>
+<p>这里推荐使用VMware Workstation 对新手会比较友好一点，安装完后需要激活码，这里就不教破解方法了，自行百度即可</p>
+<p>VMware Workstation官网：<a href="https://www.vmware.com/cn/products/workstation-pro.html">https://www.vmware.com/cn/products/workstation-pro.html</a></p>
+<p>下载激活好后进行如下操作：</p>
+<p>可以通过镜像进行安装！官方网址：<a href="https://www.centos.org/download/">https://www.centos.org/download/</a></p>
+<p><a href="https://blog.csdn.net/SDAU_LGX/article/details/120669344?ops_request_misc=%257B%2522request%255Fid%2522%253A%2522165647175016782246484602%2522%252C%2522scm%2522%253A%252220140713.130102334..%2522%257D&request_id=165647175016782246484602&biz_id=0&utm_medium=distribute.pc_search_result.none-task-blog-2~all~top_click~default-2-120669344-null-null.142%5Ev25%5Epc_rank_34,157%5Ev15%5Enew_3&utm_term=centos7%E9%95%9C%E5%83%8F&spm=1018.2226.3001.4187">安装教程</a></p>
+<blockquote>
+<p>购买云服务器（推荐）</p>
+</blockquote>
+<p>云服务器就是一个远程电脑，服务器一般不会关机</p>
+<p>虚拟机安装后占用空间，也会有些卡顿，我们作为程序员其实可以选择购买一台自己的服务器，这样的话更加接近真实线上工作；</p>
+<p>1、阿里云购买服务器：<a href="https://www.aliyun.com/minisite/goods?userCode=0phtycgr">https://www.aliyun.com/minisite/goods?userCode=0phtycgr</a></p>
+<p>2、购买完毕后，获取服务器的ip地址，重置服务器密码，就可以远程登录了</p>
+<p>3、下载 xShell（远程连接使用）和Xftp 工具（文件上传使用）</p>
+<p>这里我给大家提供了我的免费下载地址：</p>
+<p>链接：<a href="https://pan.baidu.com/s/19yBxIyCP69tHzm8Y2NogNw">https://pan.baidu.com/s/19yBxIyCP69tHzm8Y2NogNw</a><br>提取码：p73z </p>
+<p>连接成功效果如下：</p>
+<p><a href="https://imgtu.com/i/juuSeg"><img src="https://s1.ax1x.com/2022/06/30/juuSeg.png" alt="juuSeg.png"></a></p>
+<p>这里就是我们的Linux操作系统了!以后的操作都在这里操作，项目也在这里进行发布!</p>
+<p><strong>注意事项：</strong></p>
+<p>如果要打开端口，需要在阿里云的安全组面板中开启对应的出入规则，不然的话会被阿里拦截！</p>
+<h1 id="走近Linux系统"><a href="#走近Linux系统" class="headerlink" title="走近Linux系统"></a>走近Linux系统</h1><blockquote>
+<p>开机登录</p>
+</blockquote>
+<p>开机会启动许多程序。它们在Windows叫做”服务”（service），在Linux就叫做”<strong>守护进程</strong>“（daemon）。</p>
+<p>开机成功后，它会显示一个文本登录界面，这个界面就是我们经常看到的登录界面，在这个登录界面中会提示用户输入用户名，而用户输入的用户将作为参数传给login程序来验证用户的身份，密码是不显示的，输完回车即可！</p>
+<p>一般来说，用户的登录方式有三种：</p>
+<ul>
+<li>命令行登录</li>
+<li>ssh登录</li>
+<li>图形界面登录</li>
+</ul>
+<p>最高权限账户为 root，可以操作一切！</p>
+<blockquote>
+<p>关机</p>
+</blockquote>
+<p>在linux领域内大多用在服务器上，很少遇到关机的操作。毕竟服务器上跑一个服务是永无止境的，除非特殊情况下，不得已才会关机。</p>
+<p>关机指令为：shutdown ；</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">sync</span> <span class="comment"># 将数据由内存同步到硬盘中。</span></span><br><span class="line"></span><br><span class="line">shutdown <span class="comment"># 关机指令，你可以man shutdown 来看一下帮助文档。例如你可以运行如下命令关机：</span></span><br><span class="line"></span><br><span class="line">shutdown –h 10 <span class="comment"># 这个命令告诉大家，计算机将在10分钟后关机</span></span><br><span class="line"></span><br><span class="line">shutdown –h now <span class="comment"># 立马关机</span></span><br><span class="line"></span><br><span class="line">shutdown –h 20:25 <span class="comment"># 系统会在今天20:25关机</span></span><br><span class="line"></span><br><span class="line">shutdown –h +10 <span class="comment"># 十分钟后关机</span></span><br><span class="line"></span><br><span class="line">shutdown –r now <span class="comment"># 系统立马重启</span></span><br><span class="line"></span><br><span class="line">shutdown –r +10 <span class="comment"># 系统十分钟后重启</span></span><br><span class="line"></span><br><span class="line">reboot <span class="comment"># 就是重启，等同于 shutdown –r now</span></span><br><span class="line"></span><br><span class="line">halt <span class="comment"># 关闭系统，等同于shutdown –h now 和 poweroff</span></span><br></pre></td></tr></table></figure>
+
+<p>最后总结一下，不管是重启系统还是关闭系统，首先要运行 <strong>sync</strong> 命令，把内存中的数据写到磁盘中。</p>
+<blockquote>
+<p>系统目录结构</p>
+</blockquote>
+<p>1、在Linux中一切皆文件<br>2、根目录&#x2F;，所有的文件都挂载在这个节点下</p>
+<p>登录系统后，在当前命令窗口下输入命令：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">ls</span> /</span><br></pre></td></tr></table></figure>
+
+<p>你会看到如下图所示：</p>
+<p><a href="https://imgtu.com/i/junxOS"><img src="https://s1.ax1x.com/2022/06/30/junxOS.png" alt="junxOS.png"></a></p>
+<p>树状目录结构：（Linux的一切资源都挂载在这个 &#x2F; 根节点下）</p>
+<p><a href="https://imgtu.com/i/juuiYn"><img src="https://s1.ax1x.com/2022/06/30/juuiYn.png" alt="juuiYn.png"></a></p>
+<p><strong>以下是对这些目录的解释：</strong></p>
+<ul>
+<li><strong>&#x2F;bin</strong>：bin是Binary的缩写, 这个目录存放着最经常使用的命令。</li>
+<li><strong>&#x2F;boot：</strong> 这里存放的是启动Linux时使用的一些核心文件，包括一些连接文件以及镜像文件。（切记不要动他）</li>
+<li><strong>&#x2F;dev ：</strong> dev是Device(设备)的缩写, 存放的是Linux的外部设备，在Linux中访问设备的方式和访问文件的方式是相同的。</li>
+<li><strong>&#x2F;etc：</strong> 这个目录用来存放所有的系统管理所需要的配置文件和子目录。（<strong>重点</strong>）</li>
+<li><strong>&#x2F;home</strong>：用户的主目录，在Linux中，每个用户都有一个自己的目录，一般该目录名是以用户的账号命名的。（<strong>重点</strong>）</li>
+<li><strong>&#x2F;lib</strong>：这个目录里存放着系统最基本的动态连接共享库，其作用类似于Windows里的DLL文件。（切记不要动他）</li>
+<li><strong>&#x2F;lost+found</strong>：这个目录一般情况下是空的，当系统非法关机后，这里就存放了一些文件。（存放突然关机的一些文件）</li>
+<li><strong>&#x2F;media</strong>：linux系统会自动识别一些设备，例如U盘、光驱等等，当识别后，linux会把识别的设备挂载到这个目录下。</li>
+<li><strong>&#x2F;mnt</strong>：系统提供该目录是为了让用户临时挂载别的文件系统的，我们可以将光驱挂载在&#x2F;mnt&#x2F;上，然后进入该目录就可以查看光驱里的内容了。（我们后面会把一些本地文件挂载在这个目录下）</li>
+<li><strong>&#x2F;opt</strong>：这是给主机额外安装软件所摆放的目录。比如你安装一个ORACLE数据库则就可以放到这个目录下。默认是空的。(<strong>非常重要</strong>)</li>
+<li><strong>&#x2F;proc</strong>：这个目录是一个虚拟的目录，它是系统内存的映射，我们可以通过直接访问这个目录来获取系统信息。（不用管）</li>
+<li><strong>&#x2F;root</strong>：该目录为系统管理员，也称作超级权限者的用户主目录。（<strong>重点</strong>）</li>
+<li><strong>&#x2F;sbin</strong>：s就是Super User的意思，这里存放的是系统管理员使用的系统管理程序。</li>
+<li><strong>&#x2F;srv</strong>：该目录存放一些服务启动之后需要提取的数据。</li>
+<li><strong>&#x2F;sys</strong>：这是linux2.6内核的一个很大的变化。该目录下安装了2.6内核中新出现的一个文件系统 sysfs 。</li>
+<li><strong>&#x2F;tmp</strong>：这个目录是用来存放一些临时文件的。用完即丢的文件，可以放在这个目录下，比如安装包。（<strong>常用</strong>）</li>
+<li><strong>&#x2F;usr</strong>：这是一个非常重要的目录，用户的很多应用程序和文件都放在这个目录下，类似于windows下的program files目录。（<strong>重点</strong>）</li>
+<li><strong>&#x2F;usr&#x2F;bin：</strong> 系统用户使用的应用程序。</li>
+<li><strong>&#x2F;usr&#x2F;sbin：</strong> 超级用户使用的比较高级的管理程序和系统守护程序。</li>
+<li><strong>&#x2F;usr&#x2F;src：</strong> 内核源代码默认的放置目录。</li>
+<li><strong>&#x2F;var</strong>：这个目录中存放着在不断扩充着的东西，我们习惯将那些经常被修改的目录放在这个目录下。包括各种日志文件。</li>
+<li><strong>&#x2F;run</strong>：是一个临时文件系统，存储系统启动以来的信息。当系统重启时，这个目录下的文件应该被删掉或清除。</li>
+<li><strong>&#x2F;www:<strong>存放服务器网站相关的资源，环境，网站的项目，这个是只有服务器才有的（</strong>重点</strong>）</li>
+</ul>
+<p><a href="https://imgtu.com/i/juuFWq"><img src="https://s1.ax1x.com/2022/06/30/juuFWq.png" alt="juuFWq.png"></a></p>
+<h1 id="常用的基本命令（重点）"><a href="#常用的基本命令（重点）" class="headerlink" title="常用的基本命令（重点）"></a>常用的基本命令（重点）</h1><h2 id="目录管理"><a href="#目录管理" class="headerlink" title="目录管理"></a>目录管理</h2><h3 id="绝对路径和相对路径"><a href="#绝对路径和相对路径" class="headerlink" title="绝对路径和相对路径"></a>绝对路径和相对路径</h3><p>我们知道Linux的目录结构为树状结构，最顶级的目录为根目录 &#x2F;。</p>
+<p>其他目录通过挂载可以将它们添加到树中，通过解除挂载可以移除它们。</p>
+<p><strong>绝对路径：</strong></p>
+<p>路径的写法，由根目录 &#x2F; 写起，例如：&#x2F;usr&#x2F;share&#x2F;doc 这个目录。</p>
+<p><strong>相对路径：</strong></p>
+<p>路径的写法，不是由 &#x2F; 写起，例如由 &#x2F;usr&#x2F;share&#x2F;doc 要到 &#x2F;usr&#x2F;share&#x2F;man 底下时，可以写成：cd ..&#x2F;man 这就是相对路径的写法啦！</p>
+<ul>
+<li>cd :切换目录命令!</li>
+<li>.&#x2F; :当前目录</li>
+<li>cd .. :返回上一级目录</li>
+</ul>
+<h3 id="处理目录的常用命令"><a href="#处理目录的常用命令" class="headerlink" title="处理目录的常用命令"></a>处理目录的常用命令</h3><p>接下来我们就来看几个常见的处理目录的命令吧：</p>
+<ul>
+<li>ls: 列出目录</li>
+<li>cd：切换目录</li>
+<li>pwd：显示目前的目录</li>
+<li>mkdir：创建一个新的目录</li>
+<li>rmdir：删除一个空的目录</li>
+<li>cp: 复制文件或目录</li>
+<li>rm: 移除文件或目录</li>
+<li>mv: 移动文件与目录，或修改文件与目录的名称</li>
+</ul>
+<p>你可以使用 <em>man [命令]</em> 来查看各个命令的使用文档，如 ：man cp。</p>
+<h4 id="ls-（列出目录）"><a href="#ls-（列出目录）" class="headerlink" title="ls （列出目录）"></a>ls （列出目录）</h4><p>在Linux系统当中， ls 命令可能是最常被运行的。</p>
+<p>语法：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">[root@www ~]<span class="comment"># ls [-aAdfFhilnrRSt] 目录名称</span></span><br></pre></td></tr></table></figure>
+
+<p>选项与参数：</p>
+<ul>
+<li>-a ：全部的文件，连同隐藏文件( 开头为 . 的文件) 一起列出来(常用)</li>
+<li>-l ：长数据串列出，包含文件的属性与权限等等数据；(常用)</li>
+</ul>
+<p>注意：所有的Linux命令都可以进行组合使用!</p>
+<p>比如：将目录下的所有文件列出来(含属性与隐藏档)</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">[root@www ~]<span class="comment"># ls -al ~</span></span><br></pre></td></tr></table></figure>
+
+<h4 id="cd-（切换目录）"><a href="#cd-（切换目录）" class="headerlink" title="cd （切换目录）"></a>cd （切换目录）</h4><p>cd+目录名（绝对路径都是以&#x2F;开头，相对路径，对于当前目录该如何寻找..&#x2F; ..&#x2F;）</p>
+<p><a href="https://imgtu.com/i/juuAS0"><img src="https://s1.ax1x.com/2022/06/30/juuAS0.png" alt="juuAS0.png"></a></p>
+<p>cd是Change Directory的缩写，这是用来变换工作目录的命令。</p>
+<p>语法：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">cd</span> [相对路径或绝对路径]</span><br></pre></td></tr></table></figure>
+
+<p>测试：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 切换到用户目录下</span></span><br><span class="line">[root@apathy /]<span class="comment"># cd home  </span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 使用 mkdir 命令创建 apathystudy 目录</span></span><br><span class="line">[root@apathy home]<span class="comment"># mkdir apathystudy</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 进入 kuangstudy 目录</span></span><br><span class="line">[root@apathy home]<span class="comment"># cd apathystudy</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 回到上一级</span></span><br><span class="line">[root@apathy apathystudy]<span class="comment"># cd ..</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 回到根目录</span></span><br><span class="line">[root@apathy apathystudy]<span class="comment"># cd /</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 表示回到自己的家目录，亦即是 /root 这个目录</span></span><br><span class="line">[root@apathy apathystudy]<span class="comment"># cd ~</span></span><br></pre></td></tr></table></figure>
+
+<p>接下来大家多操作几次应该就可以很好的理解 cd 命令的。</p>
+<h4 id="pwd-显示目前所在的目录"><a href="#pwd-显示目前所在的目录" class="headerlink" title="pwd ( 显示目前所在的目录 )"></a>pwd ( 显示目前所在的目录 )</h4><p>pwd 是 <strong>Print Working Directory</strong> 的缩写，也就是显示目前所在目录的命令。</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">[root@apathy apathystudy]<span class="comment">#pwd [-P]</span></span><br></pre></td></tr></table></figure>
+
+<p>选项与参数：**-P** ：显示出确实的路径，而非使用连接(link) 路径。</p>
+<p>测试：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 单纯显示出目前的工作目录</span></span><br><span class="line">[root@apathy ~]<span class="comment"># pwd</span></span><br><span class="line">/root</span><br><span class="line"></span><br><span class="line"><span class="comment"># 如果是链接，要显示真实地址，可以使用 -P参数</span></span><br><span class="line">[root@apathy /]<span class="comment"># cd bin</span></span><br><span class="line">[root@apathy bin]<span class="comment"># pwd -P</span></span><br><span class="line">/usr/bin</span><br></pre></td></tr></table></figure>
+
+<h4 id="mkdir-（创建新目录）"><a href="#mkdir-（创建新目录）" class="headerlink" title="mkdir （创建新目录）"></a>mkdir （创建新目录）</h4><p>如果想要创建新的目录的话，那么就使用mkdir (make directory)吧。</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">mkdir</span> [-mp] 目录名称</span><br></pre></td></tr></table></figure>
+
+<p>选项与参数：</p>
+<ul>
+<li>-m ：配置文件的权限喔！直接配置，不需要看默认权限 (umask) 的脸色～</li>
+<li>-p ：帮助你直接将所需要的目录(包含上一级目录)递归创建起来！</li>
+</ul>
+<p>测试：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 进入我们用户目录下</span></span><br><span class="line">[root@apathy /]<span class="comment"># cd /home</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 创建一个 test 文件夹</span></span><br><span class="line">[root@apathy home]<span class="comment"># mkdir test</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 创建多层级目录</span></span><br><span class="line">[root@apathy home]<span class="comment"># mkdir test1/test2/test3/test4</span></span><br><span class="line"><span class="built_in">mkdir</span>: cannot create directory ‘test1/test2/test3/test4’:</span><br><span class="line">No such file or directory  <span class="comment"># &lt;== 没办法直接创建此目录啊！</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 加了这个 -p 的选项，可以自行帮你创建多层目录！</span></span><br><span class="line">[root@apathy home]<span class="comment"># mkdir -p test1/test2/test3/test4</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 创建权限为 rwx--x--x 的目录。</span></span><br><span class="line">[root@apathy home]<span class="comment"># mkdir -m 711 test2</span></span><br><span class="line">[root@apathy home]<span class="comment"># ls -l</span></span><br><span class="line">drwxr-xr-x 2 root root  4096 Mar 12 21:55 <span class="built_in">test</span></span><br><span class="line">drwxr-xr-x 3 root root  4096 Mar 12 21:56 test1</span><br><span class="line">drwx--x--x 2 root root  4096 Mar 12 21:58 test2</span><br></pre></td></tr></table></figure>
+
+<h4 id="rmdir-删除空的目录"><a href="#rmdir-删除空的目录" class="headerlink" title="rmdir ( 删除空的目录 )"></a>rmdir ( 删除空的目录 )</h4><p>语法：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">rmdir</span> [-p] 目录名称</span><br></pre></td></tr></table></figure>
+
+<p>选项与参数：**-p ：**连同上一级『空的』目录也一起删除</p>
+<p>测试：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 看看有多少目录存在？</span></span><br><span class="line">[root@apathy home]<span class="comment"># ls -l</span></span><br><span class="line">drwxr-xr-x 2 root root  4096 Mar 12 21:55 <span class="built_in">test</span></span><br><span class="line">drwxr-xr-x 3 root root  4096 Mar 12 21:56 test1</span><br><span class="line">drwx--x--x 2 root root  4096 Mar 12 21:58 test2</span><br><span class="line"></span><br><span class="line"><span class="comment"># 可直接删除掉，没问题</span></span><br><span class="line">[root@apathy home]<span class="comment"># rmdir test</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 因为尚有内容，所以无法删除！</span></span><br><span class="line">[root@apathy home]<span class="comment"># rmdir test1</span></span><br><span class="line"><span class="built_in">rmdir</span>: failed to remove ‘test1’: Directory not empty</span><br><span class="line"></span><br><span class="line"><span class="comment"># 利用 -p 这个选项，立刻就可以将 test1/test2/test3/test4 依次删除。</span></span><br><span class="line">[root@apathy home]<span class="comment"># rmdir -p test1/test2/test3/test4</span></span><br></pre></td></tr></table></figure>
+
+<p>注意：rmdir仅能删除空的目录，如果下面存在文件，需要先删除文件，也可以使用递归删除多个目录-p参数即可</p>
+<h4 id="cp-复制文件或目录"><a href="#cp-复制文件或目录" class="headerlink" title="cp ( 复制文件或目录 )"></a>cp ( 复制文件或目录 )</h4><p>语法：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">[root@www ~]<span class="comment"># cp [-adfilprsu] 来源档(source) 目标档(destination)</span></span><br><span class="line">[root@www ~]<span class="comment"># cp [options] source1 source2 source3 .... directory</span></span><br></pre></td></tr></table></figure>
+
+<p>选项与参数：</p>
+<ul>
+<li><strong>-a：</strong>相当于 -pdr 的意思，至于 pdr 请参考下列说明；(常用)</li>
+<li><strong>-p：</strong>连同文件的属性一起复制过去，而非使用默认属性(备份常用)；</li>
+<li><strong>-d：</strong>若来源档为连结档的属性(link file)，则复制连结档属性而非文件本身；</li>
+<li><strong>-r：</strong>递归持续复制，用于目录的复制行为；(常用)</li>
+<li><strong>-f：</strong>为强制(force)的意思，若目标文件已经存在且无法开启，则移除后再尝试一次；</li>
+<li><strong>-i：</strong>若目标档(destination)已经存在时，在覆盖时会先询问动作的进行(常用)</li>
+<li><strong>-l：</strong>进行硬式连结(hard link)的连结档创建，而非复制文件本身。</li>
+<li><strong>-s：</strong>复制成为符号连结档 (symbolic link)，亦即『捷径』文件；</li>
+<li><strong>-u：</strong>若 destination 比 source 旧才升级 destination ！</li>
+</ul>
+<p>测试：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 找一个有文件的目录，我这里找到 root目录</span></span><br><span class="line">[root@apathy home]<span class="comment"># cd /root</span></span><br><span class="line">[root@apathy ~]<span class="comment"># ls</span></span><br><span class="line">install.sh</span><br><span class="line">[root@apathy ~]<span class="comment"># cd /home</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 复制 root目录下的install.sh 到 home目录下</span></span><br><span class="line">[root@apathy home]<span class="comment"># cp /root/install.sh /home</span></span><br><span class="line">[root@apathy home]<span class="comment"># ls</span></span><br><span class="line">install.sh</span><br><span class="line"></span><br><span class="line"><span class="comment"># 再次复制，加上-i参数，增加覆盖询问？</span></span><br><span class="line">[root@apathy home]<span class="comment"># cp -i /root/install.sh /home</span></span><br><span class="line"><span class="built_in">cp</span>: overwrite ‘/home/install.sh’? y <span class="comment"># n不覆盖，y为覆盖</span></span><br></pre></td></tr></table></figure>
+
+<h4 id="rm-移除文件或目录"><a href="#rm-移除文件或目录" class="headerlink" title="rm ( 移除文件或目录 )"></a>rm ( 移除文件或目录 )</h4><p>语法：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">rm</span> [-fir] 文件或目录</span><br></pre></td></tr></table></figure>
+
+<p>选项与参数：</p>
+<ul>
+<li>-f ：就是 force 的意思，忽略不存在的文件，不会出现警告信息，相当于强制删除；</li>
+<li>-i ：互动模式，在删除前会询问使用者是否动作</li>
+<li>-r ：递归删除啊！最常用在目录的删除了！这是非常危险的选项！！！</li>
+</ul>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">rm</span> -rf /<span class="comment">#系统中所有的文件就被删除了，删库跑路就是这么操作的!</span></span><br></pre></td></tr></table></figure>
+
+<p>测试：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 将刚刚在 cp 的实例中创建的 install.sh删除掉！</span></span><br><span class="line">[root@apathy home]<span class="comment"># rm -i install.sh</span></span><br><span class="line"><span class="built_in">rm</span>: remove regular file ‘install.sh’? y</span><br><span class="line"><span class="comment"># 如果加上 -i 的选项就会主动询问喔，避免你删除到错误的档名！</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 尽量不要在服务器上使用 rm -rf /</span></span><br></pre></td></tr></table></figure>
+
+<h4 id="mv-移动文件与目录，或修改名称"><a href="#mv-移动文件与目录，或修改名称" class="headerlink" title="mv  ( 移动文件与目录，或修改名称 )"></a>mv  ( 移动文件与目录，或修改名称 )</h4><p>语法：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">[root@www ~]<span class="comment"># mv [-fiu] source destination</span></span><br><span class="line">[root@www ~]<span class="comment"># mv [options] source1 source2 source3 .... directory</span></span><br></pre></td></tr></table></figure>
+
+<p>选项与参数：</p>
+<ul>
+<li>-f ：force 强制的意思，如果目标文件已经存在，不会询问而直接覆盖；</li>
+<li>-i ：若目标文件 (destination) 已经存在时，就会询问是否覆盖！</li>
+<li>-u ：若目标文件已经存在，且 source 比较新，才会升级 (update)</li>
+</ul>
+<p>测试：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 复制一个文件到当前目录</span></span><br><span class="line">[root@apathy home]<span class="comment"># cp /root/install.sh /home</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 创建一个文件夹 test</span></span><br><span class="line">[root@apathy home]<span class="comment"># mkdir test</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 将复制过来的文件移动到我们创建的目录，并查看</span></span><br><span class="line">[root@apathy home]<span class="comment"># mv install.sh test</span></span><br><span class="line">[root@apathy home]<span class="comment"># ls</span></span><br><span class="line"><span class="built_in">test</span></span><br><span class="line">[root@apathy home]<span class="comment"># cd test</span></span><br><span class="line">[root@apathy <span class="built_in">test</span>]<span class="comment"># ls</span></span><br><span class="line">install.sh</span><br><span class="line"></span><br><span class="line"><span class="comment"># 将文件夹重命名，然后再次查看！</span></span><br><span class="line">[root@apathy <span class="built_in">test</span>]<span class="comment"># cd ..</span></span><br><span class="line">[root@apathy home]<span class="comment"># mv test mvtest</span></span><br><span class="line">[root@apathy home]<span class="comment"># ls</span></span><br><span class="line">mvtest</span><br></pre></td></tr></table></figure>
+
+<h2 id="基本属性"><a href="#基本属性" class="headerlink" title="基本属性"></a>基本属性</h2><blockquote>
+<p>看懂文件属性</p>
+</blockquote>
+<p>Linux系统是一种典型的多用户系统，不同的用户处于不同的地位，拥有不同的权限。为了保护系统的安全性，Linux系统对不同的用户访问同一文件（包括目录文件）的权限做了不同的规定。</p>
+<p>在Linux中我们可以使用<code>ll</code>或者<code>ls –l</code>命令来显示一个文件的属性以及文件所属的用户和组，如：</p>
+<p><img src="https://mmbiz.qpic.cn/mmbiz_png/uJDAUKrGC7JGpeIS4j9q3B4LQhsQkFiauXAQN0qOnVCYvj7Cm1oQbvexVDFqPhUIeTe83BdAHlXCJhGoNabSFKQ/640?wx_fmt=png&wxfrom=5&wx_lazy=1&wx_co=1" alt="图片"></p>
+<p>实例中，boot文件的第一个属性用”d”表示。”d”在Linux中代表该文件是一个目录文件。</p>
+<p>在Linux中第一个字符代表这个文件是目录、文件或链接文件等等：</p>
+<ul>
+<li>当为[ <strong>d</strong> ]则是目录</li>
+<li>当为[ <strong>-</strong> ]则是文件；</li>
+<li>若是[ <strong>l</strong> ]则表示为链接文档 ( link file )；</li>
+<li>若是[ <strong>b</strong> ]则表示为装置文件里面的可供储存的接口设备 ( 可随机存取装置 )；</li>
+<li>若是[ <strong>c</strong> ]则表示为装置文件里面的串行端口设备，例如键盘、鼠标 ( 一次性读取装置 )。</li>
+</ul>
+<p>接下来的字符中，以三个为一组，且均为『rwx』 的三个参数的组合。</p>
+<p>其中，[ r ]代表可读(read)、[ w ]代表可写(write)、[ x ]代表可执行(execute)。</p>
+<p>要注意的是，这三个权限的位置不会改变，如果没有权限，就会出现减号[ - ]而已。</p>
+<p>每个文件的属性由左边第一部分的10个字符来确定（如下图）：</p>
+<p><img src="https://mmbiz.qpic.cn/mmbiz_png/uJDAUKrGC7JGpeIS4j9q3B4LQhsQkFiauEybzG2XIdlOMLyO13lMfPKUWRpGJGgyxCAJ9mics9dTZ1qrWDIvleYQ/640?wx_fmt=png&wxfrom=5&wx_lazy=1&wx_co=1" alt="图片"></p>
+<p>从左至右用0-9这些数字来表示。</p>
+<p>第0位确定文件类型，第1-3位确定属主（该文件的所有者）拥有该文件的权限。第4-6位确定属组（所有者的同组用户）拥有该文件的权限，第7-9位确定其他用户拥有该文件的权限。</p>
+<p>其中：</p>
+<p>第1、4、7位表示读权限，如果用”r”字符表示，则有读权限，如果用”-“字符表示，则没有读权限；</p>
+<p>第2、5、8位表示写权限，如果用”w”字符表示，则有写权限，如果用”-“字符表示没有写权限；</p>
+<p>第3、6、9位表示可执行权限，如果用”x”字符表示，则有执行权限，如果用”-“字符表示，则没有执行权限。</p>
+<p>对于文件来说，它都有一个特定的所有者，也就是对该文件具有所有权的用户。</p>
+<p>同时，在Linux系统中，用户是按组分类的，一个用户属于一个或多个组。</p>
+<p>文件所有者以外的用户又可以分为文件所有者的同组用户和其他用户。</p>
+<p>因此，Linux系统按文件所有者、文件所有者同组用户和其他用户来规定了不同的文件访问权限。</p>
+<p>在以上实例中，boot 文件是一个目录文件，属主和属组都为 root。</p>
+<blockquote>
+<p>修改文件属性</p>
+</blockquote>
+<p><strong>1、chgrp：更改文件属组</strong></p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">chgrp</span> [-R] 属组名 文件名</span><br></pre></td></tr></table></figure>
+
+<p>-R：递归更改文件属组，就是在更改某个目录文件的属组时，如果加上-R的参数，那么该目录下的所有文件的属组都会更改。</p>
+<p><strong>2、chown：更改文件属主，也可以同时更改文件属组</strong></p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">chown</span> [–R] 属主名 文件名</span><br><span class="line"><span class="built_in">chown</span> [-R] 属主名：属组名 文件名</span><br></pre></td></tr></table></figure>
+
+<p><strong>3、chmod：更改文件9个属性</strong></p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">chmod</span> [-R] xyz 文件或目录</span><br></pre></td></tr></table></figure>
+
+<p>Linux文件属性有两种设置方法，一种是数字，一种是符号。</p>
+<p>Linux文件的基本权限就有九个，分别是owner&#x2F;group&#x2F;others三种身份各有自己的read&#x2F;write&#x2F;execute权限。</p>
+<p>先复习一下刚刚上面提到的数据：文件的权限字符为：『-rwxrwxrwx』， 这九个权限是三个三个一组的！其中，我们可以使用数字来代表各个权限，各权限的分数对照表如下：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">r:4     w:2         x:1</span><br></pre></td></tr></table></figure>
+
+<p>每种身份(owner&#x2F;group&#x2F;others)各自的三个权限(r&#x2F;w&#x2F;x)分数是需要累加的，例如当权限为：[-rwxrwx—] 分数则是：</p>
+<ul>
+<li>owner &#x3D; rwx &#x3D; 4+2+1 &#x3D; 7</li>
+<li>group &#x3D; rwx &#x3D; 4+2+1 &#x3D; 7</li>
+<li>others&#x3D; — &#x3D; 0+0+0 &#x3D; 0</li>
+</ul>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">chmod</span> 770 filename</span><br></pre></td></tr></table></figure>
+
+<p>可以自己下去多进行测试！</p>
+<h2 id="文件内容查看"><a href="#文件内容查看" class="headerlink" title="文件内容查看"></a>文件内容查看</h2><blockquote>
+<p>概述</p>
+</blockquote>
+<p>Linux系统中使用以下命令来查看文件的内容：</p>
+<ul>
+<li>cat 由第一行开始显示文件内容</li>
+<li>tac 从最后一行开始显示，可以看出 tac 是 cat 的倒着写！</li>
+<li>nl  显示的时候，顺道输出行号！</li>
+<li>more 一页一页的显示文件内容</li>
+<li>less 与 more 类似，但是比 more 更好的是，他可以往前翻页！</li>
+<li>head 只看头几行</li>
+<li>tail 只看尾巴几行</li>
+</ul>
+<p>你可以使用 *man [命令]*来查看各个命令的使用文档，如 ：man cp。</p>
+<blockquote>
+<p>cat 由第一行开始显示文件内容</p>
+</blockquote>
+<p>语法：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">cat</span> [-AbEnTv]</span><br></pre></td></tr></table></figure>
+
+<p>选项与参数：</p>
+<ul>
+<li>-A ：相当於 -vET 的整合选项，可列出一些特殊字符而不是空白而已；</li>
+<li>-b ：列出行号，仅针对非空白行做行号显示，空白行不标行号！</li>
+<li>-E ：将结尾的断行字节 $ 显示出来；</li>
+<li>-n ：列印出行号，连同空白行也会有行号，与 -b 的选项不同；</li>
+<li>-T ：将 [tab] 按键以 ^I 显示出来；</li>
+<li>-v ：列出一些看不出来的特殊字符</li>
+</ul>
+<p>测试：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 查看网络配置: 文件地址 /etc/sysconfig/network-scripts/</span></span><br><span class="line">[root@kuangshen ~]<span class="comment"># cat /etc/sysconfig/network-scripts/ifcfg-eth0</span></span><br><span class="line">DEVICE=eth0</span><br><span class="line">BOOTPROTO=dhcp</span><br><span class="line">ONBOOT=<span class="built_in">yes</span></span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>tac</p>
+</blockquote>
+<p>tac与cat命令刚好相反，文件内容从最后一行开始显示，可以看出 tac 是 cat 的倒着写！如：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">[root@kuangshen ~]<span class="comment"># tac /etc/sysconfig/network-scripts/ifcfg-eth0</span></span><br><span class="line">ONBOOT=<span class="built_in">yes</span></span><br><span class="line">BOOTPROTO=dhcp</span><br><span class="line">DEVICE=eth0</span><br></pre></td></tr></table></figure>
+
+
+
+<blockquote>
+<p>nl  显示行号</p>
+</blockquote>
+<p>语法：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">nl</span> [-bnw] 文件</span><br></pre></td></tr></table></figure>
+
+<p>选项与参数：</p>
+<ul>
+<li>-b ：指定行号指定的方式，主要有两种：-b a ：表示不论是否为空行，也同样列出行号(类似 cat -n)；-b t ：如果有空行，空的那一行不要列出行号(默认值)；</li>
+<li>-n ：列出行号表示的方法，主要有三种：-n ln ：行号在荧幕的最左方显示；-n rn ：行号在自己栏位的最右方显示，且不加 0 ；-n rz ：行号在自己栏位的最右方显示，且加 0 ；</li>
+<li>-w ：行号栏位的占用的位数。</li>
+</ul>
+<p>测试：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">[root@kuangshen ~]<span class="comment"># nl /etc/sysconfig/network-scripts/ifcfg-eth0</span></span><br><span class="line">1DEVICE=eth0</span><br><span class="line">2BOOTPROTO=dhcp</span><br><span class="line">3ONBOOT=<span class="built_in">yes</span></span><br></pre></td></tr></table></figure>
+
+
+
+<blockquote>
+<p>more  一页一页翻动</p>
+</blockquote>
+<p>在 more 这个程序的运行过程中，你有几个按键可以按的：</p>
+<ul>
+<li>空白键 (space)：代表向下翻一页；</li>
+<li>Enter   ：代表向下翻『一行』；</li>
+<li>&#x2F;字串   ：代表在这个显示的内容当中，向下搜寻『字串』这个关键字；</li>
+<li>:f    ：立刻显示出档名以及目前显示的行数；</li>
+<li>q    ：代表立刻离开 more ，不再显示该文件内容。</li>
+<li>b 或 [ctrl]-b ：代表往回翻页，不过这动作只对文件有用，对管线无用。</li>
+</ul>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">[root@kuangshen etc]<span class="comment"># more /etc/csh.login</span></span><br><span class="line">....(中间省略)....</span><br><span class="line">--More--(28%) <span class="comment"># 重点在这一行喔！你的光标也会在这里等待你的命令</span></span><br></pre></td></tr></table></figure>
+
+
+
+<blockquote>
+<p>less  一页一页翻动，以下实例输出&#x2F;etc&#x2F;man.config文件的内容：</p>
+</blockquote>
+<p>less运行时可以输入的命令有：</p>
+<ul>
+<li>空白键  ：向下翻动一页；</li>
+<li>[pagedown]：向下翻动一页；</li>
+<li>[pageup] ：向上翻动一页；</li>
+<li>&#x2F;字串  ：向下搜寻『字串』的功能；</li>
+<li>?字串  ：向上搜寻『字串』的功能；</li>
+<li>n   ：重复前一个搜寻 (与 &#x2F; 或 ? 有关！)</li>
+<li>N   ：反向的重复前一个搜寻 (与 &#x2F; 或 ? 有关！)</li>
+<li>q   ：离开 less 这个程序；</li>
+</ul>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">[root@kuangshen etc]<span class="comment"># more /etc/csh.login</span></span><br><span class="line">....(中间省略)....</span><br><span class="line">:   <span class="comment"># 这里可以等待你输入命令！</span></span><br></pre></td></tr></table></figure>
+
+
+
+<blockquote>
+<p>head  取出文件前面几行</p>
+</blockquote>
+<p>语法：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">head</span> [-n number] 文件</span><br></pre></td></tr></table></figure>
+
+<p>选项与参数：**-n** 后面接数字，代表显示几行的意思！</p>
+<p>默认的情况中，显示前面 10 行！若要显示前 20 行，就得要这样：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">[root@kuangshen etc]<span class="comment"># head -n 20 /etc/csh.login</span></span><br></pre></td></tr></table></figure>
+
+
+
+<blockquote>
+<p>tail  取出文件后面几行</p>
+</blockquote>
+<p>语法：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">tail</span> [-n number] 文件</span><br></pre></td></tr></table></figure>
+
+<p>选项与参数：</p>
+<ul>
+<li>-n ：后面接数字，代表显示几行的意思</li>
+</ul>
+<p>默认的情况中，显示最后 10 行！若要显示最后 20 行，就得要这样：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">[root@kuangshen etc]<span class="comment"># tail -n 20 /etc/csh.login</span></span><br></pre></td></tr></table></figure>
+
+
+
+<blockquote>
+<p>拓展：Linux 链接概念</p>
+</blockquote>
+<p>Linux 链接分两种，一种被称为硬链接（Hard Link），另一种被称为符号链接（Symbolic Link）。</p>
+<p>情况下，<strong>ln</strong> 命令产生硬链接。</p>
+<p><strong>硬连接</strong></p>
+<p>硬连接指通过索引节点来进行连接。在 Linux 的文件系统中，保存在磁盘分区中的文件不管是什么类型都给它分配一个编号，称为索引节点号(Inode Index)。在 Linux 中，多个文件名指向同一索引节点是存在的。比如：A 是 B 的硬链接（A 和 B 都是文件名），则 A 的目录项中的 inode 节点号与 B 的目录项中的 inode 节点号相同，即一个 inode 节点对应两个不同的文件名，两个文件名指向同一个文件，A 和 B 对文件系统来说是完全平等的。删除其中任何一个都不会影响另外一个的访问。</p>
+<p>硬连接的作用是允许一个文件拥有多个有效路径名，这样用户就可以建立硬连接到重要文件，以防止“误删”的功能。其原因如上所述，因为对应该目录的索引节点有一个以上的连接。只删除一个连接并不影响索引节点本身和其它的连接，只有当最后一个连接被删除后，文件的数据块及目录的连接才会被释放。也就是说，文件真正删除的条件是与之相关的所有硬连接文件均被删除。</p>
+<p><strong>软连接</strong></p>
+<p>另外一种连接称之为符号连接（Symbolic Link），也叫软连接。软链接文件有类似于 Windows 的快捷方式。它实际上是一个特殊的文件。在符号连接中，文件实际上是一个文本文件，其中包含的有另一文件的位置信息。比如：A 是 B 的软链接（A 和 B 都是文件名），A 的目录项中的 inode 节点号与 B 的目录项中的 inode 节点号不相同，A 和 B 指向的是两个不同的 inode，继而指向两块不同的数据块。但是 A 的数据块中存放的只是 B 的路径名（可以根据这个找到 B 的目录项）。A 和 B 之间是“主从”关系，如果 B 被删除了，A 仍然存在（因为两个是不同的文件），但指向的是一个无效的链接。</p>
+<p><strong>测试：</strong></p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">[root@kuangshen /]<span class="comment"># cd /home</span></span><br><span class="line">[root@kuangshen home]<span class="comment"># touch f1 # 创建一个测试文件f1</span></span><br><span class="line">[root@kuangshen home]<span class="comment"># ls</span></span><br><span class="line">f1</span><br><span class="line">[root@kuangshen home]<span class="comment"># ln f1 f2     # 创建f1的一个硬连接文件f2</span></span><br><span class="line">[root@kuangshen home]<span class="comment"># ln -s f1 f3   # 创建f1的一个符号连接文件f3</span></span><br><span class="line">[root@kuangshen home]<span class="comment"># ls -li       # -i参数显示文件的inode节点信息</span></span><br><span class="line">397247 -rw-r--r-- 2 root root     0 Mar 13 00:50 f1</span><br><span class="line">397247 -rw-r--r-- 2 root root     0 Mar 13 00:50 f2</span><br><span class="line">397248 lrwxrwxrwx 1 root root     2 Mar 13 00:50 f3 -&gt; f1</span><br></pre></td></tr></table></figure>
+
+<p>从上面的结果中可以看出，硬连接文件 f2 与原文件 f1 的 inode 节点相同，均为 397247，然而符号连接文件的 inode 节点不同。</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># echo 字符串输出 &gt;&gt; f1 输出到 f1文件</span></span><br><span class="line">[root@kuangshen home]<span class="comment"># echo &quot;I am f1 file&quot; &gt;&gt;f1</span></span><br><span class="line">[root@kuangshen home]<span class="comment"># cat f1</span></span><br><span class="line">I am f1 file</span><br><span class="line">[root@kuangshen home]<span class="comment"># cat f2</span></span><br><span class="line">I am f1 file</span><br><span class="line">[root@kuangshen home]<span class="comment"># cat f3</span></span><br><span class="line">I am f1 file</span><br><span class="line">[root@kuangshen home]<span class="comment"># rm -f f1</span></span><br><span class="line">[root@kuangshen home]<span class="comment"># cat f2</span></span><br><span class="line">I am f1 file</span><br><span class="line">[root@kuangshen home]<span class="comment"># cat f3</span></span><br><span class="line"><span class="built_in">cat</span>: f3: No such file or directory</span><br></pre></td></tr></table></figure>
+
+<p>通过上面的测试可以看出：当删除原始文件 f1 后，硬连接 f2 不受影响，但是符号连接 f1 文件无效；</p>
+<p>依此您可以做一些相关的测试，可以得到以下全部结论：</p>
+<ul>
+<li>删除符号连接f3,对f1,f2无影响；</li>
+<li>删除硬连接f2，对f1,f3也无影响；</li>
+<li>删除原文件f1，对硬连接f2没有影响，导致符号连接f3失效；</li>
+<li>同时删除原文件f1,硬连接f2，整个文件会真正的被删除。</li>
+</ul>
+]]></content>
+      <categories>
+        <category>Linux</category>
+        <category>运维</category>
+      </categories>
+      <tags>
+        <tag>Linux</tag>
+        <tag>运维</tag>
+        <tag>教程</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>Git快速入门</title>
     <url>/2022/05/24/Git%E5%BF%AB%E9%80%9F%E5%85%A5%E9%97%A8/</url>
     <content><![CDATA[<p>前言：</p>
@@ -221,178 +744,9 @@
         <category>企业协同开发工具</category>
       </categories>
       <tags>
+        <tag>教程</tag>
         <tag>Git</tag>
         <tag>企业协同开发工具</tag>
-        <tag>教程</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>Linux快速入门</title>
-    <url>/2022/05/25/Linux%E5%BF%AB%E9%80%9F%E5%85%A5%E9%97%A8/</url>
-    <content><![CDATA[<p>前言：</p>
-<p>本教程是根据B站Up主狂神说记得笔记，有需要查看视频的小伙伴可以去看看狂神的视频，真的非常好！</p>
-<p>狂神说Linux视频地址：<a href="https://www.bilibili.com/video/BV187411y7hF?vd_source=ac95d1e4dae5cfd66da910c649ab5384">https://www.bilibili.com/video/BV187411y7hF?vd_source=ac95d1e4dae5cfd66da910c649ab5384</a></p>
-<h1 id="服务器相关知识"><a href="#服务器相关知识" class="headerlink" title="服务器相关知识"></a>服务器相关知识</h1><blockquote>
-<p>为什么程序员都需要一个自己的服务器？</p>
-</blockquote>
-<ol>
-<li>作为一个程序员，必须要学会发布自己的网站和项目!</li>
-<li>练习Linux操作</li>
-<li>把自己的远程仓库、远程数据库、远程tomcat等搭建在服务器上</li>
-<li>练习Linux进行任意的环境部署操作! 大部人都是Window下开发，不熟悉Linux</li>
-</ol>
-<blockquote>
-<p>如何购买服务器？</p>
-</blockquote>
-<p>新手可以先去阿里云领一个免费的服务器先用着</p>
-<p>阿里云新人服务器领取地址：<br><a href="https://imgtu.com/i/jFDbm6"><img src="https://s1.ax1x.com/2022/06/25/jFDbm6.jpg" alt="jFDbm6.jpg"></a><br>学生的话后期可以购买学生机，阿里云只有未满24周岁都可以享受学生机优惠</p>
-<p>优惠地址：<a href="https://www.aliyun.com/minisite/goods?userCode=0phtycgr">https://www.aliyun.com/minisite/goods?userCode=0phtycgr</a></p>
-<p>购买服务器时系统选择CentOS 推荐版本7.X，因为8.0之后改了好多命令，云盘的话选择40G就够用了，如下图所示：<br><a href="https://imgtu.com/i/jFDzpd"><img src="https://s1.ax1x.com/2022/06/25/jFDzpd.jpg" alt="jFDzpd.jpg"></a></p>
-<blockquote>
-<p>买完服务器之后该干什么？</p>
-</blockquote>
-<p>首先服务器就是一个远程的Linux</p>
-<ol>
-<li>在阿里云购买服务器需要开通安全组设置去进行端口的映射，比如8080或者3306<br><a href="https://imgtu.com/i/jFcwxH"><img src="https://s1.ax1x.com/2022/06/25/jFcwxH.jpg" alt="jFcwxH.jpg"></a></li>
-<li>获取服务器的公网ip地址，修改实例名称和密码，记住第一次修改需要重启，修改后就可以使用Xshell进行远程连接了</li>
-</ol>
-<p><a href="https://imgtu.com/i/jmFkJe"><img src="https://s1.ax1x.com/2022/06/28/jmFkJe.jpg" alt="jmFkJe.jpg"></a></p>
-<blockquote>
-<p>连接到服务器之后，我们就需要搭建环境了</p>
-</blockquote>
-<p>搭建环境有两种方式：</p>
-<p>1、傻瓜式(使用宝塔面板)</p>
-<p>安装网站：<a href="https://www.bt.cn/new/download.html">https://www.bt.cn/new/download.html</a></p>
-<p>切记安装前记得先在安全组中开发如下端口：</p>
-<p><a href="https://imgtu.com/i/jmFPIO"><img src="https://s1.ax1x.com/2022/06/28/jmFPIO.jpg" alt="jmFPIO.jpg"></a></p>
-<p>安装命令： </p>
-<figure class="highlight xml"><table><tr><td class="code"><pre><span class="line">yum install -y wget &amp;&amp; wget -O install.sh http://download.bt.cn/install/install_6.0.sh &amp;&amp; sh install.sh ed8484bec</span><br></pre></td></tr></table></figure>
-
-<p>下载完毕之后，就可以得到一个地址：宝塔的管理面板</p>
-<ul>
-<li>url：</li>
-<li>username：</li>
-<li>password：</li>
-</ul>
-<p><a href="https://imgtu.com/i/jmF9Z6"><img src="https://s1.ax1x.com/2022/06/28/jmF9Z6.jpg" alt="jmF9Z6.jpg"></a></p>
-<p><a href="https://imgtu.com/i/jmFCdK"><img src="https://s1.ax1x.com/2022/06/28/jmFCdK.jpg" alt="jmFCdK.jpg"></a></p>
-<blockquote>
-<p>自定义安装服务器环境</p>
-</blockquote>
-<p><a href="https://imgtu.com/i/jmFARH"><img src="https://s1.ax1x.com/2022/06/28/jmFARH.jpg" alt="jmFARH.jpg"></a></p>
-<blockquote>
-<p>一键部署应用</p>
-</blockquote>
-<p><a href="https://imgtu.com/i/jmFEzd"><img src="https://s1.ax1x.com/2022/06/28/jmFEzd.jpg" alt="jmFEzd.jpg"></a></p>
-<blockquote>
-<p>端口开启</p>
-</blockquote>
-<p><a href="https://imgtu.com/i/jmFZQA"><img src="https://s1.ax1x.com/2022/06/28/jmFZQA.jpg" alt="jmFZQA.jpg"></a></p>
-<blockquote>
-<p>放入网站进行访问</p>
-</blockquote>
-<p>比如TomCat就直接放到webapps目录下</p>
-<p>特殊的网站：开源项目，就安装自己的操作来</p>
-<p>注意：上传文件尽量使用XFTP</p>
-<blockquote>
-<p>SpringBoot项目怎么部署？</p>
-</blockquote>
-<p>打成war包或者jar包</p>
-<ul>
-<li>war包直接丢到Tomcat即可</li>
-<li>jar包直接用java-jar执行即可访问</li>
-</ul>
-<p>注意：网站如果访问失败，一定是防火墙问题，这个时候去检查Linux服务器和阿里云安全组面板</p>
-<p>2、命令式(原生)</p>
-<h1 id="Linux入门概述"><a href="#Linux入门概述" class="headerlink" title="Linux入门概述"></a>Linux入门概述</h1><h2 id="我们为什么要学习Linux"><a href="#我们为什么要学习Linux" class="headerlink" title="我们为什么要学习Linux?"></a>我们为什么要学习Linux?</h2><blockquote>
-<p>linux诞生了这么多年，以前还喊着如何能取代windows系统，现在这个口号已经小多了，任何事物发展都有其局限性都有其天花板。就如同在国内再搞一个社交软件取代腾讯一样，想想而已基本不可能，因为用户已经习惯于使用微信交流，不是说技术上实现不了解而是老百姓已经习惯了，想让他们不用，即使他们自己不用亲戚朋友还是要用，没有办法的事情。</p>
-<p>用习惯了windows操作系统，再让大家切换到别的操作系统基本上是不可能的事情，改变一个人已经养成的习惯太难。没有办法深入到普通老百姓的生活中，并不意味着linux就没有用武之地了。在服务器端，在开发领域linux倒是越来越受欢迎，很多程序员都觉得不懂点linux都觉得不好意思，linux在开源社区的地位依然岿然不动。</p>
-<p>尤其是作为一个后端程序员，是必须要掌握Linux的，因为这都成为了你找工作的基础门槛了，所以不得不学习！</p>
-</blockquote>
-<h2 id="Linux-简介"><a href="#Linux-简介" class="headerlink" title="Linux 简介"></a>Linux 简介</h2><blockquote>
-<p>Linux 内核最初只是由芬兰人林纳斯·托瓦兹（Linus Torvalds）在赫尔辛基大学上学时出于个人爱好而编写的。</p>
-<p>Linux 是一套免费使用和自由传播的类 Unix 操作系统，是一个基于 POSIX（可移植操作系统接口） 和 UNIX 的多用户、多任务、支持多线程和多 CPU 的操作系统。</p>
-<p>Linux 能运行主要的 UNIX 工具软件、应用程序和网络协议。它支持 32 位和 64 位硬件。Linux 继承了 Unix 以网络为核心的设计思想，是一个性能稳定的多用户网络操作系统。</p>
-</blockquote>
-<h2 id="Linux-发行版"><a href="#Linux-发行版" class="headerlink" title="Linux 发行版"></a>Linux 发行版</h2><blockquote>
-<p>Linux 的发行版说简单点就是将 Linux 内核与应用软件做一个打包</p>
-</blockquote>
-<p>Kali linux：做安全渗透测试使用的</p>
-<p><img src="D:\Microservices\Linux\笔记\图床笔记\image-20220629105102018.png" alt="image-20220629105102018"></p>
-<p>目前市面上较知名的发行版有：Ubuntu、RedHat、CentOS、Debian、Fedora、SuSE、OpenSUSE、Arch Linux、SolusOS 等。</p>
-<p><img src="D:\Microservices\Linux\笔记\图床笔记\image-20220629105759293.png" alt="image-20220629105759293"></p>
-<p>有条件使用Redhat的人可以考虑考一个红帽子工程师，可以让你在面试的时候更突出一点</p>
-<blockquote>
-<p>Linux应用领域</p>
-</blockquote>
-<p>今天各种场合都有使用各种 Linux 发行版，从嵌入式设备到超级计算机，并且在服务器领域确定了地位，通常服务器使用 LAMP（Linux + Apache + MySQL + PHP）或 LNMP（Linux + Nginx+ MySQL + PHP）组合。</p>
-<p>目前 Linux 不仅在家庭与企业中使用，并且在政府中也很受欢迎。</p>
-<ul>
-<li>巴西联邦政府由于支持 Linux 而世界闻名。</li>
-<li>有新闻报道俄罗斯军队自己制造的 Linux 发布版的，做为 G.H.ost 项目已经取得成果。</li>
-<li>印度的 Kerala 联邦计划在向全联邦的高中推广使用 Linux。</li>
-<li>中华人民共和国为取得技术独立，在龙芯处理器中排他性地使用 Linux。</li>
-<li>在西班牙的一些地区开发了自己的 Linux 发布版，并且在政府与教育领域广泛使用，如 Extremadura 地区的 gnuLinEx 和 Andalusia 地区的 Guadalinex。</li>
-<li>葡萄牙同样使用自己的 Linux 发布版 Caixa Mágica，用于 Magalh?es 笔记本电脑和 e-escola 政府软件。</li>
-<li>法国和德国同样开始逐步采用 Linux。</li>
-</ul>
-<blockquote>
-<p>Linux vs Windows</p>
-</blockquote>
-<p><img src="D:\Microservices\Linux\笔记\图床笔记\image-20220629110632387.png" alt="image-20220629110632387"></p>
-<h1 id="环境搭建"><a href="#环境搭建" class="headerlink" title="环境搭建"></a>环境搭建</h1><p>Linux 的安装，安装步骤比较繁琐，现在其实云服务器挺普遍的，价格也便宜，如果直接不想搭建，也可以直接买一台学习用用！</p>
-<blockquote>
-<p>安装CentOS（虚拟机安装，耗资源）</p>
-</blockquote>
-<p>这里推荐使用VMware Workstation 对新手会比较友好一点，安装完后需要激活码，这里就不教破解方法了，自行百度即可</p>
-<p>VMware Workstation官网：<a href="https://www.vmware.com/cn/products/workstation-pro.html">https://www.vmware.com/cn/products/workstation-pro.html</a></p>
-<p>下载激活好后进行如下操作：</p>
-<p>可以通过镜像进行安装！官方网址：<a href="https://www.centos.org/download/">https://www.centos.org/download/</a></p>
-<p><a href="https://blog.csdn.net/SDAU_LGX/article/details/120669344?ops_request_misc=%257B%2522request%255Fid%2522%253A%2522165647175016782246484602%2522%252C%2522scm%2522%253A%252220140713.130102334..%2522%257D&request_id=165647175016782246484602&biz_id=0&utm_medium=distribute.pc_search_result.none-task-blog-2~all~top_click~default-2-120669344-null-null.142%5Ev25%5Epc_rank_34,157%5Ev15%5Enew_3&utm_term=centos7%E9%95%9C%E5%83%8F&spm=1018.2226.3001.4187">安装教程</a></p>
-<blockquote>
-<p>购买云服务器（推荐）</p>
-</blockquote>
-<p>云服务器就是一个远程电脑，服务器一般不会关机</p>
-<p>虚拟机安装后占用空间，也会有些卡顿，我们作为程序员其实可以选择购买一台自己的服务器，这样的话更加接近真实线上工作；</p>
-<p>1、阿里云购买服务器：<a href="https://www.aliyun.com/minisite/goods?userCode=0phtycgr">https://www.aliyun.com/minisite/goods?userCode=0phtycgr</a></p>
-<p>2、购买完毕后，获取服务器的ip地址，重置服务器密码，就可以远程登录了</p>
-<p>3、下载 xShell（远程连接使用）和Xftp 工具（文件上传使用）</p>
-<p>这里我给大家提供了我的免费下载地址：</p>
-<p>链接：<a href="https://pan.baidu.com/s/19yBxIyCP69tHzm8Y2NogNw">https://pan.baidu.com/s/19yBxIyCP69tHzm8Y2NogNw</a><br>提取码：p73z </p>
-<p>连接成功效果如下：</p>
-<p><img src="D:\Microservices\Linux\笔记\图床笔记\image-20220629181129832.png" alt="image-20220629181129832"></p>
-<p>这里就是我们的Linux操作系统了!以后的操作都在这里操作，项目也在这里进行发布!</p>
-<p><strong>注意事项：</strong></p>
-<p>如果要打开端口，需要在阿里云的安全组面板中开启对应的出入规则，不然的话会被阿里拦截！</p>
-<h1 id="走近Linux系统"><a href="#走近Linux系统" class="headerlink" title="走近Linux系统"></a>走近Linux系统</h1><blockquote>
-<p>开机登录</p>
-</blockquote>
-<p>开机会启动许多程序。它们在Windows叫做”服务”（service），在Linux就叫做”<strong>守护进程</strong>“（daemon）。</p>
-<p>开机成功后，它会显示一个文本登录界面，这个界面就是我们经常看到的登录界面，在这个登录界面中会提示用户输入用户名，而用户输入的用户将作为参数传给login程序来验证用户的身份，密码是不显示的，输完回车即可！</p>
-<p>一般来说，用户的登录方式有三种：</p>
-<ul>
-<li>命令行登录</li>
-<li>ssh登录</li>
-<li>图形界面登录</li>
-</ul>
-<p>最高权限账户为 root，可以操作一切！</p>
-<blockquote>
-<p>关机</p>
-</blockquote>
-<p>在linux领域内大多用在服务器上，很少遇到关机的操作。毕竟服务器上跑一个服务是永无止境的，除非特殊情况下，不得已才会关机。</p>
-<p>关机指令为：shutdown ；</p>
-<figure class="highlight properties"><table><tr><td class="code"><pre><span class="line"><span class="attr">sync</span> <span class="string"># 将数据由内存同步到硬盘中。</span></span><br><span class="line"></span><br><span class="line"><span class="attr">shutdown</span> <span class="string"># 关机指令，你可以man shutdown 来看一下帮助文档。例如你可以运行如下命令关机：</span></span><br><span class="line"></span><br><span class="line"><span class="attr">shutdown</span> <span class="string">–h 10 # 这个命令告诉大家，计算机将在10分钟后关机</span></span><br><span class="line"></span><br><span class="line"><span class="attr">shutdown</span> <span class="string">–h now # 立马关机</span></span><br><span class="line"></span><br><span class="line"><span class="attr">shutdown</span> <span class="string">–h 20:25 # 系统会在今天20:25关机</span></span><br><span class="line"></span><br><span class="line"><span class="attr">shutdown</span> <span class="string">–h +10 # 十分钟后关机</span></span><br><span class="line"></span><br><span class="line"><span class="attr">shutdown</span> <span class="string">–r now # 系统立马重启</span></span><br><span class="line"></span><br><span class="line"><span class="attr">shutdown</span> <span class="string">–r +10 # 系统十分钟后重启</span></span><br><span class="line"></span><br><span class="line"><span class="attr">reboot</span> <span class="string"># 就是重启，等同于 shutdown –r now</span></span><br><span class="line"></span><br><span class="line"><span class="attr">halt</span> <span class="string"># 关闭系统，等同于shutdown –h now 和 poweroff</span></span><br></pre></td></tr></table></figure>
-
-<p>最后总结一下，不管是重启系统还是关闭系统，首先要运行 <strong>sync</strong> 命令，把内存中的数据写到磁盘中。</p>
-]]></content>
-      <categories>
-        <category>Linux</category>
-        <category>运维</category>
-      </categories>
-      <tags>
-        <tag>教程</tag>
-        <tag>Linux</tag>
-        <tag>运维</tag>
       </tags>
   </entry>
   <entry>
@@ -454,6 +808,78 @@
       <tags>
         <tag>数据库</tag>
         <tag>事务</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Redis哨兵模式</title>
+    <url>/2022/05/23/Redis%E5%93%A8%E5%85%B5%E6%A8%A1%E5%BC%8F/</url>
+    <content><![CDATA[<h1 id="Redis哨兵模式"><a href="#Redis哨兵模式" class="headerlink" title="Redis哨兵模式"></a>Redis哨兵模式</h1><p><strong>介绍：</strong></p>
+<p>主从切换技术的方法是:当主服务器宕机后，需要手动把一台从服务器切换为主服务器，这就需要人工干预，费事费力，还会造成一段时间内服务不可用。这不是一种推荐的方式，更多时候，我们优先考虑哨兵模式。Redis从2.8开始正式提供了Sentinel (哨兵）架构来解决这个问题。</p>
+<p>谋朝篡位的自动版，能够后台监控主机是否故障，如果故障了根据投票数<strong>自动将从库转换为主库</strong>。</p>
+<p>哨兵模式是一种特殊的模式，首先Redis提供了哨兵的命令，哨兵是一个独立的进程，作为进程，它会独立运行。其原理是<strong>哨兵通过发送命令,等待Redis服务器响应，从而监控运行的多个Redis实例。</strong></p>
+<p><img src="https://s2.loli.net/2022/02/23/SJBvaebKFPW6Lxs.png" alt="image-20220223160951455"></p>
+<p>这里的哨兵有两个作用<br>·通过发送命令，让Redis服务器返回监控其运行状态，包括主服务器和从服务器。<br>·当哨兵监测到master宕机，会自动将slave切换成master，然后通过发布订阅模式通知其他的从服务器，修改配置文件，让它<br>们切换主机。<br>然而一个哨兵进程对Redis服务器进行监控，可能会出现问题，为此，我们可以使用多个哨兵进行监控。各个哨兵之间还会进行监控，这样就形成了多哨兵模式。</p>
+<p><img src="https://s2.loli.net/2022/02/23/cSP9LAlOKHjoTfX.png" alt="image-20220223161321009"></p>
+<p>假设主服务器宕机，哨兵1先检测到这个结果，系统并不会马上进行failover过程，仅仅是哨兵1主观的认为主服务器不可用，这个现象成为<strong>主观下线</strong>。当后面的哨兵也检测到主服务器不可用，并且数量达到一定值时，那么哨兵之间就会进行一次投票，投票的结果由一个哨兵发起，进行failover[故障转移]操作。切换成功后，就会通过发布订阅模式，让各个哨兵把自己监控的从服务器实现切换主机,这个过程称为<strong>客观下线</strong>。</p>
+<h2 id="测试："><a href="#测试：" class="headerlink" title="测试："></a>测试：</h2><p>创建一个哨兵的一个配置文件，文件名随意：sentinel.conf </p>
+<p>配置文件：这里我就配置简单点</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">sentinel monitor mymaster 127.0.0.1 6379 1</span><br></pre></td></tr></table></figure>
+
+
+
+<p><strong>正常的一主二从:</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line"># Replication</span><br><span class="line">role:master</span><br><span class="line">connected_slaves:2</span><br><span class="line">slave0:ip=127.0.0.1,port=6362,state=online,offset=141888,lag=1</span><br><span class="line">slave1:ip=127.0.0.1,port=6361,state=online,offset=141888,lag=1</span><br></pre></td></tr></table></figure>
+
+
+
+<p><strong>启动哨兵模式：</strong></p>
+<p><img src="https://s2.loli.net/2022/02/23/7OSxgQsbL6nyFRi.png" alt="image-20220223165032216"></p>
+<p>命令：redis-sentinel  选用的配置文件，如果是哨兵集群就需要多个配置文件</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">[root@VM-4-12-centos StudyHardConfig]# redis-sentinel sentinel.conf </span><br><span class="line">742116:X 23 Feb 2022 16:29:48.399 # oO0OoO0OoO0Oo Redis is starting oO0OoO0OoO0Oo</span><br><span class="line">742116:X 23 Feb 2022 16:29:48.399 # Redis version=6.0.6, bits=64, commit=00000000, modified=0, pid=742116, just started</span><br><span class="line">742116:X 23 Feb 2022 16:29:48.399 # Configuration loaded</span><br><span class="line">                _._                                                  </span><br><span class="line">           _.-``__ &#x27;&#x27;-._                                             </span><br><span class="line">      _.-``    `.  `_.  &#x27;&#x27;-._           Redis 6.0.6 (00000000/0) 64 bit</span><br><span class="line">  .-`` .-```.  ```\/    _.,_ &#x27;&#x27;-._                                   </span><br><span class="line"> (    &#x27;      ,       .-`  | `,    )     Running in sentinel mode</span><br><span class="line"> |`-._`-...-` __...-.``-._|&#x27;` _.-&#x27;|     Port: 26379   #哨兵端口</span><br><span class="line"> |    `-._   `._    /     _.-&#x27;    |     PID: 742116  </span><br><span class="line">  `-._    `-._  `-./  _.-&#x27;    _.-&#x27;                                   </span><br><span class="line"> |`-._`-._    `-.__.-&#x27;    _.-&#x27;_.-&#x27;|                                  </span><br><span class="line"> |    `-._`-._        _.-&#x27;_.-&#x27;    |           http://redis.io        </span><br><span class="line">  `-._    `-._`-.__.-&#x27;_.-&#x27;    _.-&#x27;                                   </span><br><span class="line"> |`-._`-._    `-.__.-&#x27;    _.-&#x27;_.-&#x27;|                                  </span><br><span class="line"> |    `-._`-._        _.-&#x27;_.-&#x27;    |                                  </span><br><span class="line">  `-._    `-._`-.__.-&#x27;_.-&#x27;    _.-&#x27;                                   </span><br><span class="line">      `-._    `-.__.-&#x27;    _.-&#x27;                                       </span><br><span class="line">          `-._        _.-&#x27;                                           </span><br><span class="line">              `-.__.-&#x27;                                               </span><br><span class="line"></span><br><span class="line">742116:X 23 Feb 2022 16:29:48.404 # Sentinel ID is d0592a16972e6c88a456c5c2969cf4141a0e2f07</span><br><span class="line">742116:X 23 Feb 2022 16:29:48.404 # +monitor master mymaster 127.0.0.1 6360 quorum 1</span><br><span class="line">#侦测到两个从节点，并表明主节点是谁，现在主节点表明的6360这个端口的redis</span><br><span class="line">742116:X 23 Feb 2022 16:29:48.404 * +slave slave 127.0.0.1:6362 127.0.0.1 6362 @ mymaster 127.0.0.1 6360</span><br><span class="line">742116:X 23 Feb 2022 16:29:48.408 * +slave slave 127.0.0.1:6361 127.0.0.1 6361 @ mymaster 127.0.0.1 6360</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+
+
+<p><strong>断供主节点，让哨兵自动选择一个从节点当主节点：</strong> </p>
+<p>如果master节点断开了，这个时候就会从 从机中随机选择一个服务器（根据一个投票算法）</p>
+<p>哨兵打印的新信息：</p>
+<p>这里投票，选择6362当主节点</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">Feb 2022 16:37:29.007 # +sdown master mymaster 127.0.0.1 6360</span><br><span class="line">742116:X 23 Feb 2022 16:37:29.007 # +odown master mymaster 127.0.0.1 6360 #quorum 1/1</span><br><span class="line">742116:X 23 Feb 2022 16:37:29.007 # +new-epoch 1</span><br><span class="line">742116:X 23 Feb 2022 16:37:29.007 # +try-failover master mymaster 127.0.0.1 6360</span><br><span class="line">742116:X 23 Feb 2022 16:37:29.011 # +vote-for-leader d0592a16972e6c88a456c5c2969cf4141a0e2f07 1</span><br><span class="line">742116:X 23 Feb 2022 16:37:29.011 # +elected-leader master mymaster 127.0.0.1 6360</span><br><span class="line">742116:X 23 Feb 2022 16:37:29.011 # +failover-state-select-slave master mymaster 127.0.0.1 6360</span><br><span class="line">742116:X 23 Feb 2022 16:37:29.066 # +selected-slave slave 127.0.0.1:6362 127.0.0.1 6362 @ mymaster 127.0.0.1 6360</span><br><span class="line">742116:X 23 Feb 2022 16:37:29.066 * +failover-state-send-slaveof-noone slave 127.0.0.1:6362 127.0.0.1 6362 @ mymaster 127.0.0.1 6360</span><br><span class="line">742116:X 23 Feb 2022 16:37:29.138 * +failover-state-wait-promotion slave 127.0.0.1:6362 127.0.0.1 6362 @ mymaster 127.0.0.1 6360</span><br><span class="line">742116:X 23 Feb 2022 16:37:29.419 # +promoted-slave slave 127.0.0.1:6362 127.0.0.1 6362 @ mymaster 127.0.0.1 6360</span><br><span class="line">742116:X 23 Feb 2022 16:37:29.420 # +failover-state-reconf-slaves master mymaster 127.0.0.1 6360</span><br><span class="line">742116:X 23 Feb 2022 16:37:29.498 * +slave-reconf-sent slave 127.0.0.1:6361 127.0.0.1 6361 @ mymaster 127.0.0.1 6360</span><br><span class="line">742116:X 23 Feb 2022 16:37:30.445 * +slave-reconf-inprog slave 127.0.0.1:6361 127.0.0.1 6361 @ mymaster 127.0.0.1 6360</span><br><span class="line">742116:X 23 Feb 2022 16:37:30.445 * +slave-reconf-done slave 127.0.0.1:6361 127.0.0.1 6361 @ mymaster 127.0.0.1 6360</span><br><span class="line">742116:X 23 Feb 2022 16:37:30.529 # +failover-end master mymaster 127.0.0.1 6360  #故障切换主线</span><br><span class="line">742116:X 23 Feb 2022 16:37:30.529 # +switch-master mymaster 127.0.0.1 6360 127.0.0.1 6362   #这里依旧选择了6362来当主节点</span><br><span class="line">742116:X 23 Feb 2022 16:37:30.529 * +slave slave 127.0.0.1:6361 127.0.0.1 6361 @ mymaster 127.0.0.1 6362</span><br><span class="line">742116:X 23 Feb 2022 16:37:30.529 * +slave slave 127.0.0.1:6360 127.0.0.1 6360 @ mymaster 127.0.0.1 6362</span><br><span class="line">742116:X 23 Feb 2022 16:38:00.593 # +sdown slave 127.0.0.1:6360 127.0.0.1 6360 @ mymaster 127.0.0.1 6362</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+
+
+<p>我们来看看6362信息：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">127.0.0.1:6362&gt;  SLAVEOF 127.0.0.1 6360</span><br><span class="line">OK Already connected to specified master</span><br><span class="line">127.0.0.1:6362&gt; info replication</span><br><span class="line"># Replication</span><br><span class="line">role:master   		#身份依旧是主节点了</span><br><span class="line">connected_slaves:1</span><br><span class="line">slave0:ip=127.0.0.1,port=6361,state=online,offset=191774,lag=1</span><br><span class="line">master_replid:01fa8e86c3fa6a51f5c111e46ef4e8622d062f23</span><br><span class="line">master_replid2:8009003a269bcd5e8af84c76891fc4bdc72dbf10</span><br><span class="line">master_repl_offset:191774</span><br><span class="line">second_repl_offset:170703</span><br><span class="line">repl_backlog_active:1</span><br><span class="line">repl_backlog_size:1048576</span><br><span class="line">repl_backlog_first_byte_offset:1</span><br><span class="line">repl_backlog_histlen:191774</span><br><span class="line">127.0.0.1:6362&gt; </span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+
+
+<p>如果这时6360这个节点重启呢？</p>
+<p>​	如果主机此时回来了，只能归并到新的主机下，当做从机，这就是哨兵模式的规则!</p>
+<p>​	6362：  可以看到 它变成从节点，哨兵也同样会打印信息，我就不打出来了</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">127.0.0.1:6362&gt; info replication</span><br><span class="line"># Replication</span><br><span class="line">role:master</span><br><span class="line">connected_slaves:2</span><br><span class="line">slave0:ip=127.0.0.1,port=6361,state=online,offset=198720,lag=1</span><br><span class="line">slave1:ip=127.0.0.1,port=6360,state=online,offset=198720,lag=0</span><br><span class="line">master_replid:01fa8e86c3fa6a51f5c111e46ef4e8622d062f23</span><br><span class="line">master_replid2:8009003a269bcd5e8af84c76891fc4bdc72dbf10</span><br><span class="line">master_repl_offset:198720</span><br><span class="line">second_repl_offset:170703</span><br><span class="line">repl_backlog_active:1</span><br><span class="line">repl_backlog_size:1048576</span><br><span class="line">repl_backlog_first_byte_offset:1</span><br><span class="line">repl_backlog_histlen:198720</span><br><span class="line">127.0.0.1:6362&gt; </span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+
+
+
+
+
+
+<p><strong>全部配置信息：</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line"># Example sentinel.conf</span><br><span class="line"># 哨兵sentinel实例运行的端口 默认26379</span><br><span class="line">port 26379</span><br><span class="line"></span><br><span class="line"># 哨兵sentinel的工作目录</span><br><span class="line">dir /tmp</span><br><span class="line"></span><br><span class="line"># 哨兵sentinel监控的redis主节点的 ip port</span><br><span class="line"># master-name 可以自己命名的主节点名字 只能由字母A-z、数字0-9 、这三个字符&quot;.-_&quot;组成。</span><br><span class="line"># quorum 配置多少个sentinel哨兵统一认为master主节点失联 那么这时客观上认为主节点失联了</span><br><span class="line"># sentinel monitor &lt;master-name&gt; &lt;ip&gt; &lt;redis-port&gt; &lt;quorum&gt;</span><br><span class="line">sentinel monitor mymaster 127.0.0.1 6379 2</span><br><span class="line"></span><br><span class="line"># 当在Redis实例中开启了requirepass foobared 授权密码 这样所有连接Redis实例的客户端都要提供密码</span><br><span class="line"># 设置哨兵sentinel 连接主从的密码 注意必须为主从设置一样的验证密码</span><br><span class="line"># sentinel auth-pass &lt;master-name&gt; &lt;password&gt;</span><br><span class="line">sentinel auth-pass mymaster MySUPER--secret-0123passw0rd</span><br><span class="line"></span><br><span class="line"># 指定多少毫秒之后 主节点没有应答哨兵sentinel 此时 哨兵主观上认为主节点下线 默认30秒</span><br><span class="line"># sentinel down-after-milliseconds &lt;master-name&gt; &lt;milliseconds&gt;</span><br><span class="line">sentinel down-after-milliseconds mymaster 30000</span><br><span class="line"></span><br><span class="line"># 这个配置项指定了在发生failover主备切换时最多可以有多少个slave同时对新的master进行 同步，这个数字越小，完成failover所需的时间就越长，但是如果这个数字越大，就意味着越 多的slave因为replication而不可用。可以通过将这个值设为 1 来保证每次只有一个slave 处于不能处理命令请求的状态。</span><br><span class="line"># sentinel parallel-syncs &lt;master-name&gt; &lt;numslaves&gt;</span><br><span class="line">sentinel parallel-syncs mymaster 1</span><br><span class="line"></span><br><span class="line"># 故障转移的超时时间 failover-timeout 可以用在以下这些方面：</span><br><span class="line">#1. 同一个sentinel对同一个master两次failover之间的间隔时间。</span><br><span class="line">#2. 当一个slave从一个错误的master那里同步数据开始计算时间。直到slave被纠正为向正确的master那里同步数据时。</span><br><span class="line">#3.当想要取消一个正在进行的failover所需要的时间。 </span><br><span class="line">#4.当进行failover时，配置所有slaves指向新的master所需的最大时间。不过，即使过了这个超时，slaves依然会被正确配置为指向master，但是就不按parallel-syncs所配置的规则来了</span><br><span class="line"># 默认三分钟</span><br><span class="line"># sentinel failover-timeout &lt;master-name&gt; &lt;milliseconds&gt;</span><br><span class="line">sentinel failover-timeout mymaster 180000</span><br><span class="line"></span><br><span class="line"># SCRIPTS EXECUTION</span><br><span class="line">#配置当某一事件发生时所需要执行的脚本，可以通过脚本来通知管理员，例如当系统运行不正常时发邮件通知相关人员。</span><br><span class="line">#对于脚本的运行结果有以下规则：</span><br><span class="line">#若脚本执行后返回1，那么该脚本稍后将会被再次执行，重复次数目前默认为10</span><br><span class="line">#若脚本执行后返回2，或者比2更高的一个返回值，脚本将不会重复执行。</span><br><span class="line">#如果脚本在执行过程中由于收到系统中断信号被终止了，则同返回值为1时的行为相同。</span><br><span class="line">#一个脚本的最大执行时间为60s，如果超过这个时间，脚本将会被一个SIGKILL信号终止，之后重新执行。</span><br><span class="line">#通知型脚本:当sentinel有任何警告级别的事件发生时（比如说redis实例的主观失效和客观失效等等），将会去调用这个脚本，这时这个脚本应该通过邮件，SMS等方式去通知系统管理员关于系统不正常运行的信息。调用该脚本时，将传给脚本两个参数，一个是事件的类型，一个是事件的描述。如果sentinel.conf配置文件中配置了这个脚本路径，那么必须保证这个脚本存在于这个路径，并且是可执行的，否则sentinel无法正常启动成功。</span><br><span class="line"></span><br><span class="line">#通知脚本</span><br><span class="line"># shell编程</span><br><span class="line"># sentinel notification-script &lt;master-name&gt; &lt;script-path&gt;</span><br><span class="line">sentinel notification-script mymaster /var/redis/notify.sh</span><br><span class="line"></span><br><span class="line"># 客户端重新配置主节点参数脚本</span><br><span class="line"># 当一个master由于failover而发生改变时，这个脚本将会被调用，通知相关的客户端关于master地址已经发生改变的信息。</span><br><span class="line"># 以下参数将会在调用脚本时传给脚本:</span><br><span class="line"># &lt;master-name&gt; &lt;role&gt; &lt;state&gt; &lt;from-ip&gt; &lt;from-port&gt; &lt;to-ip&gt; &lt;to-port&gt;</span><br><span class="line"># 目前&lt;state&gt;总是“failover”,</span><br><span class="line"># &lt;role&gt;是“leader”或者“observer”中的一个。</span><br><span class="line"># 参数 from-ip, from-port, to-ip, to-port是用来和旧的master和新的master(即旧的slave)通信的</span><br><span class="line"># 这个脚本应该是通用的，能被多次调用，不是针对性的。</span><br><span class="line"># sentinel client-reconfig-script &lt;master-name&gt; &lt;script-path&gt;</span><br><span class="line">sentinel client-reconfig-script mymaster /var/redis/reconfig.sh # 一般都是由运维来配置！</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+
+
+
+
+<h2 id="哨兵模式优缺点："><a href="#哨兵模式优缺点：" class="headerlink" title="哨兵模式优缺点："></a>哨兵模式优缺点：</h2><p>哨兵模式<br>优点︰<br>1、哨兵集群，基于主从复制模式，所有的主从配置优点，它全有2、主从可以切接，故障可以转移﹐系统的可用性就会史好3、哨兵模式就是主从模式的升级，手动到自动，更加建壮!缺点:</p>
+<ol>
+<li>Redis不好啊在。扩容的,集群容量一旦到达上限，在线扩容就十分麻烦!2、实现哨兵模式的配置只实是很麻烦的，里面有很多选择!</li>
+</ol>
+]]></content>
+      <categories>
+        <category>redis</category>
+      </categories>
+      <tags>
+        <tag>数据库</tag>
       </tags>
   </entry>
   <entry>
@@ -532,6 +958,19 @@
       <tags>
         <tag>数据库</tag>
         <tag>数据类型</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>redis总笔记</title>
+    <url>/2022/05/21/redis%E6%80%BB%E7%AC%94%E8%AE%B0/</url>
+    <content><![CDATA[<p>这个博主的redis会比较详细，可以去观看它的，还有可以去看看它的视频</p>
+<p>博主：狂神说</p>
+<p><a href="https://www.cnblogs.com/meditation5201314/p/14882992.htm">https://www.cnblogs.com/meditation5201314/p/14882992.htm</a></p>
+<p><strong>发布订阅简单使用：</strong></p>
+<p><img src="https://s2.loli.net/2022/02/21/CilvKd8sFBtSJo9.png" alt="image-20220221140950917"></p>
+]]></content>
+      <tags>
+        <tag>优秀文章</tag>
       </tags>
   </entry>
   <entry>
@@ -2176,88 +2615,140 @@
       </tags>
   </entry>
   <entry>
-    <title>Redis哨兵模式</title>
-    <url>/2022/05/23/Redis%E5%93%A8%E5%85%B5%E6%A8%A1%E5%BC%8F/</url>
-    <content><![CDATA[<h1 id="Redis哨兵模式"><a href="#Redis哨兵模式" class="headerlink" title="Redis哨兵模式"></a>Redis哨兵模式</h1><p><strong>介绍：</strong></p>
-<p>主从切换技术的方法是:当主服务器宕机后，需要手动把一台从服务器切换为主服务器，这就需要人工干预，费事费力，还会造成一段时间内服务不可用。这不是一种推荐的方式，更多时候，我们优先考虑哨兵模式。Redis从2.8开始正式提供了Sentinel (哨兵）架构来解决这个问题。</p>
-<p>谋朝篡位的自动版，能够后台监控主机是否故障，如果故障了根据投票数<strong>自动将从库转换为主库</strong>。</p>
-<p>哨兵模式是一种特殊的模式，首先Redis提供了哨兵的命令，哨兵是一个独立的进程，作为进程，它会独立运行。其原理是<strong>哨兵通过发送命令,等待Redis服务器响应，从而监控运行的多个Redis实例。</strong></p>
-<p><img src="https://s2.loli.net/2022/02/23/SJBvaebKFPW6Lxs.png" alt="image-20220223160951455"></p>
-<p>这里的哨兵有两个作用<br>·通过发送命令，让Redis服务器返回监控其运行状态，包括主服务器和从服务器。<br>·当哨兵监测到master宕机，会自动将slave切换成master，然后通过发布订阅模式通知其他的从服务器，修改配置文件，让它<br>们切换主机。<br>然而一个哨兵进程对Redis服务器进行监控，可能会出现问题，为此，我们可以使用多个哨兵进行监控。各个哨兵之间还会进行监控，这样就形成了多哨兵模式。</p>
-<p><img src="https://s2.loli.net/2022/02/23/cSP9LAlOKHjoTfX.png" alt="image-20220223161321009"></p>
-<p>假设主服务器宕机，哨兵1先检测到这个结果，系统并不会马上进行failover过程，仅仅是哨兵1主观的认为主服务器不可用，这个现象成为<strong>主观下线</strong>。当后面的哨兵也检测到主服务器不可用，并且数量达到一定值时，那么哨兵之间就会进行一次投票，投票的结果由一个哨兵发起，进行failover[故障转移]操作。切换成功后，就会通过发布订阅模式，让各个哨兵把自己监控的从服务器实现切换主机,这个过程称为<strong>客观下线</strong>。</p>
-<h2 id="测试："><a href="#测试：" class="headerlink" title="测试："></a>测试：</h2><p>创建一个哨兵的一个配置文件，文件名随意：sentinel.conf </p>
-<p>配置文件：这里我就配置简单点</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">sentinel monitor mymaster 127.0.0.1 6379 1</span><br></pre></td></tr></table></figure>
+    <title>redis的安装</title>
+    <url>/2022/05/21/redis%E7%9A%84%E5%AE%89%E8%A3%85/</url>
+    <content><![CDATA[<h2 id="安装Redis"><a href="#安装Redis" class="headerlink" title="安装Redis"></a>安装Redis</h2><h2 id="如何安装redis"><a href="#如何安装redis" class="headerlink" title="如何安装redis"></a>如何安装redis</h2><p>先去redis的官网下安装redis： <a href="http://www.redis.cn/">Redis中文官网</a></p>
+<p>redis不推荐在windos上安装</p>
+<p>CentOS7以上 安装方法： 安装ridis前需要先安装：gcc</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">yum -y install gcc</span><br><span class="line">yum -y install gcc-c++</span><br></pre></td></tr></table></figure>
+
+<p>安装好gcc后解压你的Redis安装包</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">tar -zxvf Reids安装包   #gz为后缀的</span><br></pre></td></tr></table></figure>
+
+<p>解压好后进入到redis里make编译</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">cd rieds</span><br><span class="line">make   #编译</span><br><span class="line">make install  #安装确认一下 也可以不执行</span><br></pre></td></tr></table></figure>
+
+<p>到这就安装完成了！</p>
+<p>我们可以去看下我们安装的程序：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">cd /usr/local/bin</span><br></pre></td></tr></table></figure>
+
+<p>我们自己安装的程序都会在里面！</p>
+<p>我们可以在这里创建一个文件夹存放我们配置文件，这里我们创建一个存放Redis的配置文件，以后修改也是修改这里的配置文件而不修改软件里的，可以确保安全性：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">mkdir SHconfig</span><br><span class="line">cp /opt/Redis/redis-6.0.6/redis.conf SHconfig</span><br></pre></td></tr></table></figure>
+
+<p>redis默认不是后台启动的，需要修改配置文件：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">vim redis.conf</span><br><span class="line">将daemonize no 改为 daemonize yes</span><br><span class="line">设置密码</span><br><span class="line">requirepass foobared</span><br><span class="line">requirepass 123   指定密码123</span><br><span class="line">设置完密码后每次登录操作需要使用auth进行登录才能使用</span><br><span class="line">[root@VM-4-12-centos StudyHardConfig]# redis-cli</span><br><span class="line">127.0.0.1:6379&gt; set key1 q</span><br><span class="line">(error) NOAUTH Authentication required.</span><br><span class="line">127.0.0.1:6379&gt; auth 031215</span><br><span class="line">OK</span><br><span class="line">127.0.0.1:6379&gt; set key1 v1</span><br><span class="line">OK</span><br></pre></td></tr></table></figure>
 
 
 
-<p><strong>正常的一主二从:</strong></p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line"># Replication</span><br><span class="line">role:master</span><br><span class="line">connected_slaves:2</span><br><span class="line">slave0:ip=127.0.0.1,port=6362,state=online,offset=141888,lag=1</span><br><span class="line">slave1:ip=127.0.0.1,port=6361,state=online,offset=141888,lag=1</span><br></pre></td></tr></table></figure>
+<h2 id="启动Redis："><a href="#启动Redis：" class="headerlink" title="启动Redis："></a>启动Redis：</h2><h3 id="在安装目录下执行："><a href="#在安装目录下执行：" class="headerlink" title="在安装目录下执行："></a>在安装目录下执行：</h3><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">redis-server shconfig/redis.conf #后面的参数是表示选用的配置文件</span><br></pre></td></tr></table></figure>
+
+<h3 id="在安装目录下测试连接并退出："><a href="#在安装目录下测试连接并退出：" class="headerlink" title="在安装目录下测试连接并退出："></a>在安装目录下测试连接并退出：</h3><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">[root@VM-4-12-centos bin]# redis-cli -p 6379 #连接</span><br><span class="line">127.0.0.1:6379&gt; ping</span><br><span class="line">PONG</span><br><span class="line">127.0.0.1:6379&gt; set name studyhard</span><br><span class="line">OK</span><br><span class="line">127.0.0.1:6379&gt; get name</span><br><span class="line">&quot;studyhard&quot;</span><br><span class="line">127.0.0.1:6379&gt; keys *</span><br><span class="line">1) &quot;name&quot;</span><br><span class="line">127.0.0.1:6379&gt; shutdown #关闭reids</span><br><span class="line">not connected&gt; exit   #退出</span><br></pre></td></tr></table></figure>
+
+<h2 id="当然还有更简单的方法"><a href="#当然还有更简单的方法" class="headerlink" title="当然还有更简单的方法"></a>当然还有更简单的方法</h2><p>使用宝塔面板~~ 十分的快捷</p>
+]]></content>
+      <categories>
+        <category>redis</category>
+      </categories>
+      <tags>
+        <tag>安装</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>redis的五大数据类型</title>
+    <url>/2022/05/21/redis%E7%9A%84%E4%BA%94%E5%A4%A7%E6%95%B0%E6%8D%AE%E7%B1%BB%E5%9E%8B/</url>
+    <content><![CDATA[<h2 id="Redis简单了解与5大数据类型"><a href="#Redis简单了解与5大数据类型" class="headerlink" title="Redis简单了解与5大数据类型"></a>Redis简单了解与5大数据类型</h2><h2 id="Redis是单线程的"><a href="#Redis是单线程的" class="headerlink" title="Redis是单线程的"></a>Redis是单线程的</h2><p>Redis是很快的，官方表示，Redis是基于内存操作，cpu并不是Redis性能瓶颈，Redis的瓶颈是根据机器和网络带宽。</p>
+<p>Redis是C语言写的，官方提供的数据为 100000+ 的Qps，完成不比同样是使用key-value的Memecahe差！</p>
+<h2 id="Redis为什么单线程还那么快？"><a href="#Redis为什么单线程还那么快？" class="headerlink" title="Redis为什么单线程还那么快？"></a>Redis为什么单线程还那么快？</h2><p>1，高性能的服务器不一定是多线程的 2，多线程不一定比单线程效率高！</p>
+<p>redis是将所有的数据全部放置内存中的，所以使用单线程去操作效率就是最高的，多线程cpu上下文切换耗时，对于内存系统来说，如果没有上下文切换效率就是最高的，多次读写都在一个cpu上的，在内存情况下，这个就是最佳方案</p>
+<p>redis一共有16个数据库 默认使用第0个</p>
+<h2 id="5大数据类型"><a href="#5大数据类型" class="headerlink" title="5大数据类型"></a>5大数据类型</h2><p>不区分大小写</p>
+<h3 id="String-的一些命令"><a href="#String-的一些命令" class="headerlink" title="String 的一些命令"></a>String 的一些命令</h3><figure class="highlight java"><table><tr><td class="code"><pre><span class="line">select <span class="number">1</span> #改变数字可切换数据库</span><br><span class="line">keys *  #查看当前数据库使用的key</span><br><span class="line">set key value  #向数据库填充kv键值对数据</span><br><span class="line">get key  #获取指定key的value</span><br><span class="line">flushall  #清空全部 会将其他库的也清除</span><br><span class="line">flushdb   #清空单前数据库</span><br><span class="line">EXISTS key  #判断当前key是否存在 存在返回<span class="number">1</span> 否者<span class="number">0</span></span><br><span class="line">move key <span class="number">1</span> #将指定的key键值对移动到指定的数据库</span><br><span class="line">EXPIRE key <span class="number">10</span>  #将指定key在指定的时间过期 <span class="number">10</span>为<span class="number">10</span>秒</span><br><span class="line">ttl key  #查看指定的key还剩余多少存活时间 -<span class="number">1</span>为永久存活 -<span class="number">2</span>为死亡</span><br><span class="line">type key  #查看当前key的数据类型</span><br><span class="line">APPEND key content  #追加指定key的value的内容 content为追加内容 </span><br><span class="line">STRLEN key  #查看指定key的value长度</span><br><span class="line">incr key  #可以为指定的key自增</span><br><span class="line">decr key #为指定的key减<span class="number">1</span></span><br><span class="line">INCRBY key i  #为指定的key 加上 i个（数字）</span><br><span class="line">DECRBY key i  #为指定的key 减 i (数字)</span><br><span class="line">GETRANGE key s e  #截取指定长度字符串 ，该方法区间（ &#125;</span><br><span class="line">GETRANGE key i -<span class="number">1</span>  #结尾为-<span class="number">1</span>可以查看全部字符串 和 get一样</span><br><span class="line">SETRANGE key s content  #替换指定位置开始的字符串 输入几个就替换几个</span><br><span class="line">setex key time value  #创建或修改一个键值对，并设置过期时间</span><br><span class="line">setnx key value  #创建一个键值对 、当如何已经有这个键值对了就会创建失败</span><br><span class="line">mset key value [k v...]  #可一次设置多个，kv键值对</span><br><span class="line">mget key [key...]  #一次获取多个value</span><br><span class="line">msetnx key value [k v...]  #可一次设置多个，kv键值对，但要满足原子性，同时成功，同时失败</span><br><span class="line">getset key value  #读取并修改 先读，可以用于更新新内容</span><br></pre></td></tr></table></figure>
+
+<h3 id="List"><a href="#List" class="headerlink" title="List"></a>List</h3><p>list可以当作链表来看，左右都可以插入</p>
+<p>可控制向左向右添加后移出，是需要开头加 L（左） 或 R（右），List的命令以L开头，除控制左右外，可存在重复值</p>
+<p>添加后内容顺序为 54321</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line">LPUSH key element [element...] #tianj或创建并添加值</span><br><span class="line">LRANGE key s e  ;#查看List的数据 从s开始 到e结束的位置</span><br><span class="line">LPOP #移出左第一个，（左右可调节）</span><br><span class="line">LINDEX key index   #根据下标查看值，必须大写，只能从左</span><br><span class="line">LLEN key   #获取指定list的长度</span><br><span class="line">LREM key count value  #移出指定的内容，并且可以设置移出几个</span><br><span class="line">ltrim key start stop  #通过下标截取要的部分 不在区间的则都移出</span><br><span class="line">rpoplpush key1 key2  #移出key1中最右的第一个并添加到key2的左边第一个</span><br><span class="line">lset key index value  #可修改list中指定下标的value，如果不存在列表就会报错</span><br><span class="line">LINSERT key before|after pivot element #向指定key里的value的前或后插入内容。 pivot key里的内容 element 插入的内容</span><br></pre></td></tr></table></figure>
 
 
 
-<p><strong>启动哨兵模式：</strong></p>
-<p><img src="https://s2.loli.net/2022/02/23/7OSxgQsbL6nyFRi.png" alt="image-20220223165032216"></p>
-<p>命令：redis-sentinel  选用的配置文件，如果是哨兵集群就需要多个配置文件</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">[root@VM-4-12-centos StudyHardConfig]# redis-sentinel sentinel.conf </span><br><span class="line">742116:X 23 Feb 2022 16:29:48.399 # oO0OoO0OoO0Oo Redis is starting oO0OoO0OoO0Oo</span><br><span class="line">742116:X 23 Feb 2022 16:29:48.399 # Redis version=6.0.6, bits=64, commit=00000000, modified=0, pid=742116, just started</span><br><span class="line">742116:X 23 Feb 2022 16:29:48.399 # Configuration loaded</span><br><span class="line">                _._                                                  </span><br><span class="line">           _.-``__ &#x27;&#x27;-._                                             </span><br><span class="line">      _.-``    `.  `_.  &#x27;&#x27;-._           Redis 6.0.6 (00000000/0) 64 bit</span><br><span class="line">  .-`` .-```.  ```\/    _.,_ &#x27;&#x27;-._                                   </span><br><span class="line"> (    &#x27;      ,       .-`  | `,    )     Running in sentinel mode</span><br><span class="line"> |`-._`-...-` __...-.``-._|&#x27;` _.-&#x27;|     Port: 26379   #哨兵端口</span><br><span class="line"> |    `-._   `._    /     _.-&#x27;    |     PID: 742116  </span><br><span class="line">  `-._    `-._  `-./  _.-&#x27;    _.-&#x27;                                   </span><br><span class="line"> |`-._`-._    `-.__.-&#x27;    _.-&#x27;_.-&#x27;|                                  </span><br><span class="line"> |    `-._`-._        _.-&#x27;_.-&#x27;    |           http://redis.io        </span><br><span class="line">  `-._    `-._`-.__.-&#x27;_.-&#x27;    _.-&#x27;                                   </span><br><span class="line"> |`-._`-._    `-.__.-&#x27;    _.-&#x27;_.-&#x27;|                                  </span><br><span class="line"> |    `-._`-._        _.-&#x27;_.-&#x27;    |                                  </span><br><span class="line">  `-._    `-._`-.__.-&#x27;_.-&#x27;    _.-&#x27;                                   </span><br><span class="line">      `-._    `-.__.-&#x27;    _.-&#x27;                                       </span><br><span class="line">          `-._        _.-&#x27;                                           </span><br><span class="line">              `-.__.-&#x27;                                               </span><br><span class="line"></span><br><span class="line">742116:X 23 Feb 2022 16:29:48.404 # Sentinel ID is d0592a16972e6c88a456c5c2969cf4141a0e2f07</span><br><span class="line">742116:X 23 Feb 2022 16:29:48.404 # +monitor master mymaster 127.0.0.1 6360 quorum 1</span><br><span class="line">#侦测到两个从节点，并表明主节点是谁，现在主节点表明的6360这个端口的redis</span><br><span class="line">742116:X 23 Feb 2022 16:29:48.404 * +slave slave 127.0.0.1:6362 127.0.0.1 6362 @ mymaster 127.0.0.1 6360</span><br><span class="line">742116:X 23 Feb 2022 16:29:48.408 * +slave slave 127.0.0.1:6361 127.0.0.1 6361 @ mymaster 127.0.0.1 6360</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<h3 id="Set"><a href="#Set" class="headerlink" title="Set"></a>Set</h3><p>set的命令都是以s开头的 set中的值是无需不能重复的</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line">sadd key value  #创建或添加</span><br><span class="line">SMEMBERS key  #查看set中的元素</span><br><span class="line">SISMEMBER key value  #判断当前set中是否有当前value</span><br><span class="line">scard setkey  #获取当前set的个数</span><br><span class="line">srem setkey element[element..]  #移出指定的值</span><br><span class="line">SRANDMEMBER setkey 【count】  #在指定的key中随机获取count个元素</span><br><span class="line">SPOP setkey 【count】  #随机移除count个元素</span><br><span class="line">SMOVE setkey1 setkey2 value  #将setkey1的value移出到setkey2中</span><br><span class="line">SINTER key [key...]  #获取选中key的交集，要都有的才会显示</span><br><span class="line">SUNION key [key...] #获取选中的并集，不会输出重复的 #并集解释：若A和B是集合，则A和B并集是有所有A的元素和所有B的元素，而没有其他元素的集合。A和B的并集通常写作 <span class="string">&quot;A∪B&quot;</span>，读作“A并B”</span><br></pre></td></tr></table></figure>
 
 
 
-<p><strong>断供主节点，让哨兵自动选择一个从节点当主节点：</strong> </p>
-<p>如果master节点断开了，这个时候就会从 从机中随机选择一个服务器（根据一个投票算法）</p>
-<p>哨兵打印的新信息：</p>
-<p>这里投票，选择6362当主节点</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">Feb 2022 16:37:29.007 # +sdown master mymaster 127.0.0.1 6360</span><br><span class="line">742116:X 23 Feb 2022 16:37:29.007 # +odown master mymaster 127.0.0.1 6360 #quorum 1/1</span><br><span class="line">742116:X 23 Feb 2022 16:37:29.007 # +new-epoch 1</span><br><span class="line">742116:X 23 Feb 2022 16:37:29.007 # +try-failover master mymaster 127.0.0.1 6360</span><br><span class="line">742116:X 23 Feb 2022 16:37:29.011 # +vote-for-leader d0592a16972e6c88a456c5c2969cf4141a0e2f07 1</span><br><span class="line">742116:X 23 Feb 2022 16:37:29.011 # +elected-leader master mymaster 127.0.0.1 6360</span><br><span class="line">742116:X 23 Feb 2022 16:37:29.011 # +failover-state-select-slave master mymaster 127.0.0.1 6360</span><br><span class="line">742116:X 23 Feb 2022 16:37:29.066 # +selected-slave slave 127.0.0.1:6362 127.0.0.1 6362 @ mymaster 127.0.0.1 6360</span><br><span class="line">742116:X 23 Feb 2022 16:37:29.066 * +failover-state-send-slaveof-noone slave 127.0.0.1:6362 127.0.0.1 6362 @ mymaster 127.0.0.1 6360</span><br><span class="line">742116:X 23 Feb 2022 16:37:29.138 * +failover-state-wait-promotion slave 127.0.0.1:6362 127.0.0.1 6362 @ mymaster 127.0.0.1 6360</span><br><span class="line">742116:X 23 Feb 2022 16:37:29.419 # +promoted-slave slave 127.0.0.1:6362 127.0.0.1 6362 @ mymaster 127.0.0.1 6360</span><br><span class="line">742116:X 23 Feb 2022 16:37:29.420 # +failover-state-reconf-slaves master mymaster 127.0.0.1 6360</span><br><span class="line">742116:X 23 Feb 2022 16:37:29.498 * +slave-reconf-sent slave 127.0.0.1:6361 127.0.0.1 6361 @ mymaster 127.0.0.1 6360</span><br><span class="line">742116:X 23 Feb 2022 16:37:30.445 * +slave-reconf-inprog slave 127.0.0.1:6361 127.0.0.1 6361 @ mymaster 127.0.0.1 6360</span><br><span class="line">742116:X 23 Feb 2022 16:37:30.445 * +slave-reconf-done slave 127.0.0.1:6361 127.0.0.1 6361 @ mymaster 127.0.0.1 6360</span><br><span class="line">742116:X 23 Feb 2022 16:37:30.529 # +failover-end master mymaster 127.0.0.1 6360  #故障切换主线</span><br><span class="line">742116:X 23 Feb 2022 16:37:30.529 # +switch-master mymaster 127.0.0.1 6360 127.0.0.1 6362   #这里依旧选择了6362来当主节点</span><br><span class="line">742116:X 23 Feb 2022 16:37:30.529 * +slave slave 127.0.0.1:6361 127.0.0.1 6361 @ mymaster 127.0.0.1 6362</span><br><span class="line">742116:X 23 Feb 2022 16:37:30.529 * +slave slave 127.0.0.1:6360 127.0.0.1 6360 @ mymaster 127.0.0.1 6362</span><br><span class="line">742116:X 23 Feb 2022 16:38:00.593 # +sdown slave 127.0.0.1:6360 127.0.0.1 6360 @ mymaster 127.0.0.1 6362</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<h3 id="Hash"><a href="#Hash" class="headerlink" title="Hash"></a>Hash</h3><p>Hash类型为key-（key-value） 所有的hash命令是以h开头的</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line">hset key field value [field value...]  #创建Hash</span><br><span class="line">#示例：hset hash field1 value1 ；key（hash）-value（field1-value1）</span><br><span class="line">#注意：低版本一次填充多个需要使用hmset命令</span><br><span class="line">hget key field   #获取field value值，需要两个key的值</span><br><span class="line">hmget key field [field...]  #获取多个 field ，高版本可能没有这个命令，而是直接使用hset</span><br><span class="line">hdel key field [field...]  #删除指定的field，</span><br><span class="line">hgetall key    #查看当前key中的value（k-v键值对都会显示）</span><br><span class="line">HEXISTS key field   #查询hash中是否存在指定的key</span><br><span class="line">hkeys key     #查看hash中所有的key</span><br><span class="line">hvals key     #查看hasg中所有的value</span><br><span class="line">HINCRBY key field i    #为指定key中的field 的value进行相加，可以加负数，这样就是相减</span><br><span class="line">hsetnx key field value #如果field存在则无需，不存在创建</span><br></pre></td></tr></table></figure>
 
 
 
-<p>我们来看看6362信息：</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">127.0.0.1:6362&gt;  SLAVEOF 127.0.0.1 6360</span><br><span class="line">OK Already connected to specified master</span><br><span class="line">127.0.0.1:6362&gt; info replication</span><br><span class="line"># Replication</span><br><span class="line">role:master   		#身份依旧是主节点了</span><br><span class="line">connected_slaves:1</span><br><span class="line">slave0:ip=127.0.0.1,port=6361,state=online,offset=191774,lag=1</span><br><span class="line">master_replid:01fa8e86c3fa6a51f5c111e46ef4e8622d062f23</span><br><span class="line">master_replid2:8009003a269bcd5e8af84c76891fc4bdc72dbf10</span><br><span class="line">master_repl_offset:191774</span><br><span class="line">second_repl_offset:170703</span><br><span class="line">repl_backlog_active:1</span><br><span class="line">repl_backlog_size:1048576</span><br><span class="line">repl_backlog_first_byte_offset:1</span><br><span class="line">repl_backlog_histlen:191774</span><br><span class="line">127.0.0.1:6362&gt; </span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<h3 id="Zset"><a href="#Zset" class="headerlink" title="Zset"></a>Zset</h3><p>有序集合，，从小到大</p>
+<p>在set的基础上加了一个值， zadd k score v ,多了个score多了了，可以用于表示</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line">zadd key sroce value [...]  #添加zset</span><br><span class="line">zrange key start stop  #查看指定key数据范围</span><br><span class="line">ZRANGEBYSCORE key min max [WITHSCORCES] [LIMIT offset ount]   #用于指定key筛选排序  min可以使用-inf 意思为负无限制，max使用+inf 正无限，获取score包含在他们的区间值</span><br><span class="line">ZREVRANGEBYSCORE key max min [WITHSCORCES] [LIMIT offset ount]  #上面排正序，这个是倒叙</span><br><span class="line">zrem key member [member...]   #使用要删除的value并移除</span><br><span class="line">ZCARD key   #查询当前集合key有多少个值</span><br><span class="line">ZCOUNT key min max #获取指定key的指定区间内有多个个值</span><br></pre></td></tr></table></figure>
 
 
 
-<p>如果这时6360这个节点重启呢？</p>
-<p>​	如果主机此时回来了，只能归并到新的主机下，当做从机，这就是哨兵模式的规则!</p>
-<p>​	6362：  可以看到 它变成从节点，哨兵也同样会打印信息，我就不打出来了</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">127.0.0.1:6362&gt; info replication</span><br><span class="line"># Replication</span><br><span class="line">role:master</span><br><span class="line">connected_slaves:2</span><br><span class="line">slave0:ip=127.0.0.1,port=6361,state=online,offset=198720,lag=1</span><br><span class="line">slave1:ip=127.0.0.1,port=6360,state=online,offset=198720,lag=0</span><br><span class="line">master_replid:01fa8e86c3fa6a51f5c111e46ef4e8622d062f23</span><br><span class="line">master_replid2:8009003a269bcd5e8af84c76891fc4bdc72dbf10</span><br><span class="line">master_repl_offset:198720</span><br><span class="line">second_repl_offset:170703</span><br><span class="line">repl_backlog_active:1</span><br><span class="line">repl_backlog_size:1048576</span><br><span class="line">repl_backlog_first_byte_offset:1</span><br><span class="line">repl_backlog_histlen:198720</span><br><span class="line">127.0.0.1:6362&gt; </span><br><span class="line"></span><br></pre></td></tr></table></figure>
-
-
-
-
-
-
-
-<p><strong>全部配置信息：</strong></p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line"># Example sentinel.conf</span><br><span class="line"># 哨兵sentinel实例运行的端口 默认26379</span><br><span class="line">port 26379</span><br><span class="line"></span><br><span class="line"># 哨兵sentinel的工作目录</span><br><span class="line">dir /tmp</span><br><span class="line"></span><br><span class="line"># 哨兵sentinel监控的redis主节点的 ip port</span><br><span class="line"># master-name 可以自己命名的主节点名字 只能由字母A-z、数字0-9 、这三个字符&quot;.-_&quot;组成。</span><br><span class="line"># quorum 配置多少个sentinel哨兵统一认为master主节点失联 那么这时客观上认为主节点失联了</span><br><span class="line"># sentinel monitor &lt;master-name&gt; &lt;ip&gt; &lt;redis-port&gt; &lt;quorum&gt;</span><br><span class="line">sentinel monitor mymaster 127.0.0.1 6379 2</span><br><span class="line"></span><br><span class="line"># 当在Redis实例中开启了requirepass foobared 授权密码 这样所有连接Redis实例的客户端都要提供密码</span><br><span class="line"># 设置哨兵sentinel 连接主从的密码 注意必须为主从设置一样的验证密码</span><br><span class="line"># sentinel auth-pass &lt;master-name&gt; &lt;password&gt;</span><br><span class="line">sentinel auth-pass mymaster MySUPER--secret-0123passw0rd</span><br><span class="line"></span><br><span class="line"># 指定多少毫秒之后 主节点没有应答哨兵sentinel 此时 哨兵主观上认为主节点下线 默认30秒</span><br><span class="line"># sentinel down-after-milliseconds &lt;master-name&gt; &lt;milliseconds&gt;</span><br><span class="line">sentinel down-after-milliseconds mymaster 30000</span><br><span class="line"></span><br><span class="line"># 这个配置项指定了在发生failover主备切换时最多可以有多少个slave同时对新的master进行 同步，这个数字越小，完成failover所需的时间就越长，但是如果这个数字越大，就意味着越 多的slave因为replication而不可用。可以通过将这个值设为 1 来保证每次只有一个slave 处于不能处理命令请求的状态。</span><br><span class="line"># sentinel parallel-syncs &lt;master-name&gt; &lt;numslaves&gt;</span><br><span class="line">sentinel parallel-syncs mymaster 1</span><br><span class="line"></span><br><span class="line"># 故障转移的超时时间 failover-timeout 可以用在以下这些方面：</span><br><span class="line">#1. 同一个sentinel对同一个master两次failover之间的间隔时间。</span><br><span class="line">#2. 当一个slave从一个错误的master那里同步数据开始计算时间。直到slave被纠正为向正确的master那里同步数据时。</span><br><span class="line">#3.当想要取消一个正在进行的failover所需要的时间。 </span><br><span class="line">#4.当进行failover时，配置所有slaves指向新的master所需的最大时间。不过，即使过了这个超时，slaves依然会被正确配置为指向master，但是就不按parallel-syncs所配置的规则来了</span><br><span class="line"># 默认三分钟</span><br><span class="line"># sentinel failover-timeout &lt;master-name&gt; &lt;milliseconds&gt;</span><br><span class="line">sentinel failover-timeout mymaster 180000</span><br><span class="line"></span><br><span class="line"># SCRIPTS EXECUTION</span><br><span class="line">#配置当某一事件发生时所需要执行的脚本，可以通过脚本来通知管理员，例如当系统运行不正常时发邮件通知相关人员。</span><br><span class="line">#对于脚本的运行结果有以下规则：</span><br><span class="line">#若脚本执行后返回1，那么该脚本稍后将会被再次执行，重复次数目前默认为10</span><br><span class="line">#若脚本执行后返回2，或者比2更高的一个返回值，脚本将不会重复执行。</span><br><span class="line">#如果脚本在执行过程中由于收到系统中断信号被终止了，则同返回值为1时的行为相同。</span><br><span class="line">#一个脚本的最大执行时间为60s，如果超过这个时间，脚本将会被一个SIGKILL信号终止，之后重新执行。</span><br><span class="line">#通知型脚本:当sentinel有任何警告级别的事件发生时（比如说redis实例的主观失效和客观失效等等），将会去调用这个脚本，这时这个脚本应该通过邮件，SMS等方式去通知系统管理员关于系统不正常运行的信息。调用该脚本时，将传给脚本两个参数，一个是事件的类型，一个是事件的描述。如果sentinel.conf配置文件中配置了这个脚本路径，那么必须保证这个脚本存在于这个路径，并且是可执行的，否则sentinel无法正常启动成功。</span><br><span class="line"></span><br><span class="line">#通知脚本</span><br><span class="line"># shell编程</span><br><span class="line"># sentinel notification-script &lt;master-name&gt; &lt;script-path&gt;</span><br><span class="line">sentinel notification-script mymaster /var/redis/notify.sh</span><br><span class="line"></span><br><span class="line"># 客户端重新配置主节点参数脚本</span><br><span class="line"># 当一个master由于failover而发生改变时，这个脚本将会被调用，通知相关的客户端关于master地址已经发生改变的信息。</span><br><span class="line"># 以下参数将会在调用脚本时传给脚本:</span><br><span class="line"># &lt;master-name&gt; &lt;role&gt; &lt;state&gt; &lt;from-ip&gt; &lt;from-port&gt; &lt;to-ip&gt; &lt;to-port&gt;</span><br><span class="line"># 目前&lt;state&gt;总是“failover”,</span><br><span class="line"># &lt;role&gt;是“leader”或者“observer”中的一个。</span><br><span class="line"># 参数 from-ip, from-port, to-ip, to-port是用来和旧的master和新的master(即旧的slave)通信的</span><br><span class="line"># 这个脚本应该是通用的，能被多次调用，不是针对性的。</span><br><span class="line"># sentinel client-reconfig-script &lt;master-name&gt; &lt;script-path&gt;</span><br><span class="line">sentinel client-reconfig-script mymaster /var/redis/reconfig.sh # 一般都是由运维来配置！</span><br><span class="line"></span><br></pre></td></tr></table></figure>
-
-
-
-
-
-<h2 id="哨兵模式优缺点："><a href="#哨兵模式优缺点：" class="headerlink" title="哨兵模式优缺点："></a>哨兵模式优缺点：</h2><p>哨兵模式<br>优点︰<br>1、哨兵集群，基于主从复制模式，所有的主从配置优点，它全有2、主从可以切接，故障可以转移﹐系统的可用性就会史好3、哨兵模式就是主从模式的升级，手动到自动，更加建壮!缺点:</p>
-<ol>
-<li>Redis不好啊在。扩容的,集群容量一旦到达上限，在线扩容就十分麻烦!2、实现哨兵模式的配置只实是很麻烦的，里面有很多选择!</li>
-</ol>
+<h2 id="官网地址"><a href="#官网地址" class="headerlink" title="官网地址"></a>官网地址</h2><p>一切以官网为准 <a href="http://www.redis.cn/" title="Redis官网">Redis官网</a></p>
 ]]></content>
       <categories>
         <category>redis</category>
       </categories>
       <tags>
         <tag>数据库</tag>
+        <tag>数据类型</tag>
       </tags>
   </entry>
   <entry>
-    <title>redis总笔记</title>
-    <url>/2022/05/21/redis%E6%80%BB%E7%AC%94%E8%AE%B0/</url>
-    <content><![CDATA[<p>这个博主的redis会比较详细，可以去观看它的，还有可以去看看它的视频</p>
-<p>博主：狂神说</p>
-<p><a href="https://www.cnblogs.com/meditation5201314/p/14882992.htm">https://www.cnblogs.com/meditation5201314/p/14882992.htm</a></p>
-<p><strong>发布订阅简单使用：</strong></p>
-<p><img src="https://s2.loli.net/2022/02/21/CilvKd8sFBtSJo9.png" alt="image-20220221140950917"></p>
+    <title>redis的持久化</title>
+    <url>/2022/05/20/redis%E7%9A%84%E6%8C%81%E4%B9%85%E5%8C%96/</url>
+    <content><![CDATA[<h1 id="Redis的持久化"><a href="#Redis的持久化" class="headerlink" title="Redis的持久化"></a>Redis的持久化</h1><p>redis是内存数据库，如果数据不持久化，当程序关闭时将会丢失数据，所以Redis提供了持久化</p>
+<h3 id="RDB"><a href="#RDB" class="headerlink" title="RDB"></a>RDB</h3><p><strong>什么是RDB？</strong></p>
+<p><img src="https://s2.loli.net/2022/02/20/IeEx1JmZS82vk9s.png" alt="image-20220220232522977"></p>
+<p>在指定的时间间隔内将内存中的数据集快照写入磁盘，也就是行话讲的Snapshot快照，它恢复时是将快照文件直接读到内存里。Redis会单独创建 ( fork )一个子进程来进行持久化，会先将数据写入到一个临时文件中，待持久化过程都结束了，再用这个临时文件替换上次持久化好的文件。整个过程中，主进程是不进行任何IO操作的。这就确保了极高的性能。如果需要进行大规模数据的恢复，且对于数据恢复的完整性不是非常敏感，那RDB方式要比AOF方式更加的高效。RDB的缺点是最后一次持久化后的数据可能丢失。我们默认的就是RDB，一般情况不需要修改这个配置！</p>
+<p>在生成环境我们将会对这个文件进行备份</p>
+<p><strong>缺点：</strong></p>
+<p>如果在最后一次宕机了，就没有办法去持久化了，需要一定的时间间隔</p>
+<p>在创建frok进程的时候，会占用一定的空间</p>
+<p><strong>优点：</strong></p>
+<p>RDB比AOF更加的高效，适合大规模恢复数据</p>
+<p>RDB保存的文件是dump.rdb   ，在配置文件中有讲，都是在配置文件中设置的</p>
+<p><strong>持久化触发机制：</strong></p>
+<p>注意：kill的情况下不会触发</p>
+<p>1,save的规则满足的情况下会触发rdb规则</p>
+<p>2,执行flushall命令也会触发rdb规则</p>
+<p>3,当退出redis时也会触发rdb规则   </p>
+<p>会生成一个dump.rdb文件，redis在重启时会读取文件，恢复数据，如果删除，关闭后就不会有之前的数据了</p>
+<p><strong>如恢复rdb文件：</strong></p>
+<p>只需要将rdb文件放置redis启动目录下，</p>
+<p>dump.rdb放在redis-server同级目录</p>
+<h2 id="AOF"><a href="#AOF" class="headerlink" title="AOF"></a>AOF</h2><p>它会将我们所有的命令记录下来，history，恢复的时候就会把这个文件全部执行一遍！</p>
+<p><strong>在redis4.0以后支持混合模式，rdb与aof同时开启会优先aof</strong></p>
+<p><img src="https://s2.loli.net/2022/02/20/r1N7HEity9OXqdA.png" alt="image-20220220233046582"></p>
+<p>以日志的形式来记录每个写操作，将Redis执行过的所有指令记录下来(读操作不记录），只许追加文件但不可以改写文件，redis启动之初会读取该文件重新构建数据，换言之，redis重启的话就根据日志文件的内容将写指令从前到后执行一次以完成数据的恢复工作</p>
+<p><strong>默认不开AOF，需要去配置文件中手动开启</strong></p>
+<p><strong>Aof保存的是appendonly.aof 文件</strong></p>
+<p>文件同样可以在配置文件中修改:</p>
+<p>&#x2F;&#x2F;The name of the append only file (default: “appendonly.aof”)</p>
+<p>​	appendfilename “appendonly.aof”</p>
+<p><strong>当我们开启时输入了命令后就会生成aod文件：</strong></p>
+<p><img src="https://s2.loli.net/2022/02/21/lDiAuKGo345PORI.png" alt="image-20220221100633418"></p>
+<p><strong>文件的内容为：</strong></p>
+<p><img src="https://s2.loli.net/2022/02/22/DGtZmALfOyTziFh.png" alt="image-20220222225551886"></p>
+<p>这个文件是能破坏的，破坏后启动redis会报错 ，但是系统会生成一个备用文件，我们可以使用它来修改appendonly.aof</p>
+<p>破坏后登录：</p>
+<p><img src="https://s2.loli.net/2022/02/21/JuwqZhENCfp9LIn.png" alt="image-20220221102935481"></p>
+<p>破坏后是可以使用这个文件进行恢复的</p>
+<p><img src="https://s2.loli.net/2022/02/21/X4TEjb1n5VfL2Fk.png" alt="image-20220221103321224"></p>
+<p>使用命令：redis-check-aof –fix appendonly.aof  进行恢复，恢复后 就能正常登录了</p>
+<p>注意：要在appendonly.aof文件位置使用该命令</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">[root@VM-4-12-centos ~]# redis-check-aof --fix appendonly.aof</span><br><span class="line">Cannot open file: appendonly.aof</span><br><span class="line">[root@VM-4-12-centos ~]# cd /usr/local/bin</span><br><span class="line">[root@VM-4-12-centos bin]# redis-check-aof --fix appendonly.aof</span><br><span class="line">0x              3c: Expected \r\n, got: 7765</span><br><span class="line">AOF analyzed: size=143, ok_up_to=52, diff=91</span><br><span class="line">This will shrink the AOF from 143 bytes, with 91 bytes, to 52 bytes</span><br><span class="line">Continue? [y/N]: y</span><br><span class="line">Successfully truncated AOF</span><br><span class="line">[root@VM-4-12-centos bin]# </span><br></pre></td></tr></table></figure>
+
 ]]></content>
+      <categories>
+        <category>redis</category>
+      </categories>
       <tags>
-        <tag>优秀文章</tag>
+        <tag>数据库</tag>
       </tags>
   </entry>
   <entry>
@@ -2829,103 +3320,6 @@ public CorsConfigurationSource corsConfigurationSource()&#123;
       </tags>
   </entry>
   <entry>
-    <title>redis的五大数据类型</title>
-    <url>/2022/05/21/redis%E7%9A%84%E4%BA%94%E5%A4%A7%E6%95%B0%E6%8D%AE%E7%B1%BB%E5%9E%8B/</url>
-    <content><![CDATA[<h2 id="Redis简单了解与5大数据类型"><a href="#Redis简单了解与5大数据类型" class="headerlink" title="Redis简单了解与5大数据类型"></a>Redis简单了解与5大数据类型</h2><h2 id="Redis是单线程的"><a href="#Redis是单线程的" class="headerlink" title="Redis是单线程的"></a>Redis是单线程的</h2><p>Redis是很快的，官方表示，Redis是基于内存操作，cpu并不是Redis性能瓶颈，Redis的瓶颈是根据机器和网络带宽。</p>
-<p>Redis是C语言写的，官方提供的数据为 100000+ 的Qps，完成不比同样是使用key-value的Memecahe差！</p>
-<h2 id="Redis为什么单线程还那么快？"><a href="#Redis为什么单线程还那么快？" class="headerlink" title="Redis为什么单线程还那么快？"></a>Redis为什么单线程还那么快？</h2><p>1，高性能的服务器不一定是多线程的 2，多线程不一定比单线程效率高！</p>
-<p>redis是将所有的数据全部放置内存中的，所以使用单线程去操作效率就是最高的，多线程cpu上下文切换耗时，对于内存系统来说，如果没有上下文切换效率就是最高的，多次读写都在一个cpu上的，在内存情况下，这个就是最佳方案</p>
-<p>redis一共有16个数据库 默认使用第0个</p>
-<h2 id="5大数据类型"><a href="#5大数据类型" class="headerlink" title="5大数据类型"></a>5大数据类型</h2><p>不区分大小写</p>
-<h3 id="String-的一些命令"><a href="#String-的一些命令" class="headerlink" title="String 的一些命令"></a>String 的一些命令</h3><figure class="highlight java"><table><tr><td class="code"><pre><span class="line">select <span class="number">1</span> #改变数字可切换数据库</span><br><span class="line">keys *  #查看当前数据库使用的key</span><br><span class="line">set key value  #向数据库填充kv键值对数据</span><br><span class="line">get key  #获取指定key的value</span><br><span class="line">flushall  #清空全部 会将其他库的也清除</span><br><span class="line">flushdb   #清空单前数据库</span><br><span class="line">EXISTS key  #判断当前key是否存在 存在返回<span class="number">1</span> 否者<span class="number">0</span></span><br><span class="line">move key <span class="number">1</span> #将指定的key键值对移动到指定的数据库</span><br><span class="line">EXPIRE key <span class="number">10</span>  #将指定key在指定的时间过期 <span class="number">10</span>为<span class="number">10</span>秒</span><br><span class="line">ttl key  #查看指定的key还剩余多少存活时间 -<span class="number">1</span>为永久存活 -<span class="number">2</span>为死亡</span><br><span class="line">type key  #查看当前key的数据类型</span><br><span class="line">APPEND key content  #追加指定key的value的内容 content为追加内容 </span><br><span class="line">STRLEN key  #查看指定key的value长度</span><br><span class="line">incr key  #可以为指定的key自增</span><br><span class="line">decr key #为指定的key减<span class="number">1</span></span><br><span class="line">INCRBY key i  #为指定的key 加上 i个（数字）</span><br><span class="line">DECRBY key i  #为指定的key 减 i (数字)</span><br><span class="line">GETRANGE key s e  #截取指定长度字符串 ，该方法区间（ &#125;</span><br><span class="line">GETRANGE key i -<span class="number">1</span>  #结尾为-<span class="number">1</span>可以查看全部字符串 和 get一样</span><br><span class="line">SETRANGE key s content  #替换指定位置开始的字符串 输入几个就替换几个</span><br><span class="line">setex key time value  #创建或修改一个键值对，并设置过期时间</span><br><span class="line">setnx key value  #创建一个键值对 、当如何已经有这个键值对了就会创建失败</span><br><span class="line">mset key value [k v...]  #可一次设置多个，kv键值对</span><br><span class="line">mget key [key...]  #一次获取多个value</span><br><span class="line">msetnx key value [k v...]  #可一次设置多个，kv键值对，但要满足原子性，同时成功，同时失败</span><br><span class="line">getset key value  #读取并修改 先读，可以用于更新新内容</span><br></pre></td></tr></table></figure>
-
-<h3 id="List"><a href="#List" class="headerlink" title="List"></a>List</h3><p>list可以当作链表来看，左右都可以插入</p>
-<p>可控制向左向右添加后移出，是需要开头加 L（左） 或 R（右），List的命令以L开头，除控制左右外，可存在重复值</p>
-<p>添加后内容顺序为 54321</p>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line">LPUSH key element [element...] #tianj或创建并添加值</span><br><span class="line">LRANGE key s e  ;#查看List的数据 从s开始 到e结束的位置</span><br><span class="line">LPOP #移出左第一个，（左右可调节）</span><br><span class="line">LINDEX key index   #根据下标查看值，必须大写，只能从左</span><br><span class="line">LLEN key   #获取指定list的长度</span><br><span class="line">LREM key count value  #移出指定的内容，并且可以设置移出几个</span><br><span class="line">ltrim key start stop  #通过下标截取要的部分 不在区间的则都移出</span><br><span class="line">rpoplpush key1 key2  #移出key1中最右的第一个并添加到key2的左边第一个</span><br><span class="line">lset key index value  #可修改list中指定下标的value，如果不存在列表就会报错</span><br><span class="line">LINSERT key before|after pivot element #向指定key里的value的前或后插入内容。 pivot key里的内容 element 插入的内容</span><br></pre></td></tr></table></figure>
-
-
-
-<h3 id="Set"><a href="#Set" class="headerlink" title="Set"></a>Set</h3><p>set的命令都是以s开头的 set中的值是无需不能重复的</p>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line">sadd key value  #创建或添加</span><br><span class="line">SMEMBERS key  #查看set中的元素</span><br><span class="line">SISMEMBER key value  #判断当前set中是否有当前value</span><br><span class="line">scard setkey  #获取当前set的个数</span><br><span class="line">srem setkey element[element..]  #移出指定的值</span><br><span class="line">SRANDMEMBER setkey 【count】  #在指定的key中随机获取count个元素</span><br><span class="line">SPOP setkey 【count】  #随机移除count个元素</span><br><span class="line">SMOVE setkey1 setkey2 value  #将setkey1的value移出到setkey2中</span><br><span class="line">SINTER key [key...]  #获取选中key的交集，要都有的才会显示</span><br><span class="line">SUNION key [key...] #获取选中的并集，不会输出重复的 #并集解释：若A和B是集合，则A和B并集是有所有A的元素和所有B的元素，而没有其他元素的集合。A和B的并集通常写作 <span class="string">&quot;A∪B&quot;</span>，读作“A并B”</span><br></pre></td></tr></table></figure>
-
-
-
-<h3 id="Hash"><a href="#Hash" class="headerlink" title="Hash"></a>Hash</h3><p>Hash类型为key-（key-value） 所有的hash命令是以h开头的</p>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line">hset key field value [field value...]  #创建Hash</span><br><span class="line">#示例：hset hash field1 value1 ；key（hash）-value（field1-value1）</span><br><span class="line">#注意：低版本一次填充多个需要使用hmset命令</span><br><span class="line">hget key field   #获取field value值，需要两个key的值</span><br><span class="line">hmget key field [field...]  #获取多个 field ，高版本可能没有这个命令，而是直接使用hset</span><br><span class="line">hdel key field [field...]  #删除指定的field，</span><br><span class="line">hgetall key    #查看当前key中的value（k-v键值对都会显示）</span><br><span class="line">HEXISTS key field   #查询hash中是否存在指定的key</span><br><span class="line">hkeys key     #查看hash中所有的key</span><br><span class="line">hvals key     #查看hasg中所有的value</span><br><span class="line">HINCRBY key field i    #为指定key中的field 的value进行相加，可以加负数，这样就是相减</span><br><span class="line">hsetnx key field value #如果field存在则无需，不存在创建</span><br></pre></td></tr></table></figure>
-
-
-
-<h3 id="Zset"><a href="#Zset" class="headerlink" title="Zset"></a>Zset</h3><p>有序集合，，从小到大</p>
-<p>在set的基础上加了一个值， zadd k score v ,多了个score多了了，可以用于表示</p>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line">zadd key sroce value [...]  #添加zset</span><br><span class="line">zrange key start stop  #查看指定key数据范围</span><br><span class="line">ZRANGEBYSCORE key min max [WITHSCORCES] [LIMIT offset ount]   #用于指定key筛选排序  min可以使用-inf 意思为负无限制，max使用+inf 正无限，获取score包含在他们的区间值</span><br><span class="line">ZREVRANGEBYSCORE key max min [WITHSCORCES] [LIMIT offset ount]  #上面排正序，这个是倒叙</span><br><span class="line">zrem key member [member...]   #使用要删除的value并移除</span><br><span class="line">ZCARD key   #查询当前集合key有多少个值</span><br><span class="line">ZCOUNT key min max #获取指定key的指定区间内有多个个值</span><br></pre></td></tr></table></figure>
-
-
-
-<h2 id="官网地址"><a href="#官网地址" class="headerlink" title="官网地址"></a>官网地址</h2><p>一切以官网为准 <a href="http://www.redis.cn/" title="Redis官网">Redis官网</a></p>
-]]></content>
-      <categories>
-        <category>redis</category>
-      </categories>
-      <tags>
-        <tag>数据库</tag>
-        <tag>数据类型</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>redis的持久化</title>
-    <url>/2022/05/20/redis%E7%9A%84%E6%8C%81%E4%B9%85%E5%8C%96/</url>
-    <content><![CDATA[<h1 id="Redis的持久化"><a href="#Redis的持久化" class="headerlink" title="Redis的持久化"></a>Redis的持久化</h1><p>redis是内存数据库，如果数据不持久化，当程序关闭时将会丢失数据，所以Redis提供了持久化</p>
-<h3 id="RDB"><a href="#RDB" class="headerlink" title="RDB"></a>RDB</h3><p><strong>什么是RDB？</strong></p>
-<p><img src="https://s2.loli.net/2022/02/20/IeEx1JmZS82vk9s.png" alt="image-20220220232522977"></p>
-<p>在指定的时间间隔内将内存中的数据集快照写入磁盘，也就是行话讲的Snapshot快照，它恢复时是将快照文件直接读到内存里。Redis会单独创建 ( fork )一个子进程来进行持久化，会先将数据写入到一个临时文件中，待持久化过程都结束了，再用这个临时文件替换上次持久化好的文件。整个过程中，主进程是不进行任何IO操作的。这就确保了极高的性能。如果需要进行大规模数据的恢复，且对于数据恢复的完整性不是非常敏感，那RDB方式要比AOF方式更加的高效。RDB的缺点是最后一次持久化后的数据可能丢失。我们默认的就是RDB，一般情况不需要修改这个配置！</p>
-<p>在生成环境我们将会对这个文件进行备份</p>
-<p><strong>缺点：</strong></p>
-<p>如果在最后一次宕机了，就没有办法去持久化了，需要一定的时间间隔</p>
-<p>在创建frok进程的时候，会占用一定的空间</p>
-<p><strong>优点：</strong></p>
-<p>RDB比AOF更加的高效，适合大规模恢复数据</p>
-<p>RDB保存的文件是dump.rdb   ，在配置文件中有讲，都是在配置文件中设置的</p>
-<p><strong>持久化触发机制：</strong></p>
-<p>注意：kill的情况下不会触发</p>
-<p>1,save的规则满足的情况下会触发rdb规则</p>
-<p>2,执行flushall命令也会触发rdb规则</p>
-<p>3,当退出redis时也会触发rdb规则   </p>
-<p>会生成一个dump.rdb文件，redis在重启时会读取文件，恢复数据，如果删除，关闭后就不会有之前的数据了</p>
-<p><strong>如恢复rdb文件：</strong></p>
-<p>只需要将rdb文件放置redis启动目录下，</p>
-<p>dump.rdb放在redis-server同级目录</p>
-<h2 id="AOF"><a href="#AOF" class="headerlink" title="AOF"></a>AOF</h2><p>它会将我们所有的命令记录下来，history，恢复的时候就会把这个文件全部执行一遍！</p>
-<p><strong>在redis4.0以后支持混合模式，rdb与aof同时开启会优先aof</strong></p>
-<p><img src="https://s2.loli.net/2022/02/20/r1N7HEity9OXqdA.png" alt="image-20220220233046582"></p>
-<p>以日志的形式来记录每个写操作，将Redis执行过的所有指令记录下来(读操作不记录），只许追加文件但不可以改写文件，redis启动之初会读取该文件重新构建数据，换言之，redis重启的话就根据日志文件的内容将写指令从前到后执行一次以完成数据的恢复工作</p>
-<p><strong>默认不开AOF，需要去配置文件中手动开启</strong></p>
-<p><strong>Aof保存的是appendonly.aof 文件</strong></p>
-<p>文件同样可以在配置文件中修改:</p>
-<p>&#x2F;&#x2F;The name of the append only file (default: “appendonly.aof”)</p>
-<p>​	appendfilename “appendonly.aof”</p>
-<p><strong>当我们开启时输入了命令后就会生成aod文件：</strong></p>
-<p><img src="https://s2.loli.net/2022/02/21/lDiAuKGo345PORI.png" alt="image-20220221100633418"></p>
-<p><strong>文件的内容为：</strong></p>
-<p><img src="https://s2.loli.net/2022/02/22/DGtZmALfOyTziFh.png" alt="image-20220222225551886"></p>
-<p>这个文件是能破坏的，破坏后启动redis会报错 ，但是系统会生成一个备用文件，我们可以使用它来修改appendonly.aof</p>
-<p>破坏后登录：</p>
-<p><img src="https://s2.loli.net/2022/02/21/JuwqZhENCfp9LIn.png" alt="image-20220221102935481"></p>
-<p>破坏后是可以使用这个文件进行恢复的</p>
-<p><img src="https://s2.loli.net/2022/02/21/X4TEjb1n5VfL2Fk.png" alt="image-20220221103321224"></p>
-<p>使用命令：redis-check-aof –fix appendonly.aof  进行恢复，恢复后 就能正常登录了</p>
-<p>注意：要在appendonly.aof文件位置使用该命令</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">[root@VM-4-12-centos ~]# redis-check-aof --fix appendonly.aof</span><br><span class="line">Cannot open file: appendonly.aof</span><br><span class="line">[root@VM-4-12-centos ~]# cd /usr/local/bin</span><br><span class="line">[root@VM-4-12-centos bin]# redis-check-aof --fix appendonly.aof</span><br><span class="line">0x              3c: Expected \r\n, got: 7765</span><br><span class="line">AOF analyzed: size=143, ok_up_to=52, diff=91</span><br><span class="line">This will shrink the AOF from 143 bytes, with 91 bytes, to 52 bytes</span><br><span class="line">Continue? [y/N]: y</span><br><span class="line">Successfully truncated AOF</span><br><span class="line">[root@VM-4-12-centos bin]# </span><br></pre></td></tr></table></figure>
-
-]]></content>
-      <categories>
-        <category>redis</category>
-      </categories>
-      <tags>
-        <tag>数据库</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>redis配置文件介绍</title>
     <url>/2022/05/19/redis%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6%E4%BB%8B%E7%BB%8D/</url>
     <content><![CDATA[<h1 id="Redis的配置文件解释"><a href="#Redis的配置文件解释" class="headerlink" title="Redis的配置文件解释"></a>Redis的配置文件解释</h1><h2 id="网络"><a href="#网络" class="headerlink" title="网络"></a>网络</h2><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">bind 127.0.0.1   #绑定的ip地址 这个是只运行本地访问</span><br><span class="line">protected-mode yes   # 保护模式   是为了禁止公网访问redis cache，加强redis安全的</span><br><span class="line">port  6379   #端口设置</span><br></pre></td></tr></table></figure>
@@ -2971,44 +3365,19 @@ public CorsConfigurationSource corsConfigurationSource()&#123;
       </tags>
   </entry>
   <entry>
-    <title>redis的安装</title>
-    <url>/2022/05/21/redis%E7%9A%84%E5%AE%89%E8%A3%85/</url>
-    <content><![CDATA[<h2 id="安装Redis"><a href="#安装Redis" class="headerlink" title="安装Redis"></a>安装Redis</h2><h2 id="如何安装redis"><a href="#如何安装redis" class="headerlink" title="如何安装redis"></a>如何安装redis</h2><p>先去redis的官网下安装redis： <a href="http://www.redis.cn/">Redis中文官网</a></p>
-<p>redis不推荐在windos上安装</p>
-<p>CentOS7以上 安装方法： 安装ridis前需要先安装：gcc</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">yum -y install gcc</span><br><span class="line">yum -y install gcc-c++</span><br></pre></td></tr></table></figure>
-
-<p>安装好gcc后解压你的Redis安装包</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">tar -zxvf Reids安装包   #gz为后缀的</span><br></pre></td></tr></table></figure>
-
-<p>解压好后进入到redis里make编译</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">cd rieds</span><br><span class="line">make   #编译</span><br><span class="line">make install  #安装确认一下 也可以不执行</span><br></pre></td></tr></table></figure>
-
-<p>到这就安装完成了！</p>
-<p>我们可以去看下我们安装的程序：</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">cd /usr/local/bin</span><br></pre></td></tr></table></figure>
-
-<p>我们自己安装的程序都会在里面！</p>
-<p>我们可以在这里创建一个文件夹存放我们配置文件，这里我们创建一个存放Redis的配置文件，以后修改也是修改这里的配置文件而不修改软件里的，可以确保安全性：</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">mkdir SHconfig</span><br><span class="line">cp /opt/Redis/redis-6.0.6/redis.conf SHconfig</span><br></pre></td></tr></table></figure>
-
-<p>redis默认不是后台启动的，需要修改配置文件：</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">vim redis.conf</span><br><span class="line">将daemonize no 改为 daemonize yes</span><br><span class="line">设置密码</span><br><span class="line">requirepass foobared</span><br><span class="line">requirepass 123   指定密码123</span><br><span class="line">设置完密码后每次登录操作需要使用auth进行登录才能使用</span><br><span class="line">[root@VM-4-12-centos StudyHardConfig]# redis-cli</span><br><span class="line">127.0.0.1:6379&gt; set key1 q</span><br><span class="line">(error) NOAUTH Authentication required.</span><br><span class="line">127.0.0.1:6379&gt; auth 031215</span><br><span class="line">OK</span><br><span class="line">127.0.0.1:6379&gt; set key1 v1</span><br><span class="line">OK</span><br></pre></td></tr></table></figure>
-
-
-
-<h2 id="启动Redis："><a href="#启动Redis：" class="headerlink" title="启动Redis："></a>启动Redis：</h2><h3 id="在安装目录下执行："><a href="#在安装目录下执行：" class="headerlink" title="在安装目录下执行："></a>在安装目录下执行：</h3><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">redis-server shconfig/redis.conf #后面的参数是表示选用的配置文件</span><br></pre></td></tr></table></figure>
-
-<h3 id="在安装目录下测试连接并退出："><a href="#在安装目录下测试连接并退出：" class="headerlink" title="在安装目录下测试连接并退出："></a>在安装目录下测试连接并退出：</h3><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">[root@VM-4-12-centos bin]# redis-cli -p 6379 #连接</span><br><span class="line">127.0.0.1:6379&gt; ping</span><br><span class="line">PONG</span><br><span class="line">127.0.0.1:6379&gt; set name studyhard</span><br><span class="line">OK</span><br><span class="line">127.0.0.1:6379&gt; get name</span><br><span class="line">&quot;studyhard&quot;</span><br><span class="line">127.0.0.1:6379&gt; keys *</span><br><span class="line">1) &quot;name&quot;</span><br><span class="line">127.0.0.1:6379&gt; shutdown #关闭reids</span><br><span class="line">not connected&gt; exit   #退出</span><br></pre></td></tr></table></figure>
-
-<h2 id="当然还有更简单的方法"><a href="#当然还有更简单的方法" class="headerlink" title="当然还有更简单的方法"></a>当然还有更简单的方法</h2><p>使用宝塔面板~~ 十分的快捷</p>
+    <title>博客技术总结</title>
+    <url>/2022/05/14/%E5%8D%9A%E5%AE%A2%E6%8A%80%E6%9C%AF%E6%80%BB%E7%BB%93/</url>
+    <content><![CDATA[<h1 id="1-技术介绍"><a href="#1-技术介绍" class="headerlink" title="1.技术介绍"></a>1.技术介绍</h1><p>前端：vue + vuex + vue-router + axios + vuetify + element + echarts</p>
+<p>后端：SpringBoot + nginx + SpringSecurity + Swagger2 + MyBatisPlus + Mysql + Redis + elasticsearch + rabbitMQ + MaxWell</p>
+<h1 id="2-运行环境"><a href="#2-运行环境" class="headerlink" title="2.运行环境"></a>2.运行环境</h1><p>开发工具：IDEA</p>
+<p>服务器：阿里云1核2G CentOS8.0以上</p>
+<p>对象存储：阿里云OSS</p>
+<p>全站cdn加速</p>
+<p>cos对象储存</p>
+<p>全站https</p>
+<h1 id="3-项目总结"><a href="#3-项目总结" class="headerlink" title="3.项目总结"></a>3.项目总结</h1><p>此次对博客进行了全方位的升级，前端技术点和后端技术点相比第一，二版提升了不少。</p>
+<p>加入了许多动画过渡效果，并考虑到了一些用户细节（深色模式，图片预览，等），评论加入了表情和分页，提升了用户体验，。后台文章编辑器换为MarkDown，语法更加简洁，新增了草稿箱和自动保存文章等功能。</p>
 ]]></content>
-      <categories>
-        <category>redis</category>
-      </categories>
-      <tags>
-        <tag>安装</tag>
-      </tags>
   </entry>
   <entry>
     <title>redis集群（主从复制）</title>
@@ -3114,20 +3483,5 @@ public CorsConfigurationSource corsConfigurationSource()&#123;
       <tags>
         <tag>集群</tag>
       </tags>
-  </entry>
-  <entry>
-    <title>博客技术总结</title>
-    <url>/2022/05/14/%E5%8D%9A%E5%AE%A2%E6%8A%80%E6%9C%AF%E6%80%BB%E7%BB%93/</url>
-    <content><![CDATA[<h1 id="1-技术介绍"><a href="#1-技术介绍" class="headerlink" title="1.技术介绍"></a>1.技术介绍</h1><p>前端：vue + vuex + vue-router + axios + vuetify + element + echarts</p>
-<p>后端：SpringBoot + nginx + SpringSecurity + Swagger2 + MyBatisPlus + Mysql + Redis + elasticsearch + rabbitMQ + MaxWell</p>
-<h1 id="2-运行环境"><a href="#2-运行环境" class="headerlink" title="2.运行环境"></a>2.运行环境</h1><p>开发工具：IDEA</p>
-<p>服务器：阿里云1核2G CentOS8.0以上</p>
-<p>对象存储：阿里云OSS</p>
-<p>全站cdn加速</p>
-<p>cos对象储存</p>
-<p>全站https</p>
-<h1 id="3-项目总结"><a href="#3-项目总结" class="headerlink" title="3.项目总结"></a>3.项目总结</h1><p>此次对博客进行了全方位的升级，前端技术点和后端技术点相比第一，二版提升了不少。</p>
-<p>加入了许多动画过渡效果，并考虑到了一些用户细节（深色模式，图片预览，等），评论加入了表情和分页，提升了用户体验，。后台文章编辑器换为MarkDown，语法更加简洁，新增了草稿箱和自动保存文章等功能。</p>
-]]></content>
   </entry>
 </search>
