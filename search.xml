@@ -1,6 +1,232 @@
 <?xml version="1.0" encoding="utf-8"?>
 <search>
   <entry>
+    <title>Git快速入门</title>
+    <url>/2022/05/24/Git%E5%BF%AB%E9%80%9F%E5%85%A5%E9%97%A8/</url>
+    <content><![CDATA[<p>前言：</p>
+<p>本教程是根据B站Up主狂神说记得笔记，有需要查看视频的小伙伴可以去看看狂神的视频，真的非常好！</p>
+<p>狂神说Git视频地址：<a href="https://www.bilibili.com/video/BV1FE411P7B3?vd_source=ac95d1e4dae5cfd66da910c649ab5384">https://www.bilibili.com/video/BV1FE411P7B3?vd_source=ac95d1e4dae5cfd66da910c649ab5384</a></p>
+<h1 id="Git"><a href="#Git" class="headerlink" title="Git"></a>Git</h1><h2 id="版本控制"><a href="#版本控制" class="headerlink" title="版本控制"></a>版本控制</h2><h3 id="什么是版本控制？"><a href="#什么是版本控制？" class="headerlink" title="什么是版本控制？"></a>什么是版本控制？</h3><p>版本控制（Revision control）是一种在开发的过程中用于管理我们对文件、目录或工程等内容的修改历史，方便查看更改历史记录，备份以便恢复以前的版本的软件工程技术。</p>
+<ul>
+<li>实现跨区域多人协同开发</li>
+<li>追踪和记载一个或者多个文件的历史记录</li>
+<li>组织和保护你的源代码和文档</li>
+<li>统计工作量</li>
+<li>并行开发、提高开发效率</li>
+<li>跟踪记录整个软件的开发过程</li>
+<li>减轻开发人员的负担，节省时间，同时降低人为错误</li>
+</ul>
+<p>简单说就是用于管理多人协同开发项目的技术。</p>
+<p>没有进行版本控制或者版本控制本身缺乏正确的流程管理，在软件开发过程中将会引入很多问题，如软件<strong>代码的一致性</strong>、软件<strong>内容的冗余</strong>、软件<strong>过程的事物性</strong>、软件<strong>开发过程中的并发性</strong>、软件源<strong>代码的安全性</strong>，以及<strong>软件的整合</strong>等问题。</p>
+<p>无论是工作还是学习，或者是自己做笔记，都经历过这样一个阶段，比如写方案的时候客户总是要求改，最后可能又觉得第一版好，然而有的时候你的历史版本可能已经被你删除了，这个时候我们就迫切需要一个版本控制工具！多人开发时就会有更多的问题，所以多人开发就必须要使用版本控制！</p>
+<h3 id="常见的版本控制工具"><a href="#常见的版本控制工具" class="headerlink" title="常见的版本控制工具"></a>常见的版本控制工具</h3><p>我们学习的东西，一定是当下最流行的！</p>
+<p>主流的版本控制器有如下这些：</p>
+<ul>
+<li><strong>Git</strong></li>
+<li><strong>SVN</strong>（Subversion）</li>
+<li><strong>CVS</strong>（Concurrent Versions System）</li>
+<li><strong>VSS</strong>（Micorosoft Visual SourceSafe）</li>
+<li><strong>TFS</strong>（Team Foundation Server）</li>
+<li>Visual Studio Online</li>
+</ul>
+<p>版本控制产品非常的多（Perforce、Rational ClearCase、RCS（GNU Revision Control System）、Serena Dimention、SVK、BitKeeper、Monotone、Bazaar、Mercurial、SourceGear Vault），现在影响力最大且使用最广泛的是Git与SVN</p>
+<h3 id="版本控制分类"><a href="#版本控制分类" class="headerlink" title="版本控制分类"></a>版本控制分类</h3><h4 id="本地版本控制"><a href="#本地版本控制" class="headerlink" title="本地版本控制"></a><strong>本地版本控制</strong></h4><p>记录文件每次的更新，可以对每个版本做一个快照，或是记录补丁文件，适合个人用，如RCS。</p>
+<p><a href="https://imgtu.com/i/jmZwRS"><img src="https://s1.ax1x.com/2022/06/29/jmZwRS.png" alt="jmZwRS.png"></a></p>
+<h4 id="集中版本控制-SVN"><a href="#集中版本控制-SVN" class="headerlink" title="集中版本控制  SVN"></a><strong>集中版本控制  SVN</strong></h4><p>所有的版本数据都保存在服务器上，协同开发者从服务器上同步更新或上传自己的修改</p>
+<p><a href="https://imgtu.com/i/jmZaPf"><img src="https://s1.ax1x.com/2022/06/29/jmZaPf.png" alt="jmZaPf.png"></a></p>
+<p>所有的版本数据都存在服务器上，用户的本地只有自己以前所同步的版本，如果不连网的话，用户就看不到历史版本，也无法切换版本验证问题，或在不同分支工作。而且，所有数据都保存在单一的服务器上，有很大的风险这个服务器会损坏，这样就会丢失所有的数据，当然可以定期备份。代表产品：SVN、CVS、VSS</p>
+<h4 id="分布式版本控制-Git"><a href="#分布式版本控制-Git" class="headerlink" title="分布式版本控制 	Git"></a><strong>分布式版本控制 	Git</strong></h4><p>每个人都拥有全部的代码！安全隐患！</p>
+<p>所有版本信息仓库全部同步到本地的每个用户，这样就可以在本地查看所有版本历史，可以离线在本地提交，只需在连网时push到相应的服务器或其他用户那里。由于每个用户那里保存的都是所有的版本数据，只要有一个用户的设备没有问题就可以恢复所有的数据，但这增加了本地存储空间的占用。</p>
+<p>不会因为服务器损坏或者网络问题，造成不能工作的情况！</p>
+<p><a href="https://imgtu.com/i/jmZdG8"><img src="https://s1.ax1x.com/2022/06/29/jmZdG8.png" alt="jmZdG8.png"></a></p>
+<h2 id="Git与SVN的主要区别"><a href="#Git与SVN的主要区别" class="headerlink" title="Git与SVN的主要区别"></a>Git与SVN的主要区别</h2><p>SVN是集中式版本控制系统，版本库是集中放在中央服务器的，而工作的时候，用的都是自己的电脑，所以首先要从中央服务器得到最新的版本，然后工作，完成工作后，需要把自己做完的活推送到中央服务器。集中式版本控制系统是必须联网才能工作，对网络带宽要求较高。</p>
+<p><a href="https://imgtu.com/i/jmZNIP"><img src="https://s1.ax1x.com/2022/06/29/jmZNIP.png" alt="jmZNIP.png"></a></p>
+<p>Git是分布式版本控制系统，没有中央服务器，每个人的电脑就是一个完整的版本库，工作的时候不需要联网了，因为版本都在自己电脑上。协同的方法是这样的：比如说自己在电脑上改了文件A，其他人也在电脑上改了文件A，这时，你们两之间只需把各自的修改推送给对方，就可以互相看到对方的修改了。Git可以直接看到更新了哪些代码和文件！</p>
+<p><strong>Git是目前世界上最先进的分布式版本控制系统。</strong></p>
+<h2 id="Git的历史"><a href="#Git的历史" class="headerlink" title="Git的历史"></a>Git的历史</h2><p>同生活中的许多伟大事物一样，Git 诞生于一个极富纷争大举创新的年代。</p>
+<p>Linux 内核开源项目有着为数众广的参与者。绝大多数的 Linux 内核维护工作都花在了提交补丁和保存归档的繁琐事务上(1991－2002年间)。到 2002 年，整个项目组开始启用一个专有的分布式版本控制系统 BitKeeper 来管理和维护代码。</p>
+<p>Linux社区中存在很多的大佬！破解研究 BitKeeper ！</p>
+<p>到了 2005 年，开发 BitKeeper 的商业公司同 Linux 内核开源社区的合作关系结束，他们收回了 Linux 内核社区免费使用 BitKeeper 的权力。这就迫使 Linux 开源社区(特别是 Linux 的缔造者 Linus Torvalds)基于使用 BitKeeper 时的经验教训，开发出自己的版本系统。（2周左右！） 也就是后来的 Git！</p>
+<p><strong>Git是目前世界上最先进的分布式版本控制系统。</strong></p>
+<p>Git是免费、开源的，最初Git是为辅助 Linux 内核开发的，来替代 BitKeeper！</p>
+<p><a href="https://imgtu.com/i/jmZtat"><img src="https://s1.ax1x.com/2022/06/29/jmZtat.png" alt="jmZtat.png"></a></p>
+<p>Linux和Git之父李纳斯·托沃兹（Linus Benedic Torvalds）1969、芬兰</p>
+<h2 id="Git环境配置"><a href="#Git环境配置" class="headerlink" title="Git环境配置"></a>Git环境配置</h2><h3 id="软件下载"><a href="#软件下载" class="headerlink" title="软件下载"></a>软件下载</h3><p>打开 [git官网] <a href="https://git-scm.com/%EF%BC%8C%E4%B8%8B%E8%BD%BDgit%E5%AF%B9%E5%BA%94%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E7%9A%84%E7%89%88%E6%9C%AC%E3%80%82">https://git-scm.com/，下载git对应操作系统的版本。</a></p>
+<p>所有东西下载慢的话就可以去找镜像！</p>
+<p>官网下载太慢，我们可以使用淘宝镜像下载：<a href="http://npm.taobao.org/mirrors/git-for-windows/">http://npm.taobao.org/mirrors/git-for-windows/</a></p>
+<p><a href="https://imgtu.com/i/jmZ6Zn"><img src="https://s1.ax1x.com/2022/06/29/jmZ6Zn.png" alt="jmZ6Zn.png"></a></p>
+<p>下载对应的版本即可安装！</p>
+<p>安装：无脑下一步即可！安装完毕就可以使用了！</p>
+<p>卸载的话先删除对应的环境变量然后直接卸载软件即可</p>
+<p>直接反安装即可、然后清理环境变量，环境变量只是为了全局使用而已</p>
+<h3 id="启动Git"><a href="#启动Git" class="headerlink" title="启动Git"></a>启动Git</h3><p>安装成功后在开始菜单中会有Git项，菜单下有3个程序：任意文件夹下右键也可以看到对应的程序！</p>
+<p><a href="https://imgtu.com/i/jmZDMQ"><img src="https://s1.ax1x.com/2022/06/29/jmZDMQ.png" alt="jmZDMQ.png"></a></p>
+<p><strong>Git Bash：</strong> Unix与Linux风格的命令行，使用最多，推荐最多</p>
+<p><strong>Git CMD：</strong> Windows风格的命令行</p>
+<p><strong>Git GUI</strong>：图形界面的Git，不建议初学者使用，尽量先熟悉常用命令</p>
+<h2 id="常用的Linux命令"><a href="#常用的Linux命令" class="headerlink" title="常用的Linux命令"></a>常用的Linux命令</h2><p>平时一定要多使用这些基础的命令！</p>
+<ol>
+<li><p>cd : 改变目录。</p>
+</li>
+<li><p>cd . . 回退到上一个目录，直接cd进入默认目录</p>
+</li>
+<li><p>pwd : 显示当前所在的目录路径。</p>
+</li>
+<li><p>ls，ll:  都是列出当前目录中的所有文件，只不过ll(两个ll)列出的内容更为详细。</p>
+</li>
+<li><p>touch : 新建一个文件 如 touch index.js 就会在当前目录下新建一个index.js文件。</p>
+</li>
+<li><p>rm:  删除一个文件, rm index.js 就会把index.js文件删除。</p>
+</li>
+<li><p>mkdir:  新建一个目录,就是新建一个文件夹。</p>
+</li>
+<li><p>rm -r :  删除一个文件夹, rm -r src 删除src目录</p>
+</li>
+<li><p>rm -rf &#x2F; 切勿在Linux中尝试！删除电脑中全部文件！</p>
+</li>
+<li><p>mv 移动文件, mv index.html src test 是我们要移动的文件, src 是目标文件夹,当然, 这样写,必须保证文件和目标文件夹在同一目录下,其中src也可以省略</p>
+</li>
+<li><p>reset 重新初始化终端&#x2F;清屏。</p>
+</li>
+<li><p>clear 清屏。</p>
+</li>
+<li><p>history 查看命令历史。</p>
+</li>
+<li><p>help 帮助。</p>
+</li>
+<li><p>exit 退出。</p>
+</li>
+<li><p>‘#’表示注释，一般不要随便加</p>
+</li>
+</ol>
+<h2 id="Git配置"><a href="#Git配置" class="headerlink" title="Git配置"></a>Git配置</h2><p>所有的配置文件，其实都保存在本地！</p>
+<p>查看配置 git config -l</p>
+<p><a href="https://imgtu.com/i/jmZ0xg"><img src="https://s1.ax1x.com/2022/06/29/jmZ0xg.png" alt="jmZ0xg.png"></a></p>
+<p>查看不同级别的配置文件：</p>
+<figure class="highlight properties"><table><tr><td class="code"><pre><span class="line"><span class="comment">#查看系统config</span></span><br><span class="line"><span class="attr">git</span> <span class="string">config --system --list</span></span><br><span class="line"><span class="comment">　　</span></span><br><span class="line"><span class="comment">#查看当前用户（global）配置</span></span><br><span class="line"><span class="attr">git</span> <span class="string">config --global  --list</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="Git相关的配置文件："><a href="#Git相关的配置文件：" class="headerlink" title="Git相关的配置文件："></a><strong>Git相关的配置文件：</strong></h3><ol>
+<li>Git\etc\gitconfig  ：Git 安装目录下的 gitconfig   –system 系统级</li>
+<li>C:\Users\Apathy\ .gitconfig         只适用于当前登录用户的配置  –global 全局</li>
+</ol>
+<p><a href="https://imgtu.com/i/jmntaR"><img src="https://s1.ax1x.com/2022/06/29/jmntaR.jpg" alt="jmntaR.jpg"></a></p>
+<p>这里可以直接编辑配置文件，通过命令设置后会响应到这里。</p>
+<h3 id="设置用户名与邮箱（用户标识，必要）"><a href="#设置用户名与邮箱（用户标识，必要）" class="headerlink" title="设置用户名与邮箱（用户标识，必要）"></a>设置用户名与邮箱（用户标识，必要）</h3><p>当你安装Git后首先要做的事情是设置你的用户名称和e-mail地址。这是非常重要的，因为每次Git提交都会使用该信息。它被永远的嵌入到了你的提交中：</p>
+<figure class="highlight properties"><table><tr><td class="code"><pre><span class="line"><span class="attr">git</span> <span class="string">config --global user.name &quot;gods&quot;  #名称</span></span><br><span class="line"><span class="attr">git</span> <span class="string">config --global user.email apathygods@qq.com   #邮箱</span></span><br></pre></td></tr></table></figure>
+
+<p>只需要做一次这个设置，如果你传递了–global 选项，因为Git将总是会使用该信息来处理你在系统中所做的一切操作。如果你希望在一个特定的项目中使用不同的名称或e-mail地址，你可以在该项目中运行该命令而不要–global选项。总之–global为全局配置，不加为某个项目的特定配置。</p>
+<p><a href="https://imgtu.com/i/jmnYZ9"><img src="https://s1.ax1x.com/2022/06/29/jmnYZ9.jpg" alt="jmnYZ9.jpg"></a></p>
+<h2 id="Git基本理论（重要）"><a href="#Git基本理论（重要）" class="headerlink" title="Git基本理论（重要）"></a>Git基本理论（重要）</h2><h3 id="三个区域"><a href="#三个区域" class="headerlink" title="三个区域"></a>三个区域</h3><p>Git本地有三个工作区域：工作目录（Working Directory）、暂存区(Stage&#x2F;Index)、资源库(Repository或Git Directory)。如果在加上远程的git仓库(Remote Directory)就可以分为四个工作区域。文件在这四个区域之间的转换关系如下：</p>
+<p><a href="https://imgtu.com/i/jmZcaq"><img src="https://s1.ax1x.com/2022/06/29/jmZcaq.png" alt="jmZcaq.png"></a></p>
+<ul>
+<li>Workspace：工作区，就是你平时存放项目代码的地方</li>
+<li>Index &#x2F; Stage：暂存区，用于临时存放你的改动，事实上它只是一个文件，保存即将提交到文件列表信息</li>
+<li>Repository：仓库区（或本地仓库），就是安全存放数据的位置，这里面有你提交到所有版本的数据。其中HEAD指向最新放入仓库的版本</li>
+<li>Remote：远程仓库，托管代码的服务器，可以简单的认为是你项目组中的一台电脑用于远程数据交换</li>
+</ul>
+<p>本地的三个区域确切的说应该是git仓库中HEAD指向的版本：</p>
+<p><a href="https://imgtu.com/i/jmZgI0"><img src="https://s1.ax1x.com/2022/06/29/jmZgI0.png" alt="jmZgI0.png"></a></p>
+<ul>
+<li>Directory：使用Git管理的一个目录，也就是一个仓库，包含我们的工作空间和Git的管理空间。</li>
+<li>WorkSpace：需要通过Git进行版本控制的目录和文件，这些目录和文件组成了工作空间。</li>
+<li>.git：存放Git管理信息的目录，初始化仓库的时候自动创建。</li>
+<li>Index&#x2F;Stage：暂存区，或者叫待提交更新区，在提交进入repo之前，我们可以把所有的更新放在暂存区。</li>
+<li>Local Repo：本地仓库，一个存放在本地的版本库；HEAD会只是当前的开发分支（branch）。</li>
+<li>Stash：隐藏，是一个工作状态保存栈，用于保存&#x2F;恢复WorkSpace中的临时状态。</li>
+</ul>
+<h3 id="工作流程"><a href="#工作流程" class="headerlink" title="工作流程"></a>工作流程</h3><p>git的工作流程一般是这样的：</p>
+<ol>
+<li>在工作目录中添加、修改文件；      UserMapper.xml</li>
+<li>将需要进行版本管理的文件放入暂存区域；    命令：git add.</li>
+<li>将暂存区域的文件提交到git仓库。        命令:git commit</li>
+</ol>
+<p>因此，git管理的文件有三种状态：已修改（modified）,已暂存（staged）,已提交(committed)</p>
+<p><a href="https://imgtu.com/i/jmZRiV"><img src="https://s1.ax1x.com/2022/06/29/jmZRiV.png" alt="jmZRiV.png"></a></p>
+<h2 id="Git项目搭建"><a href="#Git项目搭建" class="headerlink" title="Git项目搭建"></a>Git项目搭建</h2><h3 id="创建工作目录与常用指令"><a href="#创建工作目录与常用指令" class="headerlink" title="创建工作目录与常用指令"></a>创建工作目录与常用指令</h3><p>工作目录（WorkSpace)一般就是你希望Git帮助你管理的文件夹，可以是你项目的目录，也可以是一个空目录，建议不要有中文。</p>
+<p>日常使用只要记住下图6个命令：</p>
+<p><a href="https://imgtu.com/i/jmZWGT"><img src="https://s1.ax1x.com/2022/06/29/jmZWGT.png" alt="jmZWGT.png"></a></p>
+<h3 id="本地仓库搭建"><a href="#本地仓库搭建" class="headerlink" title="本地仓库搭建"></a>本地仓库搭建</h3><p>创建本地仓库的方法有两种：一种是创建全新的仓库，另一种是克隆远程仓库。</p>
+<ol>
+<li><p>创建全新的仓库，需要用GIT管理的项目的根目录执行：</p>
+ <figure class="highlight properties"><table><tr><td class="code"><pre><span class="line"><span class="attr">&#x27;#&#x27;</span> <span class="string">在当前目录新建一个Git代码库</span></span><br><span class="line"><span class="attr">&#x27;$&#x27;</span> <span class="string">git init</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p>执行后可以看到，仅仅在项目目录多出了一个.git目录，关于版本等的所有信息都在这个目录里面,记得勾选显示隐藏的项目</p>
+<p> <a href="https://imgtu.com/i/jmZfRU"><img src="https://s1.ax1x.com/2022/06/29/jmZfRU.png" alt="jmZfRU.png"></a></p>
+</li>
+</ol>
+<h3 id="克隆远程仓库"><a href="#克隆远程仓库" class="headerlink" title="克隆远程仓库"></a>克隆远程仓库</h3><ol>
+<li><p>另一种方式是克隆远程目录，由于是将远程服务器上的仓库完全镜像一份至本地！</p>
+ <figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">&#x27;#&#x27; 克隆一个项目和它的整个代码历史(版本信息)</span><br><span class="line">&#x27;$&#x27; git clone [url]  &#x27;#&#x27; https://gitee.com/kuangstudy/openclass.git</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>去 gitee 或者 github 上克隆一个测试！</p>
+</li>
+</ol>
+<h2 id="Git文件操作"><a href="#Git文件操作" class="headerlink" title="Git文件操作"></a>Git文件操作</h2><h3 id="文件的四种状态"><a href="#文件的四种状态" class="headerlink" title="文件的四种状态"></a>文件的四种状态</h3><p>版本控制就是对文件的版本控制，要对文件进行修改、提交等操作，首先要知道文件当前在什么状态，不然可能会提交了现在还不想提交的文件，或者要提交的文件没提交上。</p>
+<ul>
+<li><strong>Untracked</strong>: 未跟踪, 此文件在文件夹中, 但并没有加入到git库, 不参与版本控制. 通过git add 状态变为Staged.</li>
+<li><strong>Unmodify</strong>: 文件已经入库, 未修改, 即版本库中的文件快照内容与文件夹中完全一致. 这种类型的文件有两种去处, 如果它被修改, 而变为Modified. 如果使用git rm移出版本库, 则成为Untracked文件</li>
+<li><strong>Modified</strong>: 文件已修改, 仅仅是修改, 并没有进行其他的操作. 这个文件也有两个去处, 通过git add可进入暂存staged状态, 使用git checkout 则丢弃修改过, 返回到unmodify状态, 这个git checkout即从库中取出文件, 覆盖当前修改 !</li>
+<li><strong>Staged</strong>: 暂存状态. 执行git commit则将修改同步到库中, 这时库中的文件和本地文件又变为一致, 文件为Unmodify状态. 执行git reset HEAD filename取消暂存, 文件状态为Modified</li>
+</ul>
+<h3 id="查看文件状态"><a href="#查看文件状态" class="headerlink" title="查看文件状态"></a>查看文件状态</h3><p>上面说文件有4种状态，通过如下命令可以查看到文件的状态：</p>
+<figure class="highlight properties"><table><tr><td class="code"><pre><span class="line"><span class="comment">#查看指定文件状态</span></span><br><span class="line"><span class="attr">git</span> <span class="string">status [filename]</span></span><br><span class="line"><span class="comment"></span></span><br><span class="line"><span class="comment">#查看所有文件状态</span></span><br><span class="line"><span class="attr">git</span> <span class="string">status</span></span><br><span class="line"><span class="comment"></span></span><br><span class="line"><span class="comment"># git add .                  添加所有文件到暂存区</span></span><br><span class="line"><span class="comment"># git commit -m &quot;消息内容&quot;    提交暂存区中的内容到本地仓库 -m 提交信息</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="忽略文件"><a href="#忽略文件" class="headerlink" title="忽略文件"></a>忽略文件</h3><p>有些时候我们不想把某些文件纳入版本控制中，比如数据库文件，临时文件，设计文件等</p>
+<p>在主目录下建立”.gitignore”文件，此文件有如下规则：</p>
+<ol>
+<li>忽略文件中的空行或以井号（#）开始的行将会被忽略。</li>
+<li>可以使用Linux通配符。例如：星号（*）代表任意多个字符，问号（？）代表一个字符，方括号（[abc]）代表可选字符范围，大括号（{string1,string2,…}）代表可选的字符串等。</li>
+<li>如果名称的最前面有一个感叹号（!），表示例外规则，将不被忽略。</li>
+<li>如果名称的最前面是一个路径分隔符（&#x2F;），表示要忽略的文件在此目录下，而子目录中的文件不忽略。</li>
+<li>如果名称的最后面是一个路径分隔符（&#x2F;），表示要忽略的是此目录下该名称的子目录，而非文件（默认文件或目录都忽略）</li>
+</ol>
+<figure class="highlight properties"><table><tr><td class="code"><pre><span class="line"><span class="comment">#为注释</span></span><br><span class="line"><span class="attr">*.txt</span>        <span class="string">#忽略所有 .txt结尾的文件,这样的话上传就不会被选中！</span></span><br><span class="line"><span class="comment">!lib.txt     #但lib.txt除外</span></span><br><span class="line"><span class="attr">/temp</span>        <span class="string">#仅忽略项目根目录下的TODO文件,不包括其它目录temp</span></span><br><span class="line"><span class="attr">build/</span>       <span class="string">#忽略build/目录下的所有文件</span></span><br><span class="line"><span class="attr">doc/*.txt</span>    <span class="string">#会忽略 doc/notes.txt 但不包括 doc/server/arch.txt</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="使用码云"><a href="#使用码云" class="headerlink" title="使用码云"></a>使用码云</h2><p>由于GitHub是国外的网站，所以一般访问时间较慢，这里推荐使用国内的镜像Gitee，公司中有时候也会搭建自己的gitlab服务器</p>
+<ol>
+<li><p>注册并登录<a href="https://gitee.com/">码云</a>，然后完善个人信息</p>
+<p> <a href="https://imgtu.com/i/jmZ5M4"><img src="https://s1.ax1x.com/2022/06/29/jmZ5M4.png" alt="jmZ5M4.png"></a></p>
+</li>
+<li><p>生成一个新的<a href="https://so.csdn.net/so/search?q=SSH&spm=1001.2101.3001.7020">SSH</a>密钥打开 Git Bash，输入如下命令，然后连续按三个回车即可：</p>
+ <figure class="highlight properties"><table><tr><td class="code"><pre><span class="line"><span class="attr">ssh-keygen</span> <span class="string">-t rsa -C &quot;你的邮箱&quot;</span></span><br></pre></td></tr></table></figure>
+
+<p> <a href="https://imgtu.com/i/jmnGqJ"><img src="https://s1.ax1x.com/2022/06/29/jmnGqJ.jpg" alt="jmnGqJ.jpg"></a></p>
+</li>
+<li><p>将.pub文件里面的公钥信息添加到码云账户中即可！</p>
+<p> <a href="https://imgtu.com/i/jmn8r4"><img src="https://s1.ax1x.com/2022/06/29/jmn8r4.jpg" alt="jmn8r4.jpg"></a></p>
+</li>
+<li><p>学习使用码云创建一个自己的远程仓库</p>
+<p> <a href="https://imgtu.com/i/jmZ7ZR"><img src="https://s1.ax1x.com/2022/06/29/jmZ7ZR.png" alt="jmZ7ZR.png"></a><br> 许可证：开源是否可以随意转载，开源但是不能商业使用，不能转载等等，主要做一些限制！</p>
+<p><a href="https://imgtu.com/i/jmZbIx"><img src="https://s1.ax1x.com/2022/06/29/jmZbIx.png" alt="jmZbIx.png"></a></p>
+</li>
+</ol>
+<h2 id="IDEA中集成Git"><a href="#IDEA中集成Git" class="headerlink" title="IDEA中集成Git"></a>IDEA中集成Git</h2><p>   1、 在项目中绑定git，将自己远程的git文件目录拷贝到项目即可<br>       <a href="https://imgtu.com/i/jmZLi6"><img src="https://s1.ax1x.com/2022/06/29/jmZLi6.png" alt="jmZLi6.png"></a><br>       项目拷贝完后idea会新增几个git的按钮<br>       <a href="https://imgtu.com/i/jmZXRO"><img src="https://s1.ax1x.com/2022/06/29/jmZXRO.png" alt="jmZXRO.png"></a><br>   2、 修改文件，使用IDEA操作git<br>       add 添加到暂存区</p>
+<pre><code>   commit 提交
+   
+   push到远程仓库
+   
+</code></pre>
+<p>   3、 刷新远程仓库发现已经发送过去了<br>       <a href="https://imgtu.com/i/jmZOJK"><img src="https://s1.ax1x.com/2022/06/29/jmZOJK.png" alt="jmZOJK.png"></a></p>
+<h2 id="GIT分支"><a href="#GIT分支" class="headerlink" title="GIT分支"></a>GIT分支</h2><h3 id="什么是分支？"><a href="#什么是分支？" class="headerlink" title="什么是分支？"></a>什么是分支？</h3><p>分支就像地球和太阳，如果他们互不干扰的话，对你就没印象，但是万一某天这两个行星突然出问题了，那就需要去解决了</p>
+<p>在程序里的示意图：</p>
+<p><a href="https://imgtu.com/i/jmZjzD"><img src="https://s1.ax1x.com/2022/06/29/jmZjzD.png" alt="jmZjzD.png"></a></p>
+<h3 id="git分支中常用指令："><a href="#git分支中常用指令：" class="headerlink" title="git分支中常用指令："></a>git分支中常用指令：</h3><figure class="highlight properties"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 列出所有本地分支</span></span><br><span class="line"><span class="attr">git</span> <span class="string">branch</span></span><br><span class="line"><span class="comment"></span></span><br><span class="line"><span class="comment"># 列出所有远程分支</span></span><br><span class="line"><span class="attr">git</span> <span class="string">branch -r</span></span><br><span class="line"><span class="comment"></span></span><br><span class="line"><span class="comment"># 新建一个分支，但依然停留在当前分支</span></span><br><span class="line"><span class="attr">git</span> <span class="string">branch [branch-name]</span></span><br><span class="line"><span class="comment"></span></span><br><span class="line"><span class="comment"># 新建一个分支，并切换到该分支</span></span><br><span class="line"><span class="attr">git</span> <span class="string">checkout -b [branch]</span></span><br><span class="line"><span class="comment"></span></span><br><span class="line"><span class="comment"># 临时切换到新建分支</span></span><br><span class="line"><span class="attr">git</span> <span class="string">checkout [branch]</span></span><br><span class="line"><span class="comment"></span></span><br><span class="line"><span class="comment"># 合并指定分支到当前分支</span></span><br><span class="line"><span class="attr">$</span> <span class="string">git merge [branch]</span></span><br><span class="line"><span class="comment"></span></span><br><span class="line"><span class="comment"># 删除分支</span></span><br><span class="line"><span class="attr">$</span> <span class="string">git branch -d [branch-name]</span></span><br><span class="line"><span class="comment"></span></span><br><span class="line"><span class="comment"># 删除远程分支</span></span><br><span class="line"><span class="attr">$</span> <span class="string">git push origin --delete [branch-name]</span></span><br><span class="line"><span class="attr">$</span> <span class="string">git branch -dr [remote/branch]</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="IDEA中操作"><a href="#IDEA中操作" class="headerlink" title="IDEA中操作"></a>IDEA中操作</h3><p><a href="https://imgtu.com/i/jmnNI1"><img src="https://s1.ax1x.com/2022/06/29/jmnNI1.png" alt="jmnNI1.png"></a></p>
+<p>如果同一个文件在合并分支时都被修改了则会引起冲突：这个时候我们应该修改冲突后的文件然后重新提交，然后团队自己协商好提交谁的即可</p>
+<p>master主分支相对稳定，一般用来发布新版本，一般情况下不会在上面工作，工作时一般在新建的dev分支上工作，工作完后，比如上要发布，或者说dev分支代码稳定后可以合并到主分支master上来。</p>
+]]></content>
+      <categories>
+        <category>Git</category>
+        <category>企业协同开发工具</category>
+      </categories>
+      <tags>
+        <tag>Git</tag>
+        <tag>企业协同开发工具</tag>
+        <tag>教程</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>Linux快速入门</title>
     <url>/2022/05/25/Linux%E5%BF%AB%E9%80%9F%E5%85%A5%E9%97%A8/</url>
     <content><![CDATA[<p>前言：</p>
@@ -312,18 +538,15 @@
 <p>测试：</p>
 <figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 复制一个文件到当前目录</span></span><br><span class="line">[root@apathy home]<span class="comment"># cp /root/install.sh /home</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 创建一个文件夹 test</span></span><br><span class="line">[root@apathy home]<span class="comment"># mkdir test</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 将复制过来的文件移动到我们创建的目录，并查看</span></span><br><span class="line">[root@apathy home]<span class="comment"># mv install.sh test</span></span><br><span class="line">[root@apathy home]<span class="comment"># ls</span></span><br><span class="line"><span class="built_in">test</span></span><br><span class="line">[root@apathy home]<span class="comment"># cd test</span></span><br><span class="line">[root@apathy <span class="built_in">test</span>]<span class="comment"># ls</span></span><br><span class="line">install.sh</span><br><span class="line"></span><br><span class="line"><span class="comment"># 将文件夹重命名，然后再次查看！</span></span><br><span class="line">[root@apathy <span class="built_in">test</span>]<span class="comment"># cd ..</span></span><br><span class="line">[root@apathy home]<span class="comment"># mv test mvtest</span></span><br><span class="line">[root@apathy home]<span class="comment"># ls</span></span><br><span class="line">mvtest</span><br></pre></td></tr></table></figure>
 
-<h2 id="基本属性"><a href="#基本属性" class="headerlink" title="基本属性"></a>基本属性</h2><blockquote>
-<p>看懂文件属性</p>
-</blockquote>
-<p>Linux系统是一种典型的多用户系统，不同的用户处于不同的地位，拥有不同的权限。为了保护系统的安全性，Linux系统对不同的用户访问同一文件（包括目录文件）的权限做了不同的规定。</p>
+<h2 id="基本属性"><a href="#基本属性" class="headerlink" title="基本属性"></a>基本属性</h2><h4 id="看懂文件属性"><a href="#看懂文件属性" class="headerlink" title="看懂文件属性"></a>看懂文件属性</h4><p>Linux系统是一种典型的多用户系统，不同的用户处于不同的地位，拥有不同的权限。为了保护系统的安全性，Linux系统对不同的用户访问同一文件（包括目录文件）的权限做了不同的规定。</p>
 <p>在Linux中我们可以使用<code>ll</code>或者<code>ls –l</code>命令来显示一个文件的属性以及文件所属的用户和组，如：</p>
-<p><img src="https://mmbiz.qpic.cn/mmbiz_png/uJDAUKrGC7JGpeIS4j9q3B4LQhsQkFiauXAQN0qOnVCYvj7Cm1oQbvexVDFqPhUIeTe83BdAHlXCJhGoNabSFKQ/640?wx_fmt=png&wxfrom=5&wx_lazy=1&wx_co=1" alt="图片"></p>
+<p><img src="D:\Microservices\Linux\笔记\图床笔记\image-20220630084803607.png" alt="image-20220630084803607"></p>
 <p>实例中，boot文件的第一个属性用”d”表示。”d”在Linux中代表该文件是一个目录文件。</p>
 <p>在Linux中第一个字符代表这个文件是目录、文件或链接文件等等：</p>
 <ul>
-<li>当为[ <strong>d</strong> ]则是目录</li>
-<li>当为[ <strong>-</strong> ]则是文件；</li>
-<li>若是[ <strong>l</strong> ]则表示为链接文档 ( link file )；</li>
+<li>当为[ <strong>d</strong> ]则是目录；（<strong>常用</strong>）</li>
+<li>当为[ <strong>-</strong> ]则是文件；（<strong>常用</strong>）</li>
+<li>若是[ <strong>l</strong> ]则表示为链接文档 ( link file )；（<strong>常用</strong>）</li>
 <li>若是[ <strong>b</strong> ]则表示为装置文件里面的可供储存的接口设备 ( 可随机存取装置 )；</li>
 <li>若是[ <strong>c</strong> ]则表示为装置文件里面的串行端口设备，例如键盘、鼠标 ( 一次性读取装置 )。</li>
 </ul>
@@ -331,7 +554,7 @@
 <p>其中，[ r ]代表可读(read)、[ w ]代表可写(write)、[ x ]代表可执行(execute)。</p>
 <p>要注意的是，这三个权限的位置不会改变，如果没有权限，就会出现减号[ - ]而已。</p>
 <p>每个文件的属性由左边第一部分的10个字符来确定（如下图）：</p>
-<p><img src="https://mmbiz.qpic.cn/mmbiz_png/uJDAUKrGC7JGpeIS4j9q3B4LQhsQkFiauEybzG2XIdlOMLyO13lMfPKUWRpGJGgyxCAJ9mics9dTZ1qrWDIvleYQ/640?wx_fmt=png&wxfrom=5&wx_lazy=1&wx_co=1" alt="图片"></p>
+<p><img src="D:\Microservices\Linux\笔记\图床笔记\image-20220630085351109.png" alt="image-20220630085351109"></p>
 <p>从左至右用0-9这些数字来表示。</p>
 <p>第0位确定文件类型，第1-3位确定属主（该文件的所有者）拥有该文件的权限。第4-6位确定属组（所有者的同组用户）拥有该文件的权限，第7-9位确定其他用户拥有该文件的权限。</p>
 <p>其中：</p>
@@ -343,23 +566,20 @@
 <p>文件所有者以外的用户又可以分为文件所有者的同组用户和其他用户。</p>
 <p>因此，Linux系统按文件所有者、文件所有者同组用户和其他用户来规定了不同的文件访问权限。</p>
 <p>在以上实例中，boot 文件是一个目录文件，属主和属组都为 root。</p>
-<blockquote>
-<p>修改文件属性</p>
-</blockquote>
-<p><strong>1、chgrp：更改文件属组</strong></p>
+<h4 id="修改文件属性"><a href="#修改文件属性" class="headerlink" title="修改文件属性"></a>修改文件属性</h4><p><strong>1、chgrp：更改文件属组</strong>（尽量不要修改）</p>
 <figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">chgrp</span> [-R] 属组名 文件名</span><br></pre></td></tr></table></figure>
 
 <p>-R：递归更改文件属组，就是在更改某个目录文件的属组时，如果加上-R的参数，那么该目录下的所有文件的属组都会更改。</p>
-<p><strong>2、chown：更改文件属主，也可以同时更改文件属组</strong></p>
+<p><strong>2、chown：更改文件属主，也可以同时更改文件属组</strong>（尽量不要修改）</p>
 <figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">chown</span> [–R] 属主名 文件名</span><br><span class="line"><span class="built_in">chown</span> [-R] 属主名：属组名 文件名</span><br></pre></td></tr></table></figure>
 
-<p><strong>3、chmod：更改文件9个属性</strong></p>
+<p><strong>3、chmod：更改文件9个属性</strong>（常用，必须掌握）</p>
 <figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">chmod</span> [-R] xyz 文件或目录</span><br></pre></td></tr></table></figure>
 
-<p>Linux文件属性有两种设置方法，一种是数字，一种是符号。</p>
+<p>Linux文件属性有两种设置方法，一种是数字（常用的），一种是符号。</p>
 <p>Linux文件的基本权限就有九个，分别是owner&#x2F;group&#x2F;others三种身份各有自己的read&#x2F;write&#x2F;execute权限。</p>
 <p>先复习一下刚刚上面提到的数据：文件的权限字符为：『-rwxrwxrwx』， 这九个权限是三个三个一组的！其中，我们可以使用数字来代表各个权限，各权限的分数对照表如下：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">r:4     w:2         x:1</span><br></pre></td></tr></table></figure>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">r:4     w:2         x:1</span><br><span class="line"></span><br><span class="line">可读可写不可执行   rw-   6</span><br><span class="line"></span><br><span class="line">可读可写可执行     rwx   7</span><br><span class="line"></span><br><span class="line">chomd 777文件赋予所有用户可读可写可执行</span><br></pre></td></tr></table></figure>
 
 <p>每种身份(owner&#x2F;group&#x2F;others)各自的三个权限(r&#x2F;w&#x2F;x)分数是需要累加的，例如当权限为：[-rwxrwx—] 分数则是：</p>
 <ul>
@@ -370,24 +590,30 @@
 <figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">chmod</span> 770 filename</span><br></pre></td></tr></table></figure>
 
 <p>可以自己下去多进行测试！</p>
-<h2 id="文件内容查看"><a href="#文件内容查看" class="headerlink" title="文件内容查看"></a>文件内容查看</h2><blockquote>
-<p>概述</p>
-</blockquote>
-<p>Linux系统中使用以下命令来查看文件的内容：</p>
+<h2 id="文件内容查看（必须掌握）"><a href="#文件内容查看（必须掌握）" class="headerlink" title="文件内容查看（必须掌握）"></a>文件内容查看（必须掌握）</h2><h4 id="概述"><a href="#概述" class="headerlink" title="概述"></a>概述</h4><p>Linux系统中使用以下命令来查看文件的内容：</p>
 <ul>
 <li>cat 由第一行开始显示文件内容</li>
 <li>tac 从最后一行开始显示，可以看出 tac 是 cat 的倒着写！</li>
-<li>nl  显示的时候，顺道输出行号！</li>
-<li>more 一页一页的显示文件内容</li>
-<li>less 与 more 类似，但是比 more 更好的是，他可以往前翻页！</li>
-<li>head 只看头几行</li>
-<li>tail 只看尾巴几行</li>
+</ul>
+<p><img src="D:\Microservices\Linux\笔记\图床笔记\image-20220630114628760.png" alt="image-20220630114628760"></p>
+<ul>
+<li>nl  显示的时候，顺道输出行号！  看代码的时候，希望显示行号!（常用）</li>
+</ul>
+<p><img src="D:\Microservices\Linux\笔记\图床笔记\image-20220630114811736.png" alt="image-20220630114811736"></p>
+<ul>
+<li>more 一页一页的显示文件内容，带余下内容的（空格代表翻页，enter代表向下看一行，:f行号)</li>
+</ul>
+<p><img src="D:\Microservices\Linux\笔记\图床笔记\image-20220630115237433.png" alt="image-20220630115237433"></p>
+<ul>
+<li>less 与 more 类似，但是比 more 更好的是，他可以往前翻页！(空格下翻页，上下键代表翻动页面!退出命令为：q，查找字符串：&#x2F;要查询的字符向下查询，向上查询使用?要查询的字符串，n继续搜寻下一个，向上寻找使用N）</li>
+<li>head 只看头几行  通过-n参数来控制显示几行!</li>
+<li><img src="D:\Microservices\Linux\笔记\图床笔记\image-20220630115749780.png" alt="image-20220630115749780"></li>
+<li>tail 只看尾巴几行  通过-n参数来控制显示几行!</li>
 </ul>
 <p>你可以使用 *man [命令]*来查看各个命令的使用文档，如 ：man cp。</p>
-<blockquote>
-<p>cat 由第一行开始显示文件内容</p>
-</blockquote>
-<p>语法：</p>
+<p>网络配置目录:cd &#x2F;etc&#x2F;sysconfig&#x2F;network-scripts</p>
+<p><img src="D:\Microservices\Linux\笔记\图床笔记\image-20220630104352024.png" alt="image-20220630104352024"></p>
+<h4 id="cat-由第一行开始显示文件内容"><a href="#cat-由第一行开始显示文件内容" class="headerlink" title="cat 由第一行开始显示文件内容"></a>cat 由第一行开始显示文件内容</h4><p>语法：</p>
 <figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">cat</span> [-AbEnTv]</span><br></pre></td></tr></table></figure>
 
 <p>选项与参数：</p>
@@ -400,20 +626,14 @@
 <li>-v ：列出一些看不出来的特殊字符</li>
 </ul>
 <p>测试：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 查看网络配置: 文件地址 /etc/sysconfig/network-scripts/</span></span><br><span class="line">[root@kuangshen ~]<span class="comment"># cat /etc/sysconfig/network-scripts/ifcfg-eth0</span></span><br><span class="line">DEVICE=eth0</span><br><span class="line">BOOTPROTO=dhcp</span><br><span class="line">ONBOOT=<span class="built_in">yes</span></span><br></pre></td></tr></table></figure>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 查看网络配置: 文件地址 /etc/sysconfig/network-scripts/</span></span><br><span class="line">[root@apathy ~]<span class="comment"># cat /etc/sysconfig/network-scripts/ifcfg-eth0</span></span><br><span class="line">DEVICE=eth0</span><br><span class="line">BOOTPROTO=dhcp</span><br><span class="line">ONBOOT=<span class="built_in">yes</span></span><br></pre></td></tr></table></figure>
 
-<blockquote>
-<p>tac</p>
-</blockquote>
-<p>tac与cat命令刚好相反，文件内容从最后一行开始显示，可以看出 tac 是 cat 的倒着写！如：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">[root@kuangshen ~]<span class="comment"># tac /etc/sysconfig/network-scripts/ifcfg-eth0</span></span><br><span class="line">ONBOOT=<span class="built_in">yes</span></span><br><span class="line">BOOTPROTO=dhcp</span><br><span class="line">DEVICE=eth0</span><br></pre></td></tr></table></figure>
+<h4 id="tac"><a href="#tac" class="headerlink" title="tac"></a>tac</h4><p>tac与cat命令刚好相反，文件内容从最后一行开始显示，可以看出 tac 是 cat 的倒着写！如：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">[root@apathy ~]<span class="comment"># tac /etc/sysconfig/network-scripts/ifcfg-eth0</span></span><br><span class="line">ONBOOT=<span class="built_in">yes</span></span><br><span class="line">BOOTPROTO=dhcp</span><br><span class="line">DEVICE=eth0</span><br></pre></td></tr></table></figure>
 
 
 
-<blockquote>
-<p>nl  显示行号</p>
-</blockquote>
-<p>语法：</p>
+<h4 id="nl-显示行号"><a href="#nl-显示行号" class="headerlink" title="nl  显示行号"></a>nl  显示行号</h4><p>语法：</p>
 <figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">nl</span> [-bnw] 文件</span><br></pre></td></tr></table></figure>
 
 <p>选项与参数：</p>
@@ -423,14 +643,11 @@
 <li>-w ：行号栏位的占用的位数。</li>
 </ul>
 <p>测试：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">[root@kuangshen ~]<span class="comment"># nl /etc/sysconfig/network-scripts/ifcfg-eth0</span></span><br><span class="line">1DEVICE=eth0</span><br><span class="line">2BOOTPROTO=dhcp</span><br><span class="line">3ONBOOT=<span class="built_in">yes</span></span><br></pre></td></tr></table></figure>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">[root@apathy ~]<span class="comment"># nl /etc/sysconfig/network-scripts/ifcfg-eth0</span></span><br><span class="line">1DEVICE=eth0</span><br><span class="line">2BOOTPROTO=dhcp</span><br><span class="line">3ONBOOT=<span class="built_in">yes</span></span><br></pre></td></tr></table></figure>
 
 
 
-<blockquote>
-<p>more  一页一页翻动</p>
-</blockquote>
-<p>在 more 这个程序的运行过程中，你有几个按键可以按的：</p>
+<h4 id="more-一页一页翻动"><a href="#more-一页一页翻动" class="headerlink" title="more  一页一页翻动"></a>more  一页一页翻动</h4><p>在 more 这个程序的运行过程中，你有几个按键可以按的：</p>
 <ul>
 <li>空白键 (space)：代表向下翻一页；</li>
 <li>Enter   ：代表向下翻『一行』；</li>
@@ -439,14 +656,11 @@
 <li>q    ：代表立刻离开 more ，不再显示该文件内容。</li>
 <li>b 或 [ctrl]-b ：代表往回翻页，不过这动作只对文件有用，对管线无用。</li>
 </ul>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">[root@kuangshen etc]<span class="comment"># more /etc/csh.login</span></span><br><span class="line">....(中间省略)....</span><br><span class="line">--More--(28%) <span class="comment"># 重点在这一行喔！你的光标也会在这里等待你的命令</span></span><br></pre></td></tr></table></figure>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">[root@apathy etc]<span class="comment"># more /etc/csh.login</span></span><br><span class="line">....(中间省略)....</span><br><span class="line">--More--(28%) <span class="comment"># 重点在这一行喔！你的光标也会在这里等待你的命令</span></span><br></pre></td></tr></table></figure>
 
 
 
-<blockquote>
-<p>less  一页一页翻动，以下实例输出&#x2F;etc&#x2F;man.config文件的内容：</p>
-</blockquote>
-<p>less运行时可以输入的命令有：</p>
+<h4 id="less-一页一页翻动，以下实例输出-x2F-etc-x2F-man-config文件的内容："><a href="#less-一页一页翻动，以下实例输出-x2F-etc-x2F-man-config文件的内容：" class="headerlink" title="less  一页一页翻动，以下实例输出&#x2F;etc&#x2F;man.config文件的内容："></a>less  一页一页翻动，以下实例输出&#x2F;etc&#x2F;man.config文件的内容：</h4><p>less运行时可以输入的命令有：</p>
 <ul>
 <li>空白键  ：向下翻动一页；</li>
 <li>[pagedown]：向下翻动一页；</li>
@@ -457,26 +671,20 @@
 <li>N   ：反向的重复前一个搜寻 (与 &#x2F; 或 ? 有关！)</li>
 <li>q   ：离开 less 这个程序；</li>
 </ul>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">[root@kuangshen etc]<span class="comment"># more /etc/csh.login</span></span><br><span class="line">....(中间省略)....</span><br><span class="line">:   <span class="comment"># 这里可以等待你输入命令！</span></span><br></pre></td></tr></table></figure>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">[root@apathy etc]<span class="comment"># more /etc/csh.login</span></span><br><span class="line">....(中间省略)....</span><br><span class="line">:   <span class="comment"># 这里可以等待你输入命令！</span></span><br></pre></td></tr></table></figure>
 
 
 
-<blockquote>
-<p>head  取出文件前面几行</p>
-</blockquote>
-<p>语法：</p>
+<h4 id="head-取出文件前面几行"><a href="#head-取出文件前面几行" class="headerlink" title="head  取出文件前面几行"></a>head  取出文件前面几行</h4><p>语法：</p>
 <figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">head</span> [-n number] 文件</span><br></pre></td></tr></table></figure>
 
 <p>选项与参数：**-n** 后面接数字，代表显示几行的意思！</p>
 <p>默认的情况中，显示前面 10 行！若要显示前 20 行，就得要这样：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">[root@kuangshen etc]<span class="comment"># head -n 20 /etc/csh.login</span></span><br></pre></td></tr></table></figure>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">[root@apathy etc]<span class="comment"># head -n 20 /etc/csh.login</span></span><br></pre></td></tr></table></figure>
 
 
 
-<blockquote>
-<p>tail  取出文件后面几行</p>
-</blockquote>
-<p>语法：</p>
+<h4 id="tail-取出文件后面几行"><a href="#tail-取出文件后面几行" class="headerlink" title="tail  取出文件后面几行"></a>tail  取出文件后面几行</h4><p>语法：</p>
 <figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">tail</span> [-n number] 文件</span><br></pre></td></tr></table></figure>
 
 <p>选项与参数：</p>
@@ -484,14 +692,11 @@
 <li>-n ：后面接数字，代表显示几行的意思</li>
 </ul>
 <p>默认的情况中，显示最后 10 行！若要显示最后 20 行，就得要这样：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">[root@kuangshen etc]<span class="comment"># tail -n 20 /etc/csh.login</span></span><br></pre></td></tr></table></figure>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">[root@apathy etc]<span class="comment"># tail -n 20 /etc/csh.login</span></span><br></pre></td></tr></table></figure>
 
 
 
-<blockquote>
-<p>拓展：Linux 链接概念</p>
-</blockquote>
-<p>Linux 链接分两种，一种被称为硬链接（Hard Link），另一种被称为符号链接（Symbolic Link）。</p>
+<h4 id="拓展：Linux-链接概念"><a href="#拓展：Linux-链接概念" class="headerlink" title="拓展：Linux 链接概念"></a>拓展：Linux 链接概念</h4><p>Linux 链接分两种，一种被称为硬链接（Hard Link），另一种被称为符号链接（Symbolic Link）。</p>
 <p>情况下，<strong>ln</strong> 命令产生硬链接。</p>
 <p><strong>硬连接</strong></p>
 <p>硬连接指通过索引节点来进行连接。在 Linux 的文件系统中，保存在磁盘分区中的文件不管是什么类型都给它分配一个编号，称为索引节点号(Inode Index)。在 Linux 中，多个文件名指向同一索引节点是存在的。比如：A 是 B 的硬链接（A 和 B 都是文件名），则 A 的目录项中的 inode 节点号与 B 的目录项中的 inode 节点号相同，即一个 inode 节点对应两个不同的文件名，两个文件名指向同一个文件，A 和 B 对文件系统来说是完全平等的。删除其中任何一个都不会影响另外一个的访问。</p>
@@ -499,10 +704,10 @@
 <p><strong>软连接</strong></p>
 <p>另外一种连接称之为符号连接（Symbolic Link），也叫软连接。软链接文件有类似于 Windows 的快捷方式。它实际上是一个特殊的文件。在符号连接中，文件实际上是一个文本文件，其中包含的有另一文件的位置信息。比如：A 是 B 的软链接（A 和 B 都是文件名），A 的目录项中的 inode 节点号与 B 的目录项中的 inode 节点号不相同，A 和 B 指向的是两个不同的 inode，继而指向两块不同的数据块。但是 A 的数据块中存放的只是 B 的路径名（可以根据这个找到 B 的目录项）。A 和 B 之间是“主从”关系，如果 B 被删除了，A 仍然存在（因为两个是不同的文件），但指向的是一个无效的链接。</p>
 <p><strong>测试：</strong></p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">[root@kuangshen /]<span class="comment"># cd /home</span></span><br><span class="line">[root@kuangshen home]<span class="comment"># touch f1 # 创建一个测试文件f1</span></span><br><span class="line">[root@kuangshen home]<span class="comment"># ls</span></span><br><span class="line">f1</span><br><span class="line">[root@kuangshen home]<span class="comment"># ln f1 f2     # 创建f1的一个硬连接文件f2</span></span><br><span class="line">[root@kuangshen home]<span class="comment"># ln -s f1 f3   # 创建f1的一个符号连接文件f3</span></span><br><span class="line">[root@kuangshen home]<span class="comment"># ls -li       # -i参数显示文件的inode节点信息</span></span><br><span class="line">397247 -rw-r--r-- 2 root root     0 Mar 13 00:50 f1</span><br><span class="line">397247 -rw-r--r-- 2 root root     0 Mar 13 00:50 f2</span><br><span class="line">397248 lrwxrwxrwx 1 root root     2 Mar 13 00:50 f3 -&gt; f1</span><br></pre></td></tr></table></figure>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">[root@apathy /]<span class="comment"># cd /home</span></span><br><span class="line">[root@apathy home]<span class="comment"># touch f1 # 创建一个测试文件f1</span></span><br><span class="line">[root@apathy home]<span class="comment"># ls</span></span><br><span class="line">f1</span><br><span class="line">[root@apathy home]<span class="comment"># ln f1 f2     # 创建f1的一个硬连接文件f2</span></span><br><span class="line">[root@apathy home]<span class="comment"># ln -s f1 f3   # 创建f1的一个符号连接文件f3</span></span><br><span class="line">[root@apathy home]<span class="comment"># ls -li       # -i参数显示文件的inode节点信息</span></span><br><span class="line">397247 -rw-r--r-- 2 root root     0 Mar 13 00:50 f1</span><br><span class="line">397247 -rw-r--r-- 2 root root     0 Mar 13 00:50 f2</span><br><span class="line">397248 lrwxrwxrwx 1 root root     2 Mar 13 00:50 f3 -&gt; f1</span><br></pre></td></tr></table></figure>
 
 <p>从上面的结果中可以看出，硬连接文件 f2 与原文件 f1 的 inode 节点相同，均为 397247，然而符号连接文件的 inode 节点不同。</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># echo 字符串输出 &gt;&gt; f1 输出到 f1文件</span></span><br><span class="line">[root@kuangshen home]<span class="comment"># echo &quot;I am f1 file&quot; &gt;&gt;f1</span></span><br><span class="line">[root@kuangshen home]<span class="comment"># cat f1</span></span><br><span class="line">I am f1 file</span><br><span class="line">[root@kuangshen home]<span class="comment"># cat f2</span></span><br><span class="line">I am f1 file</span><br><span class="line">[root@kuangshen home]<span class="comment"># cat f3</span></span><br><span class="line">I am f1 file</span><br><span class="line">[root@kuangshen home]<span class="comment"># rm -f f1</span></span><br><span class="line">[root@kuangshen home]<span class="comment"># cat f2</span></span><br><span class="line">I am f1 file</span><br><span class="line">[root@kuangshen home]<span class="comment"># cat f3</span></span><br><span class="line"><span class="built_in">cat</span>: f3: No such file or directory</span><br></pre></td></tr></table></figure>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># echo 字符串输出 &gt;&gt; f1 输出到 f1文件</span></span><br><span class="line">[root@apathy home]<span class="comment"># echo &quot;I am f1 file&quot; &gt;&gt;f1</span></span><br><span class="line">[root@apathy home]<span class="comment"># cat f1</span></span><br><span class="line">I am f1 file</span><br><span class="line">[root@apathy home]<span class="comment"># cat f2</span></span><br><span class="line">I am f1 file</span><br><span class="line">[root@apathy home]<span class="comment"># cat f3</span></span><br><span class="line">I am f1 file</span><br><span class="line">[root@apathy home]<span class="comment"># rm -f f1</span></span><br><span class="line">[root@apathy home]<span class="comment"># cat f2</span></span><br><span class="line">I am f1 file</span><br><span class="line">[root@apathy home]<span class="comment"># cat f3</span></span><br><span class="line"><span class="built_in">cat</span>: f3: No such file or directory</span><br></pre></td></tr></table></figure>
 
 <p>通过上面的测试可以看出：当删除原始文件 f1 后，硬连接 f2 不受影响，但是符号连接 f1 文件无效；</p>
 <p>依此您可以做一些相关的测试，可以得到以下全部结论：</p>
@@ -518,235 +723,9 @@
         <category>运维</category>
       </categories>
       <tags>
+        <tag>教程</tag>
         <tag>Linux</tag>
         <tag>运维</tag>
-        <tag>教程</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>Git快速入门</title>
-    <url>/2022/05/24/Git%E5%BF%AB%E9%80%9F%E5%85%A5%E9%97%A8/</url>
-    <content><![CDATA[<p>前言：</p>
-<p>本教程是根据B站Up主狂神说记得笔记，有需要查看视频的小伙伴可以去看看狂神的视频，真的非常好！</p>
-<p>狂神说Git视频地址：<a href="https://www.bilibili.com/video/BV1FE411P7B3?vd_source=ac95d1e4dae5cfd66da910c649ab5384">https://www.bilibili.com/video/BV1FE411P7B3?vd_source=ac95d1e4dae5cfd66da910c649ab5384</a></p>
-<h1 id="Git"><a href="#Git" class="headerlink" title="Git"></a>Git</h1><h2 id="版本控制"><a href="#版本控制" class="headerlink" title="版本控制"></a>版本控制</h2><h3 id="什么是版本控制？"><a href="#什么是版本控制？" class="headerlink" title="什么是版本控制？"></a>什么是版本控制？</h3><p>版本控制（Revision control）是一种在开发的过程中用于管理我们对文件、目录或工程等内容的修改历史，方便查看更改历史记录，备份以便恢复以前的版本的软件工程技术。</p>
-<ul>
-<li>实现跨区域多人协同开发</li>
-<li>追踪和记载一个或者多个文件的历史记录</li>
-<li>组织和保护你的源代码和文档</li>
-<li>统计工作量</li>
-<li>并行开发、提高开发效率</li>
-<li>跟踪记录整个软件的开发过程</li>
-<li>减轻开发人员的负担，节省时间，同时降低人为错误</li>
-</ul>
-<p>简单说就是用于管理多人协同开发项目的技术。</p>
-<p>没有进行版本控制或者版本控制本身缺乏正确的流程管理，在软件开发过程中将会引入很多问题，如软件<strong>代码的一致性</strong>、软件<strong>内容的冗余</strong>、软件<strong>过程的事物性</strong>、软件<strong>开发过程中的并发性</strong>、软件源<strong>代码的安全性</strong>，以及<strong>软件的整合</strong>等问题。</p>
-<p>无论是工作还是学习，或者是自己做笔记，都经历过这样一个阶段，比如写方案的时候客户总是要求改，最后可能又觉得第一版好，然而有的时候你的历史版本可能已经被你删除了，这个时候我们就迫切需要一个版本控制工具！多人开发时就会有更多的问题，所以多人开发就必须要使用版本控制！</p>
-<h3 id="常见的版本控制工具"><a href="#常见的版本控制工具" class="headerlink" title="常见的版本控制工具"></a>常见的版本控制工具</h3><p>我们学习的东西，一定是当下最流行的！</p>
-<p>主流的版本控制器有如下这些：</p>
-<ul>
-<li><strong>Git</strong></li>
-<li><strong>SVN</strong>（Subversion）</li>
-<li><strong>CVS</strong>（Concurrent Versions System）</li>
-<li><strong>VSS</strong>（Micorosoft Visual SourceSafe）</li>
-<li><strong>TFS</strong>（Team Foundation Server）</li>
-<li>Visual Studio Online</li>
-</ul>
-<p>版本控制产品非常的多（Perforce、Rational ClearCase、RCS（GNU Revision Control System）、Serena Dimention、SVK、BitKeeper、Monotone、Bazaar、Mercurial、SourceGear Vault），现在影响力最大且使用最广泛的是Git与SVN</p>
-<h3 id="版本控制分类"><a href="#版本控制分类" class="headerlink" title="版本控制分类"></a>版本控制分类</h3><h4 id="本地版本控制"><a href="#本地版本控制" class="headerlink" title="本地版本控制"></a><strong>本地版本控制</strong></h4><p>记录文件每次的更新，可以对每个版本做一个快照，或是记录补丁文件，适合个人用，如RCS。</p>
-<p><a href="https://imgtu.com/i/jmZwRS"><img src="https://s1.ax1x.com/2022/06/29/jmZwRS.png" alt="jmZwRS.png"></a></p>
-<h4 id="集中版本控制-SVN"><a href="#集中版本控制-SVN" class="headerlink" title="集中版本控制  SVN"></a><strong>集中版本控制  SVN</strong></h4><p>所有的版本数据都保存在服务器上，协同开发者从服务器上同步更新或上传自己的修改</p>
-<p><a href="https://imgtu.com/i/jmZaPf"><img src="https://s1.ax1x.com/2022/06/29/jmZaPf.png" alt="jmZaPf.png"></a></p>
-<p>所有的版本数据都存在服务器上，用户的本地只有自己以前所同步的版本，如果不连网的话，用户就看不到历史版本，也无法切换版本验证问题，或在不同分支工作。而且，所有数据都保存在单一的服务器上，有很大的风险这个服务器会损坏，这样就会丢失所有的数据，当然可以定期备份。代表产品：SVN、CVS、VSS</p>
-<h4 id="分布式版本控制-Git"><a href="#分布式版本控制-Git" class="headerlink" title="分布式版本控制 	Git"></a><strong>分布式版本控制 	Git</strong></h4><p>每个人都拥有全部的代码！安全隐患！</p>
-<p>所有版本信息仓库全部同步到本地的每个用户，这样就可以在本地查看所有版本历史，可以离线在本地提交，只需在连网时push到相应的服务器或其他用户那里。由于每个用户那里保存的都是所有的版本数据，只要有一个用户的设备没有问题就可以恢复所有的数据，但这增加了本地存储空间的占用。</p>
-<p>不会因为服务器损坏或者网络问题，造成不能工作的情况！</p>
-<p><a href="https://imgtu.com/i/jmZdG8"><img src="https://s1.ax1x.com/2022/06/29/jmZdG8.png" alt="jmZdG8.png"></a></p>
-<h2 id="Git与SVN的主要区别"><a href="#Git与SVN的主要区别" class="headerlink" title="Git与SVN的主要区别"></a>Git与SVN的主要区别</h2><p>SVN是集中式版本控制系统，版本库是集中放在中央服务器的，而工作的时候，用的都是自己的电脑，所以首先要从中央服务器得到最新的版本，然后工作，完成工作后，需要把自己做完的活推送到中央服务器。集中式版本控制系统是必须联网才能工作，对网络带宽要求较高。</p>
-<p><a href="https://imgtu.com/i/jmZNIP"><img src="https://s1.ax1x.com/2022/06/29/jmZNIP.png" alt="jmZNIP.png"></a></p>
-<p>Git是分布式版本控制系统，没有中央服务器，每个人的电脑就是一个完整的版本库，工作的时候不需要联网了，因为版本都在自己电脑上。协同的方法是这样的：比如说自己在电脑上改了文件A，其他人也在电脑上改了文件A，这时，你们两之间只需把各自的修改推送给对方，就可以互相看到对方的修改了。Git可以直接看到更新了哪些代码和文件！</p>
-<p><strong>Git是目前世界上最先进的分布式版本控制系统。</strong></p>
-<h2 id="Git的历史"><a href="#Git的历史" class="headerlink" title="Git的历史"></a>Git的历史</h2><p>同生活中的许多伟大事物一样，Git 诞生于一个极富纷争大举创新的年代。</p>
-<p>Linux 内核开源项目有着为数众广的参与者。绝大多数的 Linux 内核维护工作都花在了提交补丁和保存归档的繁琐事务上(1991－2002年间)。到 2002 年，整个项目组开始启用一个专有的分布式版本控制系统 BitKeeper 来管理和维护代码。</p>
-<p>Linux社区中存在很多的大佬！破解研究 BitKeeper ！</p>
-<p>到了 2005 年，开发 BitKeeper 的商业公司同 Linux 内核开源社区的合作关系结束，他们收回了 Linux 内核社区免费使用 BitKeeper 的权力。这就迫使 Linux 开源社区(特别是 Linux 的缔造者 Linus Torvalds)基于使用 BitKeeper 时的经验教训，开发出自己的版本系统。（2周左右！） 也就是后来的 Git！</p>
-<p><strong>Git是目前世界上最先进的分布式版本控制系统。</strong></p>
-<p>Git是免费、开源的，最初Git是为辅助 Linux 内核开发的，来替代 BitKeeper！</p>
-<p><a href="https://imgtu.com/i/jmZtat"><img src="https://s1.ax1x.com/2022/06/29/jmZtat.png" alt="jmZtat.png"></a></p>
-<p>Linux和Git之父李纳斯·托沃兹（Linus Benedic Torvalds）1969、芬兰</p>
-<h2 id="Git环境配置"><a href="#Git环境配置" class="headerlink" title="Git环境配置"></a>Git环境配置</h2><h3 id="软件下载"><a href="#软件下载" class="headerlink" title="软件下载"></a>软件下载</h3><p>打开 [git官网] <a href="https://git-scm.com/%EF%BC%8C%E4%B8%8B%E8%BD%BDgit%E5%AF%B9%E5%BA%94%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E7%9A%84%E7%89%88%E6%9C%AC%E3%80%82">https://git-scm.com/，下载git对应操作系统的版本。</a></p>
-<p>所有东西下载慢的话就可以去找镜像！</p>
-<p>官网下载太慢，我们可以使用淘宝镜像下载：<a href="http://npm.taobao.org/mirrors/git-for-windows/">http://npm.taobao.org/mirrors/git-for-windows/</a></p>
-<p><a href="https://imgtu.com/i/jmZ6Zn"><img src="https://s1.ax1x.com/2022/06/29/jmZ6Zn.png" alt="jmZ6Zn.png"></a></p>
-<p>下载对应的版本即可安装！</p>
-<p>安装：无脑下一步即可！安装完毕就可以使用了！</p>
-<p>卸载的话先删除对应的环境变量然后直接卸载软件即可</p>
-<p>直接反安装即可、然后清理环境变量，环境变量只是为了全局使用而已</p>
-<h3 id="启动Git"><a href="#启动Git" class="headerlink" title="启动Git"></a>启动Git</h3><p>安装成功后在开始菜单中会有Git项，菜单下有3个程序：任意文件夹下右键也可以看到对应的程序！</p>
-<p><a href="https://imgtu.com/i/jmZDMQ"><img src="https://s1.ax1x.com/2022/06/29/jmZDMQ.png" alt="jmZDMQ.png"></a></p>
-<p><strong>Git Bash：</strong> Unix与Linux风格的命令行，使用最多，推荐最多</p>
-<p><strong>Git CMD：</strong> Windows风格的命令行</p>
-<p><strong>Git GUI</strong>：图形界面的Git，不建议初学者使用，尽量先熟悉常用命令</p>
-<h2 id="常用的Linux命令"><a href="#常用的Linux命令" class="headerlink" title="常用的Linux命令"></a>常用的Linux命令</h2><p>平时一定要多使用这些基础的命令！</p>
-<ol>
-<li><p>cd : 改变目录。</p>
-</li>
-<li><p>cd . . 回退到上一个目录，直接cd进入默认目录</p>
-</li>
-<li><p>pwd : 显示当前所在的目录路径。</p>
-</li>
-<li><p>ls，ll:  都是列出当前目录中的所有文件，只不过ll(两个ll)列出的内容更为详细。</p>
-</li>
-<li><p>touch : 新建一个文件 如 touch index.js 就会在当前目录下新建一个index.js文件。</p>
-</li>
-<li><p>rm:  删除一个文件, rm index.js 就会把index.js文件删除。</p>
-</li>
-<li><p>mkdir:  新建一个目录,就是新建一个文件夹。</p>
-</li>
-<li><p>rm -r :  删除一个文件夹, rm -r src 删除src目录</p>
-</li>
-<li><p>rm -rf &#x2F; 切勿在Linux中尝试！删除电脑中全部文件！</p>
-</li>
-<li><p>mv 移动文件, mv index.html src test 是我们要移动的文件, src 是目标文件夹,当然, 这样写,必须保证文件和目标文件夹在同一目录下,其中src也可以省略</p>
-</li>
-<li><p>reset 重新初始化终端&#x2F;清屏。</p>
-</li>
-<li><p>clear 清屏。</p>
-</li>
-<li><p>history 查看命令历史。</p>
-</li>
-<li><p>help 帮助。</p>
-</li>
-<li><p>exit 退出。</p>
-</li>
-<li><p>‘#’表示注释，一般不要随便加</p>
-</li>
-</ol>
-<h2 id="Git配置"><a href="#Git配置" class="headerlink" title="Git配置"></a>Git配置</h2><p>所有的配置文件，其实都保存在本地！</p>
-<p>查看配置 git config -l</p>
-<p><a href="https://imgtu.com/i/jmZ0xg"><img src="https://s1.ax1x.com/2022/06/29/jmZ0xg.png" alt="jmZ0xg.png"></a></p>
-<p>查看不同级别的配置文件：</p>
-<figure class="highlight properties"><table><tr><td class="code"><pre><span class="line"><span class="comment">#查看系统config</span></span><br><span class="line"><span class="attr">git</span> <span class="string">config --system --list</span></span><br><span class="line"><span class="comment">　　</span></span><br><span class="line"><span class="comment">#查看当前用户（global）配置</span></span><br><span class="line"><span class="attr">git</span> <span class="string">config --global  --list</span></span><br></pre></td></tr></table></figure>
-
-<h3 id="Git相关的配置文件："><a href="#Git相关的配置文件：" class="headerlink" title="Git相关的配置文件："></a><strong>Git相关的配置文件：</strong></h3><ol>
-<li>Git\etc\gitconfig  ：Git 安装目录下的 gitconfig   –system 系统级</li>
-<li>C:\Users\Apathy\ .gitconfig         只适用于当前登录用户的配置  –global 全局</li>
-</ol>
-<p><a href="https://imgtu.com/i/jmntaR"><img src="https://s1.ax1x.com/2022/06/29/jmntaR.jpg" alt="jmntaR.jpg"></a></p>
-<p>这里可以直接编辑配置文件，通过命令设置后会响应到这里。</p>
-<h3 id="设置用户名与邮箱（用户标识，必要）"><a href="#设置用户名与邮箱（用户标识，必要）" class="headerlink" title="设置用户名与邮箱（用户标识，必要）"></a>设置用户名与邮箱（用户标识，必要）</h3><p>当你安装Git后首先要做的事情是设置你的用户名称和e-mail地址。这是非常重要的，因为每次Git提交都会使用该信息。它被永远的嵌入到了你的提交中：</p>
-<figure class="highlight properties"><table><tr><td class="code"><pre><span class="line"><span class="attr">git</span> <span class="string">config --global user.name &quot;gods&quot;  #名称</span></span><br><span class="line"><span class="attr">git</span> <span class="string">config --global user.email apathygods@qq.com   #邮箱</span></span><br></pre></td></tr></table></figure>
-
-<p>只需要做一次这个设置，如果你传递了–global 选项，因为Git将总是会使用该信息来处理你在系统中所做的一切操作。如果你希望在一个特定的项目中使用不同的名称或e-mail地址，你可以在该项目中运行该命令而不要–global选项。总之–global为全局配置，不加为某个项目的特定配置。</p>
-<p><a href="https://imgtu.com/i/jmnYZ9"><img src="https://s1.ax1x.com/2022/06/29/jmnYZ9.jpg" alt="jmnYZ9.jpg"></a></p>
-<h2 id="Git基本理论（重要）"><a href="#Git基本理论（重要）" class="headerlink" title="Git基本理论（重要）"></a>Git基本理论（重要）</h2><h3 id="三个区域"><a href="#三个区域" class="headerlink" title="三个区域"></a>三个区域</h3><p>Git本地有三个工作区域：工作目录（Working Directory）、暂存区(Stage&#x2F;Index)、资源库(Repository或Git Directory)。如果在加上远程的git仓库(Remote Directory)就可以分为四个工作区域。文件在这四个区域之间的转换关系如下：</p>
-<p><a href="https://imgtu.com/i/jmZcaq"><img src="https://s1.ax1x.com/2022/06/29/jmZcaq.png" alt="jmZcaq.png"></a></p>
-<ul>
-<li>Workspace：工作区，就是你平时存放项目代码的地方</li>
-<li>Index &#x2F; Stage：暂存区，用于临时存放你的改动，事实上它只是一个文件，保存即将提交到文件列表信息</li>
-<li>Repository：仓库区（或本地仓库），就是安全存放数据的位置，这里面有你提交到所有版本的数据。其中HEAD指向最新放入仓库的版本</li>
-<li>Remote：远程仓库，托管代码的服务器，可以简单的认为是你项目组中的一台电脑用于远程数据交换</li>
-</ul>
-<p>本地的三个区域确切的说应该是git仓库中HEAD指向的版本：</p>
-<p><a href="https://imgtu.com/i/jmZgI0"><img src="https://s1.ax1x.com/2022/06/29/jmZgI0.png" alt="jmZgI0.png"></a></p>
-<ul>
-<li>Directory：使用Git管理的一个目录，也就是一个仓库，包含我们的工作空间和Git的管理空间。</li>
-<li>WorkSpace：需要通过Git进行版本控制的目录和文件，这些目录和文件组成了工作空间。</li>
-<li>.git：存放Git管理信息的目录，初始化仓库的时候自动创建。</li>
-<li>Index&#x2F;Stage：暂存区，或者叫待提交更新区，在提交进入repo之前，我们可以把所有的更新放在暂存区。</li>
-<li>Local Repo：本地仓库，一个存放在本地的版本库；HEAD会只是当前的开发分支（branch）。</li>
-<li>Stash：隐藏，是一个工作状态保存栈，用于保存&#x2F;恢复WorkSpace中的临时状态。</li>
-</ul>
-<h3 id="工作流程"><a href="#工作流程" class="headerlink" title="工作流程"></a>工作流程</h3><p>git的工作流程一般是这样的：</p>
-<ol>
-<li>在工作目录中添加、修改文件；      UserMapper.xml</li>
-<li>将需要进行版本管理的文件放入暂存区域；    命令：git add.</li>
-<li>将暂存区域的文件提交到git仓库。        命令:git commit</li>
-</ol>
-<p>因此，git管理的文件有三种状态：已修改（modified）,已暂存（staged）,已提交(committed)</p>
-<p><a href="https://imgtu.com/i/jmZRiV"><img src="https://s1.ax1x.com/2022/06/29/jmZRiV.png" alt="jmZRiV.png"></a></p>
-<h2 id="Git项目搭建"><a href="#Git项目搭建" class="headerlink" title="Git项目搭建"></a>Git项目搭建</h2><h3 id="创建工作目录与常用指令"><a href="#创建工作目录与常用指令" class="headerlink" title="创建工作目录与常用指令"></a>创建工作目录与常用指令</h3><p>工作目录（WorkSpace)一般就是你希望Git帮助你管理的文件夹，可以是你项目的目录，也可以是一个空目录，建议不要有中文。</p>
-<p>日常使用只要记住下图6个命令：</p>
-<p><a href="https://imgtu.com/i/jmZWGT"><img src="https://s1.ax1x.com/2022/06/29/jmZWGT.png" alt="jmZWGT.png"></a></p>
-<h3 id="本地仓库搭建"><a href="#本地仓库搭建" class="headerlink" title="本地仓库搭建"></a>本地仓库搭建</h3><p>创建本地仓库的方法有两种：一种是创建全新的仓库，另一种是克隆远程仓库。</p>
-<ol>
-<li><p>创建全新的仓库，需要用GIT管理的项目的根目录执行：</p>
- <figure class="highlight properties"><table><tr><td class="code"><pre><span class="line"><span class="attr">&#x27;#&#x27;</span> <span class="string">在当前目录新建一个Git代码库</span></span><br><span class="line"><span class="attr">&#x27;$&#x27;</span> <span class="string">git init</span></span><br></pre></td></tr></table></figure>
-</li>
-<li><p>执行后可以看到，仅仅在项目目录多出了一个.git目录，关于版本等的所有信息都在这个目录里面,记得勾选显示隐藏的项目</p>
-<p> <a href="https://imgtu.com/i/jmZfRU"><img src="https://s1.ax1x.com/2022/06/29/jmZfRU.png" alt="jmZfRU.png"></a></p>
-</li>
-</ol>
-<h3 id="克隆远程仓库"><a href="#克隆远程仓库" class="headerlink" title="克隆远程仓库"></a>克隆远程仓库</h3><ol>
-<li><p>另一种方式是克隆远程目录，由于是将远程服务器上的仓库完全镜像一份至本地！</p>
- <figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">&#x27;#&#x27; 克隆一个项目和它的整个代码历史(版本信息)</span><br><span class="line">&#x27;$&#x27; git clone [url]  &#x27;#&#x27; https://gitee.com/kuangstudy/openclass.git</span><br></pre></td></tr></table></figure>
-</li>
-<li><p>去 gitee 或者 github 上克隆一个测试！</p>
-</li>
-</ol>
-<h2 id="Git文件操作"><a href="#Git文件操作" class="headerlink" title="Git文件操作"></a>Git文件操作</h2><h3 id="文件的四种状态"><a href="#文件的四种状态" class="headerlink" title="文件的四种状态"></a>文件的四种状态</h3><p>版本控制就是对文件的版本控制，要对文件进行修改、提交等操作，首先要知道文件当前在什么状态，不然可能会提交了现在还不想提交的文件，或者要提交的文件没提交上。</p>
-<ul>
-<li><strong>Untracked</strong>: 未跟踪, 此文件在文件夹中, 但并没有加入到git库, 不参与版本控制. 通过git add 状态变为Staged.</li>
-<li><strong>Unmodify</strong>: 文件已经入库, 未修改, 即版本库中的文件快照内容与文件夹中完全一致. 这种类型的文件有两种去处, 如果它被修改, 而变为Modified. 如果使用git rm移出版本库, 则成为Untracked文件</li>
-<li><strong>Modified</strong>: 文件已修改, 仅仅是修改, 并没有进行其他的操作. 这个文件也有两个去处, 通过git add可进入暂存staged状态, 使用git checkout 则丢弃修改过, 返回到unmodify状态, 这个git checkout即从库中取出文件, 覆盖当前修改 !</li>
-<li><strong>Staged</strong>: 暂存状态. 执行git commit则将修改同步到库中, 这时库中的文件和本地文件又变为一致, 文件为Unmodify状态. 执行git reset HEAD filename取消暂存, 文件状态为Modified</li>
-</ul>
-<h3 id="查看文件状态"><a href="#查看文件状态" class="headerlink" title="查看文件状态"></a>查看文件状态</h3><p>上面说文件有4种状态，通过如下命令可以查看到文件的状态：</p>
-<figure class="highlight properties"><table><tr><td class="code"><pre><span class="line"><span class="comment">#查看指定文件状态</span></span><br><span class="line"><span class="attr">git</span> <span class="string">status [filename]</span></span><br><span class="line"><span class="comment"></span></span><br><span class="line"><span class="comment">#查看所有文件状态</span></span><br><span class="line"><span class="attr">git</span> <span class="string">status</span></span><br><span class="line"><span class="comment"></span></span><br><span class="line"><span class="comment"># git add .                  添加所有文件到暂存区</span></span><br><span class="line"><span class="comment"># git commit -m &quot;消息内容&quot;    提交暂存区中的内容到本地仓库 -m 提交信息</span></span><br></pre></td></tr></table></figure>
-
-<h3 id="忽略文件"><a href="#忽略文件" class="headerlink" title="忽略文件"></a>忽略文件</h3><p>有些时候我们不想把某些文件纳入版本控制中，比如数据库文件，临时文件，设计文件等</p>
-<p>在主目录下建立”.gitignore”文件，此文件有如下规则：</p>
-<ol>
-<li>忽略文件中的空行或以井号（#）开始的行将会被忽略。</li>
-<li>可以使用Linux通配符。例如：星号（*）代表任意多个字符，问号（？）代表一个字符，方括号（[abc]）代表可选字符范围，大括号（{string1,string2,…}）代表可选的字符串等。</li>
-<li>如果名称的最前面有一个感叹号（!），表示例外规则，将不被忽略。</li>
-<li>如果名称的最前面是一个路径分隔符（&#x2F;），表示要忽略的文件在此目录下，而子目录中的文件不忽略。</li>
-<li>如果名称的最后面是一个路径分隔符（&#x2F;），表示要忽略的是此目录下该名称的子目录，而非文件（默认文件或目录都忽略）</li>
-</ol>
-<figure class="highlight properties"><table><tr><td class="code"><pre><span class="line"><span class="comment">#为注释</span></span><br><span class="line"><span class="attr">*.txt</span>        <span class="string">#忽略所有 .txt结尾的文件,这样的话上传就不会被选中！</span></span><br><span class="line"><span class="comment">!lib.txt     #但lib.txt除外</span></span><br><span class="line"><span class="attr">/temp</span>        <span class="string">#仅忽略项目根目录下的TODO文件,不包括其它目录temp</span></span><br><span class="line"><span class="attr">build/</span>       <span class="string">#忽略build/目录下的所有文件</span></span><br><span class="line"><span class="attr">doc/*.txt</span>    <span class="string">#会忽略 doc/notes.txt 但不包括 doc/server/arch.txt</span></span><br></pre></td></tr></table></figure>
-
-<h2 id="使用码云"><a href="#使用码云" class="headerlink" title="使用码云"></a>使用码云</h2><p>由于GitHub是国外的网站，所以一般访问时间较慢，这里推荐使用国内的镜像Gitee，公司中有时候也会搭建自己的gitlab服务器</p>
-<ol>
-<li><p>注册并登录<a href="https://gitee.com/">码云</a>，然后完善个人信息</p>
-<p> <a href="https://imgtu.com/i/jmZ5M4"><img src="https://s1.ax1x.com/2022/06/29/jmZ5M4.png" alt="jmZ5M4.png"></a></p>
-</li>
-<li><p>生成一个新的<a href="https://so.csdn.net/so/search?q=SSH&spm=1001.2101.3001.7020">SSH</a>密钥打开 Git Bash，输入如下命令，然后连续按三个回车即可：</p>
- <figure class="highlight properties"><table><tr><td class="code"><pre><span class="line"><span class="attr">ssh-keygen</span> <span class="string">-t rsa -C &quot;你的邮箱&quot;</span></span><br></pre></td></tr></table></figure>
-
-<p> <a href="https://imgtu.com/i/jmnGqJ"><img src="https://s1.ax1x.com/2022/06/29/jmnGqJ.jpg" alt="jmnGqJ.jpg"></a></p>
-</li>
-<li><p>将.pub文件里面的公钥信息添加到码云账户中即可！</p>
-<p> <a href="https://imgtu.com/i/jmn8r4"><img src="https://s1.ax1x.com/2022/06/29/jmn8r4.jpg" alt="jmn8r4.jpg"></a></p>
-</li>
-<li><p>学习使用码云创建一个自己的远程仓库</p>
-<p> <a href="https://imgtu.com/i/jmZ7ZR"><img src="https://s1.ax1x.com/2022/06/29/jmZ7ZR.png" alt="jmZ7ZR.png"></a><br> 许可证：开源是否可以随意转载，开源但是不能商业使用，不能转载等等，主要做一些限制！</p>
-<p><a href="https://imgtu.com/i/jmZbIx"><img src="https://s1.ax1x.com/2022/06/29/jmZbIx.png" alt="jmZbIx.png"></a></p>
-</li>
-</ol>
-<h2 id="IDEA中集成Git"><a href="#IDEA中集成Git" class="headerlink" title="IDEA中集成Git"></a>IDEA中集成Git</h2><p>   1、 在项目中绑定git，将自己远程的git文件目录拷贝到项目即可<br>       <a href="https://imgtu.com/i/jmZLi6"><img src="https://s1.ax1x.com/2022/06/29/jmZLi6.png" alt="jmZLi6.png"></a><br>       项目拷贝完后idea会新增几个git的按钮<br>       <a href="https://imgtu.com/i/jmZXRO"><img src="https://s1.ax1x.com/2022/06/29/jmZXRO.png" alt="jmZXRO.png"></a><br>   2、 修改文件，使用IDEA操作git<br>       add 添加到暂存区</p>
-<pre><code>   commit 提交
-   
-   push到远程仓库
-   
-</code></pre>
-<p>   3、 刷新远程仓库发现已经发送过去了<br>       <a href="https://imgtu.com/i/jmZOJK"><img src="https://s1.ax1x.com/2022/06/29/jmZOJK.png" alt="jmZOJK.png"></a></p>
-<h2 id="GIT分支"><a href="#GIT分支" class="headerlink" title="GIT分支"></a>GIT分支</h2><h3 id="什么是分支？"><a href="#什么是分支？" class="headerlink" title="什么是分支？"></a>什么是分支？</h3><p>分支就像地球和太阳，如果他们互不干扰的话，对你就没印象，但是万一某天这两个行星突然出问题了，那就需要去解决了</p>
-<p>在程序里的示意图：</p>
-<p><a href="https://imgtu.com/i/jmZjzD"><img src="https://s1.ax1x.com/2022/06/29/jmZjzD.png" alt="jmZjzD.png"></a></p>
-<h3 id="git分支中常用指令："><a href="#git分支中常用指令：" class="headerlink" title="git分支中常用指令："></a>git分支中常用指令：</h3><figure class="highlight properties"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 列出所有本地分支</span></span><br><span class="line"><span class="attr">git</span> <span class="string">branch</span></span><br><span class="line"><span class="comment"></span></span><br><span class="line"><span class="comment"># 列出所有远程分支</span></span><br><span class="line"><span class="attr">git</span> <span class="string">branch -r</span></span><br><span class="line"><span class="comment"></span></span><br><span class="line"><span class="comment"># 新建一个分支，但依然停留在当前分支</span></span><br><span class="line"><span class="attr">git</span> <span class="string">branch [branch-name]</span></span><br><span class="line"><span class="comment"></span></span><br><span class="line"><span class="comment"># 新建一个分支，并切换到该分支</span></span><br><span class="line"><span class="attr">git</span> <span class="string">checkout -b [branch]</span></span><br><span class="line"><span class="comment"></span></span><br><span class="line"><span class="comment"># 临时切换到新建分支</span></span><br><span class="line"><span class="attr">git</span> <span class="string">checkout [branch]</span></span><br><span class="line"><span class="comment"></span></span><br><span class="line"><span class="comment"># 合并指定分支到当前分支</span></span><br><span class="line"><span class="attr">$</span> <span class="string">git merge [branch]</span></span><br><span class="line"><span class="comment"></span></span><br><span class="line"><span class="comment"># 删除分支</span></span><br><span class="line"><span class="attr">$</span> <span class="string">git branch -d [branch-name]</span></span><br><span class="line"><span class="comment"></span></span><br><span class="line"><span class="comment"># 删除远程分支</span></span><br><span class="line"><span class="attr">$</span> <span class="string">git push origin --delete [branch-name]</span></span><br><span class="line"><span class="attr">$</span> <span class="string">git branch -dr [remote/branch]</span></span><br></pre></td></tr></table></figure>
-
-<h3 id="IDEA中操作"><a href="#IDEA中操作" class="headerlink" title="IDEA中操作"></a>IDEA中操作</h3><p><a href="https://imgtu.com/i/jmnNI1"><img src="https://s1.ax1x.com/2022/06/29/jmnNI1.png" alt="jmnNI1.png"></a></p>
-<p>如果同一个文件在合并分支时都被修改了则会引起冲突：这个时候我们应该修改冲突后的文件然后重新提交，然后团队自己协商好提交谁的即可</p>
-<p>master主分支相对稳定，一般用来发布新版本，一般情况下不会在上面工作，工作时一般在新建的dev分支上工作，工作完后，比如上要发布，或者说dev分支代码稳定后可以合并到主分支master上来。</p>
-]]></content>
-      <categories>
-        <category>Git</category>
-        <category>企业协同开发工具</category>
-      </categories>
-      <tags>
-        <tag>教程</tag>
-        <tag>Git</tag>
-        <tag>企业协同开发工具</tag>
       </tags>
   </entry>
   <entry>
@@ -961,16 +940,47 @@
       </tags>
   </entry>
   <entry>
-    <title>redis总笔记</title>
-    <url>/2022/05/21/redis%E6%80%BB%E7%AC%94%E8%AE%B0/</url>
-    <content><![CDATA[<p>这个博主的redis会比较详细，可以去观看它的，还有可以去看看它的视频</p>
-<p>博主：狂神说</p>
-<p><a href="https://www.cnblogs.com/meditation5201314/p/14882992.htm">https://www.cnblogs.com/meditation5201314/p/14882992.htm</a></p>
-<p><strong>发布订阅简单使用：</strong></p>
-<p><img src="https://s2.loli.net/2022/02/21/CilvKd8sFBtSJo9.png" alt="image-20220221140950917"></p>
+    <title>redis的五大数据类型</title>
+    <url>/2022/05/21/redis%E7%9A%84%E4%BA%94%E5%A4%A7%E6%95%B0%E6%8D%AE%E7%B1%BB%E5%9E%8B/</url>
+    <content><![CDATA[<h2 id="Redis简单了解与5大数据类型"><a href="#Redis简单了解与5大数据类型" class="headerlink" title="Redis简单了解与5大数据类型"></a>Redis简单了解与5大数据类型</h2><h2 id="Redis是单线程的"><a href="#Redis是单线程的" class="headerlink" title="Redis是单线程的"></a>Redis是单线程的</h2><p>Redis是很快的，官方表示，Redis是基于内存操作，cpu并不是Redis性能瓶颈，Redis的瓶颈是根据机器和网络带宽。</p>
+<p>Redis是C语言写的，官方提供的数据为 100000+ 的Qps，完成不比同样是使用key-value的Memecahe差！</p>
+<h2 id="Redis为什么单线程还那么快？"><a href="#Redis为什么单线程还那么快？" class="headerlink" title="Redis为什么单线程还那么快？"></a>Redis为什么单线程还那么快？</h2><p>1，高性能的服务器不一定是多线程的 2，多线程不一定比单线程效率高！</p>
+<p>redis是将所有的数据全部放置内存中的，所以使用单线程去操作效率就是最高的，多线程cpu上下文切换耗时，对于内存系统来说，如果没有上下文切换效率就是最高的，多次读写都在一个cpu上的，在内存情况下，这个就是最佳方案</p>
+<p>redis一共有16个数据库 默认使用第0个</p>
+<h2 id="5大数据类型"><a href="#5大数据类型" class="headerlink" title="5大数据类型"></a>5大数据类型</h2><p>不区分大小写</p>
+<h3 id="String-的一些命令"><a href="#String-的一些命令" class="headerlink" title="String 的一些命令"></a>String 的一些命令</h3><figure class="highlight java"><table><tr><td class="code"><pre><span class="line">select <span class="number">1</span> #改变数字可切换数据库</span><br><span class="line">keys *  #查看当前数据库使用的key</span><br><span class="line">set key value  #向数据库填充kv键值对数据</span><br><span class="line">get key  #获取指定key的value</span><br><span class="line">flushall  #清空全部 会将其他库的也清除</span><br><span class="line">flushdb   #清空单前数据库</span><br><span class="line">EXISTS key  #判断当前key是否存在 存在返回<span class="number">1</span> 否者<span class="number">0</span></span><br><span class="line">move key <span class="number">1</span> #将指定的key键值对移动到指定的数据库</span><br><span class="line">EXPIRE key <span class="number">10</span>  #将指定key在指定的时间过期 <span class="number">10</span>为<span class="number">10</span>秒</span><br><span class="line">ttl key  #查看指定的key还剩余多少存活时间 -<span class="number">1</span>为永久存活 -<span class="number">2</span>为死亡</span><br><span class="line">type key  #查看当前key的数据类型</span><br><span class="line">APPEND key content  #追加指定key的value的内容 content为追加内容 </span><br><span class="line">STRLEN key  #查看指定key的value长度</span><br><span class="line">incr key  #可以为指定的key自增</span><br><span class="line">decr key #为指定的key减<span class="number">1</span></span><br><span class="line">INCRBY key i  #为指定的key 加上 i个（数字）</span><br><span class="line">DECRBY key i  #为指定的key 减 i (数字)</span><br><span class="line">GETRANGE key s e  #截取指定长度字符串 ，该方法区间（ &#125;</span><br><span class="line">GETRANGE key i -<span class="number">1</span>  #结尾为-<span class="number">1</span>可以查看全部字符串 和 get一样</span><br><span class="line">SETRANGE key s content  #替换指定位置开始的字符串 输入几个就替换几个</span><br><span class="line">setex key time value  #创建或修改一个键值对，并设置过期时间</span><br><span class="line">setnx key value  #创建一个键值对 、当如何已经有这个键值对了就会创建失败</span><br><span class="line">mset key value [k v...]  #可一次设置多个，kv键值对</span><br><span class="line">mget key [key...]  #一次获取多个value</span><br><span class="line">msetnx key value [k v...]  #可一次设置多个，kv键值对，但要满足原子性，同时成功，同时失败</span><br><span class="line">getset key value  #读取并修改 先读，可以用于更新新内容</span><br></pre></td></tr></table></figure>
+
+<h3 id="List"><a href="#List" class="headerlink" title="List"></a>List</h3><p>list可以当作链表来看，左右都可以插入</p>
+<p>可控制向左向右添加后移出，是需要开头加 L（左） 或 R（右），List的命令以L开头，除控制左右外，可存在重复值</p>
+<p>添加后内容顺序为 54321</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line">LPUSH key element [element...] #tianj或创建并添加值</span><br><span class="line">LRANGE key s e  ;#查看List的数据 从s开始 到e结束的位置</span><br><span class="line">LPOP #移出左第一个，（左右可调节）</span><br><span class="line">LINDEX key index   #根据下标查看值，必须大写，只能从左</span><br><span class="line">LLEN key   #获取指定list的长度</span><br><span class="line">LREM key count value  #移出指定的内容，并且可以设置移出几个</span><br><span class="line">ltrim key start stop  #通过下标截取要的部分 不在区间的则都移出</span><br><span class="line">rpoplpush key1 key2  #移出key1中最右的第一个并添加到key2的左边第一个</span><br><span class="line">lset key index value  #可修改list中指定下标的value，如果不存在列表就会报错</span><br><span class="line">LINSERT key before|after pivot element #向指定key里的value的前或后插入内容。 pivot key里的内容 element 插入的内容</span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="Set"><a href="#Set" class="headerlink" title="Set"></a>Set</h3><p>set的命令都是以s开头的 set中的值是无需不能重复的</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line">sadd key value  #创建或添加</span><br><span class="line">SMEMBERS key  #查看set中的元素</span><br><span class="line">SISMEMBER key value  #判断当前set中是否有当前value</span><br><span class="line">scard setkey  #获取当前set的个数</span><br><span class="line">srem setkey element[element..]  #移出指定的值</span><br><span class="line">SRANDMEMBER setkey 【count】  #在指定的key中随机获取count个元素</span><br><span class="line">SPOP setkey 【count】  #随机移除count个元素</span><br><span class="line">SMOVE setkey1 setkey2 value  #将setkey1的value移出到setkey2中</span><br><span class="line">SINTER key [key...]  #获取选中key的交集，要都有的才会显示</span><br><span class="line">SUNION key [key...] #获取选中的并集，不会输出重复的 #并集解释：若A和B是集合，则A和B并集是有所有A的元素和所有B的元素，而没有其他元素的集合。A和B的并集通常写作 <span class="string">&quot;A∪B&quot;</span>，读作“A并B”</span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="Hash"><a href="#Hash" class="headerlink" title="Hash"></a>Hash</h3><p>Hash类型为key-（key-value） 所有的hash命令是以h开头的</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line">hset key field value [field value...]  #创建Hash</span><br><span class="line">#示例：hset hash field1 value1 ；key（hash）-value（field1-value1）</span><br><span class="line">#注意：低版本一次填充多个需要使用hmset命令</span><br><span class="line">hget key field   #获取field value值，需要两个key的值</span><br><span class="line">hmget key field [field...]  #获取多个 field ，高版本可能没有这个命令，而是直接使用hset</span><br><span class="line">hdel key field [field...]  #删除指定的field，</span><br><span class="line">hgetall key    #查看当前key中的value（k-v键值对都会显示）</span><br><span class="line">HEXISTS key field   #查询hash中是否存在指定的key</span><br><span class="line">hkeys key     #查看hash中所有的key</span><br><span class="line">hvals key     #查看hasg中所有的value</span><br><span class="line">HINCRBY key field i    #为指定key中的field 的value进行相加，可以加负数，这样就是相减</span><br><span class="line">hsetnx key field value #如果field存在则无需，不存在创建</span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="Zset"><a href="#Zset" class="headerlink" title="Zset"></a>Zset</h3><p>有序集合，，从小到大</p>
+<p>在set的基础上加了一个值， zadd k score v ,多了个score多了了，可以用于表示</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line">zadd key sroce value [...]  #添加zset</span><br><span class="line">zrange key start stop  #查看指定key数据范围</span><br><span class="line">ZRANGEBYSCORE key min max [WITHSCORCES] [LIMIT offset ount]   #用于指定key筛选排序  min可以使用-inf 意思为负无限制，max使用+inf 正无限，获取score包含在他们的区间值</span><br><span class="line">ZREVRANGEBYSCORE key max min [WITHSCORCES] [LIMIT offset ount]  #上面排正序，这个是倒叙</span><br><span class="line">zrem key member [member...]   #使用要删除的value并移除</span><br><span class="line">ZCARD key   #查询当前集合key有多少个值</span><br><span class="line">ZCOUNT key min max #获取指定key的指定区间内有多个个值</span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="官网地址"><a href="#官网地址" class="headerlink" title="官网地址"></a>官网地址</h2><p>一切以官网为准 <a href="http://www.redis.cn/" title="Redis官网">Redis官网</a></p>
 ]]></content>
+      <categories>
+        <category>redis</category>
+      </categories>
       <tags>
-        <tag>优秀文章</tag>
+        <tag>数据库</tag>
+        <tag>数据类型</tag>
       </tags>
   </entry>
   <entry>
@@ -2615,6 +2625,19 @@
       </tags>
   </entry>
   <entry>
+    <title>redis总笔记</title>
+    <url>/2022/05/21/redis%E6%80%BB%E7%AC%94%E8%AE%B0/</url>
+    <content><![CDATA[<p>这个博主的redis会比较详细，可以去观看它的，还有可以去看看它的视频</p>
+<p>博主：狂神说</p>
+<p><a href="https://www.cnblogs.com/meditation5201314/p/14882992.htm">https://www.cnblogs.com/meditation5201314/p/14882992.htm</a></p>
+<p><strong>发布订阅简单使用：</strong></p>
+<p><img src="https://s2.loli.net/2022/02/21/CilvKd8sFBtSJo9.png" alt="image-20220221140950917"></p>
+]]></content>
+      <tags>
+        <tag>优秀文章</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>redis的安装</title>
     <url>/2022/05/21/redis%E7%9A%84%E5%AE%89%E8%A3%85/</url>
     <content><![CDATA[<h2 id="安装Redis"><a href="#安装Redis" class="headerlink" title="安装Redis"></a>安装Redis</h2><h2 id="如何安装redis"><a href="#如何安装redis" class="headerlink" title="如何安装redis"></a>如何安装redis</h2><p>先去redis的官网下安装redis： <a href="http://www.redis.cn/">Redis中文官网</a></p>
@@ -2652,50 +2675,6 @@
       </categories>
       <tags>
         <tag>安装</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>redis的五大数据类型</title>
-    <url>/2022/05/21/redis%E7%9A%84%E4%BA%94%E5%A4%A7%E6%95%B0%E6%8D%AE%E7%B1%BB%E5%9E%8B/</url>
-    <content><![CDATA[<h2 id="Redis简单了解与5大数据类型"><a href="#Redis简单了解与5大数据类型" class="headerlink" title="Redis简单了解与5大数据类型"></a>Redis简单了解与5大数据类型</h2><h2 id="Redis是单线程的"><a href="#Redis是单线程的" class="headerlink" title="Redis是单线程的"></a>Redis是单线程的</h2><p>Redis是很快的，官方表示，Redis是基于内存操作，cpu并不是Redis性能瓶颈，Redis的瓶颈是根据机器和网络带宽。</p>
-<p>Redis是C语言写的，官方提供的数据为 100000+ 的Qps，完成不比同样是使用key-value的Memecahe差！</p>
-<h2 id="Redis为什么单线程还那么快？"><a href="#Redis为什么单线程还那么快？" class="headerlink" title="Redis为什么单线程还那么快？"></a>Redis为什么单线程还那么快？</h2><p>1，高性能的服务器不一定是多线程的 2，多线程不一定比单线程效率高！</p>
-<p>redis是将所有的数据全部放置内存中的，所以使用单线程去操作效率就是最高的，多线程cpu上下文切换耗时，对于内存系统来说，如果没有上下文切换效率就是最高的，多次读写都在一个cpu上的，在内存情况下，这个就是最佳方案</p>
-<p>redis一共有16个数据库 默认使用第0个</p>
-<h2 id="5大数据类型"><a href="#5大数据类型" class="headerlink" title="5大数据类型"></a>5大数据类型</h2><p>不区分大小写</p>
-<h3 id="String-的一些命令"><a href="#String-的一些命令" class="headerlink" title="String 的一些命令"></a>String 的一些命令</h3><figure class="highlight java"><table><tr><td class="code"><pre><span class="line">select <span class="number">1</span> #改变数字可切换数据库</span><br><span class="line">keys *  #查看当前数据库使用的key</span><br><span class="line">set key value  #向数据库填充kv键值对数据</span><br><span class="line">get key  #获取指定key的value</span><br><span class="line">flushall  #清空全部 会将其他库的也清除</span><br><span class="line">flushdb   #清空单前数据库</span><br><span class="line">EXISTS key  #判断当前key是否存在 存在返回<span class="number">1</span> 否者<span class="number">0</span></span><br><span class="line">move key <span class="number">1</span> #将指定的key键值对移动到指定的数据库</span><br><span class="line">EXPIRE key <span class="number">10</span>  #将指定key在指定的时间过期 <span class="number">10</span>为<span class="number">10</span>秒</span><br><span class="line">ttl key  #查看指定的key还剩余多少存活时间 -<span class="number">1</span>为永久存活 -<span class="number">2</span>为死亡</span><br><span class="line">type key  #查看当前key的数据类型</span><br><span class="line">APPEND key content  #追加指定key的value的内容 content为追加内容 </span><br><span class="line">STRLEN key  #查看指定key的value长度</span><br><span class="line">incr key  #可以为指定的key自增</span><br><span class="line">decr key #为指定的key减<span class="number">1</span></span><br><span class="line">INCRBY key i  #为指定的key 加上 i个（数字）</span><br><span class="line">DECRBY key i  #为指定的key 减 i (数字)</span><br><span class="line">GETRANGE key s e  #截取指定长度字符串 ，该方法区间（ &#125;</span><br><span class="line">GETRANGE key i -<span class="number">1</span>  #结尾为-<span class="number">1</span>可以查看全部字符串 和 get一样</span><br><span class="line">SETRANGE key s content  #替换指定位置开始的字符串 输入几个就替换几个</span><br><span class="line">setex key time value  #创建或修改一个键值对，并设置过期时间</span><br><span class="line">setnx key value  #创建一个键值对 、当如何已经有这个键值对了就会创建失败</span><br><span class="line">mset key value [k v...]  #可一次设置多个，kv键值对</span><br><span class="line">mget key [key...]  #一次获取多个value</span><br><span class="line">msetnx key value [k v...]  #可一次设置多个，kv键值对，但要满足原子性，同时成功，同时失败</span><br><span class="line">getset key value  #读取并修改 先读，可以用于更新新内容</span><br></pre></td></tr></table></figure>
-
-<h3 id="List"><a href="#List" class="headerlink" title="List"></a>List</h3><p>list可以当作链表来看，左右都可以插入</p>
-<p>可控制向左向右添加后移出，是需要开头加 L（左） 或 R（右），List的命令以L开头，除控制左右外，可存在重复值</p>
-<p>添加后内容顺序为 54321</p>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line">LPUSH key element [element...] #tianj或创建并添加值</span><br><span class="line">LRANGE key s e  ;#查看List的数据 从s开始 到e结束的位置</span><br><span class="line">LPOP #移出左第一个，（左右可调节）</span><br><span class="line">LINDEX key index   #根据下标查看值，必须大写，只能从左</span><br><span class="line">LLEN key   #获取指定list的长度</span><br><span class="line">LREM key count value  #移出指定的内容，并且可以设置移出几个</span><br><span class="line">ltrim key start stop  #通过下标截取要的部分 不在区间的则都移出</span><br><span class="line">rpoplpush key1 key2  #移出key1中最右的第一个并添加到key2的左边第一个</span><br><span class="line">lset key index value  #可修改list中指定下标的value，如果不存在列表就会报错</span><br><span class="line">LINSERT key before|after pivot element #向指定key里的value的前或后插入内容。 pivot key里的内容 element 插入的内容</span><br></pre></td></tr></table></figure>
-
-
-
-<h3 id="Set"><a href="#Set" class="headerlink" title="Set"></a>Set</h3><p>set的命令都是以s开头的 set中的值是无需不能重复的</p>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line">sadd key value  #创建或添加</span><br><span class="line">SMEMBERS key  #查看set中的元素</span><br><span class="line">SISMEMBER key value  #判断当前set中是否有当前value</span><br><span class="line">scard setkey  #获取当前set的个数</span><br><span class="line">srem setkey element[element..]  #移出指定的值</span><br><span class="line">SRANDMEMBER setkey 【count】  #在指定的key中随机获取count个元素</span><br><span class="line">SPOP setkey 【count】  #随机移除count个元素</span><br><span class="line">SMOVE setkey1 setkey2 value  #将setkey1的value移出到setkey2中</span><br><span class="line">SINTER key [key...]  #获取选中key的交集，要都有的才会显示</span><br><span class="line">SUNION key [key...] #获取选中的并集，不会输出重复的 #并集解释：若A和B是集合，则A和B并集是有所有A的元素和所有B的元素，而没有其他元素的集合。A和B的并集通常写作 <span class="string">&quot;A∪B&quot;</span>，读作“A并B”</span><br></pre></td></tr></table></figure>
-
-
-
-<h3 id="Hash"><a href="#Hash" class="headerlink" title="Hash"></a>Hash</h3><p>Hash类型为key-（key-value） 所有的hash命令是以h开头的</p>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line">hset key field value [field value...]  #创建Hash</span><br><span class="line">#示例：hset hash field1 value1 ；key（hash）-value（field1-value1）</span><br><span class="line">#注意：低版本一次填充多个需要使用hmset命令</span><br><span class="line">hget key field   #获取field value值，需要两个key的值</span><br><span class="line">hmget key field [field...]  #获取多个 field ，高版本可能没有这个命令，而是直接使用hset</span><br><span class="line">hdel key field [field...]  #删除指定的field，</span><br><span class="line">hgetall key    #查看当前key中的value（k-v键值对都会显示）</span><br><span class="line">HEXISTS key field   #查询hash中是否存在指定的key</span><br><span class="line">hkeys key     #查看hash中所有的key</span><br><span class="line">hvals key     #查看hasg中所有的value</span><br><span class="line">HINCRBY key field i    #为指定key中的field 的value进行相加，可以加负数，这样就是相减</span><br><span class="line">hsetnx key field value #如果field存在则无需，不存在创建</span><br></pre></td></tr></table></figure>
-
-
-
-<h3 id="Zset"><a href="#Zset" class="headerlink" title="Zset"></a>Zset</h3><p>有序集合，，从小到大</p>
-<p>在set的基础上加了一个值， zadd k score v ,多了个score多了了，可以用于表示</p>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line">zadd key sroce value [...]  #添加zset</span><br><span class="line">zrange key start stop  #查看指定key数据范围</span><br><span class="line">ZRANGEBYSCORE key min max [WITHSCORCES] [LIMIT offset ount]   #用于指定key筛选排序  min可以使用-inf 意思为负无限制，max使用+inf 正无限，获取score包含在他们的区间值</span><br><span class="line">ZREVRANGEBYSCORE key max min [WITHSCORCES] [LIMIT offset ount]  #上面排正序，这个是倒叙</span><br><span class="line">zrem key member [member...]   #使用要删除的value并移除</span><br><span class="line">ZCARD key   #查询当前集合key有多少个值</span><br><span class="line">ZCOUNT key min max #获取指定key的指定区间内有多个个值</span><br></pre></td></tr></table></figure>
-
-
-
-<h2 id="官网地址"><a href="#官网地址" class="headerlink" title="官网地址"></a>官网地址</h2><p>一切以官网为准 <a href="http://www.redis.cn/" title="Redis官网">Redis官网</a></p>
-]]></content>
-      <categories>
-        <category>redis</category>
-      </categories>
-      <tags>
-        <tag>数据库</tag>
-        <tag>数据类型</tag>
       </tags>
   </entry>
   <entry>
@@ -3365,21 +3344,6 @@ public CorsConfigurationSource corsConfigurationSource()&#123;
       </tags>
   </entry>
   <entry>
-    <title>博客技术总结</title>
-    <url>/2022/05/14/%E5%8D%9A%E5%AE%A2%E6%8A%80%E6%9C%AF%E6%80%BB%E7%BB%93/</url>
-    <content><![CDATA[<h1 id="1-技术介绍"><a href="#1-技术介绍" class="headerlink" title="1.技术介绍"></a>1.技术介绍</h1><p>前端：vue + vuex + vue-router + axios + vuetify + element + echarts</p>
-<p>后端：SpringBoot + nginx + SpringSecurity + Swagger2 + MyBatisPlus + Mysql + Redis + elasticsearch + rabbitMQ + MaxWell</p>
-<h1 id="2-运行环境"><a href="#2-运行环境" class="headerlink" title="2.运行环境"></a>2.运行环境</h1><p>开发工具：IDEA</p>
-<p>服务器：阿里云1核2G CentOS8.0以上</p>
-<p>对象存储：阿里云OSS</p>
-<p>全站cdn加速</p>
-<p>cos对象储存</p>
-<p>全站https</p>
-<h1 id="3-项目总结"><a href="#3-项目总结" class="headerlink" title="3.项目总结"></a>3.项目总结</h1><p>此次对博客进行了全方位的升级，前端技术点和后端技术点相比第一，二版提升了不少。</p>
-<p>加入了许多动画过渡效果，并考虑到了一些用户细节（深色模式，图片预览，等），评论加入了表情和分页，提升了用户体验，。后台文章编辑器换为MarkDown，语法更加简洁，新增了草稿箱和自动保存文章等功能。</p>
-]]></content>
-  </entry>
-  <entry>
     <title>redis集群（主从复制）</title>
     <url>/2022/05/21/redis%E9%9B%86%E7%BE%A4%EF%BC%88%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6%EF%BC%89/</url>
     <content><![CDATA[<h1 id="Redis主从复制："><a href="#Redis主从复制：" class="headerlink" title="Redis主从复制："></a>Redis主从复制：</h1><h2 id="Redis主从复制概念"><a href="#Redis主从复制概念" class="headerlink" title="Redis主从复制概念"></a>Redis主从复制概念</h2><p>主从复制,是指将一台Redis服务器的数据，复制到其他的Redis服务器。前者称为主节点(master&#x2F;leader)，后者称为从节点(slave&#x2F;follower);数据的复制是单向的，只能由主节点到从节点。Master以写为主，Slave以读为主。</p>
@@ -3483,5 +3447,20 @@ public CorsConfigurationSource corsConfigurationSource()&#123;
       <tags>
         <tag>集群</tag>
       </tags>
+  </entry>
+  <entry>
+    <title>博客技术总结</title>
+    <url>/2022/05/14/%E5%8D%9A%E5%AE%A2%E6%8A%80%E6%9C%AF%E6%80%BB%E7%BB%93/</url>
+    <content><![CDATA[<h1 id="1-技术介绍"><a href="#1-技术介绍" class="headerlink" title="1.技术介绍"></a>1.技术介绍</h1><p>前端：vue + vuex + vue-router + axios + vuetify + element + echarts</p>
+<p>后端：SpringBoot + nginx + SpringSecurity + Swagger2 + MyBatisPlus + Mysql + Redis + elasticsearch + rabbitMQ + MaxWell</p>
+<h1 id="2-运行环境"><a href="#2-运行环境" class="headerlink" title="2.运行环境"></a>2.运行环境</h1><p>开发工具：IDEA</p>
+<p>服务器：阿里云1核2G CentOS8.0以上</p>
+<p>对象存储：阿里云OSS</p>
+<p>全站cdn加速</p>
+<p>cos对象储存</p>
+<p>全站https</p>
+<h1 id="3-项目总结"><a href="#3-项目总结" class="headerlink" title="3.项目总结"></a>3.项目总结</h1><p>此次对博客进行了全方位的升级，前端技术点和后端技术点相比第一，二版提升了不少。</p>
+<p>加入了许多动画过渡效果，并考虑到了一些用户细节（深色模式，图片预览，等），评论加入了表情和分页，提升了用户体验，。后台文章编辑器换为MarkDown，语法更加简洁，新增了草稿箱和自动保存文章等功能。</p>
+]]></content>
   </entry>
 </search>
