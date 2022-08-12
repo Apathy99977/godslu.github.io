@@ -584,106 +584,6 @@
       </tags>
   </entry>
   <entry>
-    <title>HashMap源码讲解</title>
-    <url>/2022/07/01/HashMap%E6%BA%90%E7%A0%81%E8%AE%B2%E8%A7%A3/</url>
-    <content><![CDATA[<p>前言：</p>
-<p>本教程简单明了的讲解了java集合中HashMap的底层原理，本文章来源于我好朋友的技术总结，有需要的可以去访问他的博客<br>本文原链接：<a href="https://www.studyhard.site/2022/07/01/HashMap%E6%BA%90%E7%A0%81%E8%AE%B2%E8%A7%A3/">https://www.studyhard.site/2022/07/01/HashMap%E6%BA%90%E7%A0%81%E8%AE%B2%E8%A7%A3/</a></p>
-<hr>
-<h1 id="HashMap源码："><a href="#HashMap源码：" class="headerlink" title="HashMap源码："></a>HashMap源码：</h1><h2 id="结论："><a href="#结论：" class="headerlink" title="结论："></a>结论：</h2><p>先说下结论，有的小伙伴可能没有心思看看完！</p>
-<p><strong>数据结构：</strong></p>
-<p>加载因子为0.75f</p>
-<p>默认初始容量为16</p>
-<p>扩容为原来的1倍  &lt;&lt;1  临界点也会随着增加1倍 &lt;&lt;1</p>
-<p>依靠每次在数组中添加成功都会自增的size与临界点做比较，是否需要扩容</p>
-<p>如果添加key相同的键值对会进行value的替换，并返回替换掉的value值</p>
-<p>链表未大于等于8位时：</p>
-<p>​	数组加链表，其实就是一个Node类型的数组，而而每个下表都是Node类，Node它的结构为链表的形式，记录下一个、本身键值对，为<strong>单向链表</strong></p>
-<p>转换红黑树条件：</p>
-<p>​	数组长度大于64，并且链表长度大于8才会进行转换</p>
-<p>​	</p>
-<p>与HashTable的区别：</p>
-<p>JDK1.8 ：</p>
-<p>HashMap在添加时进行数组实例化，HashTable实例化时就会进行数组实例化</p>
-<p>HashTable不会转换为红黑树</p>
-<p>线程安全性不同。HashMap线程不安全；Hashtable 中的方法是Synchronize的。<br>key、value是否允许null。HashMap的key和value都是可以是null，key只允许一个null；Hashtable的key和value都不可为null。<br>迭代器不同。HashMap的Iterator是fail-fast迭代器；Hashtable还使用了enumerator迭代器。<br>hash的计算方式不同。HashMap计算了hash值；Hashtable使用了key的hashCode方法。<br>默认初始大小和扩容方式不同。HashMap默认初始大小16，容量必须是2的整数次幂，扩容时将容量变为原来的2倍；Hashtable默认初始大小11，扩容时将容量变为原来的2倍加1。<br>是否有contains方法。HashMap没有contains方法；Hashtable包含contains方法，类似于containsValue。<br>父类不同。HashMap继承自AbstractMap；Hashtable继承自Dictionary。</p>
-<h2 id="HashMap初始化："><a href="#HashMap初始化：" class="headerlink" title="HashMap初始化："></a>HashMap初始化：</h2><p><strong>HashMap有着多个重载的构造方法，接下来 一 一来看看分别有着什么作用！！</strong></p>
-<h3 id="无参构造："><a href="#无参构造：" class="headerlink" title="无参构造："></a>无参构造：</h3><p>无参构造中可以看出我们没有做其他的初始化，只是赋予了一个默认加载因子</p>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="comment">//常量，加载因子</span></span><br><span class="line"><span class="keyword">static</span> <span class="keyword">final</span> <span class="type">float</span> <span class="variable">DEFAULT_LOAD_FACTOR</span> <span class="operator">=</span> <span class="number">0.75f</span>;</span><br><span class="line"><span class="comment">//真正使用在hashMap中的加载因子</span></span><br><span class="line"><span class="keyword">final</span> <span class="type">float</span> loadFactor;</span><br></pre></td></tr></table></figure>
-
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="title function_">HashMap</span><span class="params">()</span> &#123;</span><br><span class="line">    <span class="built_in">this</span>.loadFactor = DEFAULT_LOAD_FACTOR; <span class="comment">// 所有字段均为默认值</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-
-
-
-
-
-
-<h3 id="有参构造："><a href="#有参构造：" class="headerlink" title="有参构造："></a>有参构造：</h3><h4 id="设置默认容量构造器："><a href="#设置默认容量构造器：" class="headerlink" title="设置默认容量构造器："></a>设置默认容量构造器：</h4><figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="comment">//常量，加载因子</span></span><br><span class="line"><span class="keyword">static</span> <span class="keyword">final</span> <span class="type">float</span> <span class="variable">DEFAULT_LOAD_FACTOR</span> <span class="operator">=</span> <span class="number">0.75f</span>;</span><br><span class="line"><span class="comment">//最大容量   1,073,741,824</span></span><br><span class="line"><span class="keyword">static</span> <span class="keyword">final</span> <span class="type">int</span> <span class="variable">MAXIMUM_CAPACITY</span> <span class="operator">=</span> <span class="number">1</span> &lt;&lt; <span class="number">30</span>; </span><br></pre></td></tr></table></figure>
-
-
-
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="comment">//可设置初始容量</span></span><br><span class="line"><span class="keyword">public</span> <span class="title function_">HashMap</span><span class="params">(<span class="type">int</span> initialCapacity)</span> &#123;</span><br><span class="line">    <span class="comment">//调用其他构造方法</span></span><br><span class="line">    <span class="built_in">this</span>(initialCapacity, DEFAULT_LOAD_FACTOR);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>调用的构造方法</p>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"> <span class="comment">//真正实例化的构造器   参数：1、默认容量   2、加载因子</span></span><br><span class="line"> <span class="keyword">public</span> <span class="title function_">HashMap</span><span class="params">(<span class="type">int</span> initialCapacity, <span class="type">float</span> loadFactor)</span> &#123;</span><br><span class="line">     	<span class="comment">//判断当前设置的默认容量是否为0 ，为0抛出异常</span></span><br><span class="line">        <span class="keyword">if</span> (initialCapacity &lt; <span class="number">0</span>)</span><br><span class="line">            <span class="keyword">throw</span> <span class="keyword">new</span> <span class="title class_">IllegalArgumentException</span>(<span class="string">&quot;Illegal initial capacity: &quot;</span> +</span><br><span class="line">                                               initialCapacity);</span><br><span class="line">     	<span class="comment">//判断是否超出最大容量，如果超出就赋予最大容量</span></span><br><span class="line">        <span class="keyword">if</span> (initialCapacity &gt; MAXIMUM_CAPACITY)</span><br><span class="line">            initialCapacity = MAXIMUM_CAPACITY;</span><br><span class="line">     	<span class="comment">//判断当前加载因子是否小于等于0 Float.isNaN这个方法目前还不是很清楚</span></span><br><span class="line">        <span class="keyword">if</span> (loadFactor &lt;= <span class="number">0</span> || Float.isNaN(loadFactor))</span><br><span class="line">            <span class="keyword">throw</span> <span class="keyword">new</span> <span class="title class_">IllegalArgumentException</span>(<span class="string">&quot;Illegal load factor: &quot;</span> +</span><br><span class="line">                                               loadFactor);</span><br><span class="line">        <span class="built_in">this</span>.loadFactor = loadFactor;  <span class="comment">//为加载因素赋值</span></span><br><span class="line">        <span class="built_in">this</span>.threshold = tableSizeFor(initialCapacity);  <span class="comment">//根据当前容量得出下次需要扩容的临界点</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-
-
-
-
-<h2 id="Put："><a href="#Put：" class="headerlink" title="Put："></a>Put：</h2><p>在初始化我们可以看出都没有进行数据结构的创建，其实HashMap使用的是懒加载默认，但我们真正要存储时再进行创建</p>
-<h3 id="添加方法："><a href="#添加方法：" class="headerlink" title="添加方法："></a>添加方法：</h3><figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> V <span class="title function_">put</span><span class="params">(K key, V value)</span> &#123;</span><br><span class="line">     <span class="keyword">return</span> putVal(hash(key), key, value, <span class="literal">false</span>, <span class="literal">true</span>);</span><br><span class="line"> &#125;</span><br></pre></td></tr></table></figure>
-
-
-
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="comment">//更加key获取hash值</span></span><br><span class="line"><span class="keyword">static</span> <span class="keyword">final</span> <span class="type">int</span> <span class="title function_">hash</span><span class="params">(Object key)</span> &#123;</span><br><span class="line">        <span class="type">int</span> h;</span><br><span class="line">        <span class="keyword">return</span> (key == <span class="literal">null</span>) ? <span class="number">0</span> : (h = key.hashCode()) ^ (h &gt;&gt;&gt; <span class="number">16</span>);</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
-
-
-
-<h4 id="第一次添加："><a href="#第一次添加：" class="headerlink" title="第一次添加："></a>第一次添加：</h4><h5 id="主方法："><a href="#主方法：" class="headerlink" title="主方法："></a>主方法：</h5><figure class="highlight java"><table><tr><td class="code"><pre><span class="line"></span><br><span class="line"><span class="keyword">transient</span> Node&lt;K,V&gt;[] table;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment">//执行方法</span></span><br><span class="line"><span class="keyword">final</span> V <span class="title function_">putVal</span><span class="params">(<span class="type">int</span> hash, K key, V value, <span class="type">boolean</span> onlyIfAbsent,</span></span><br><span class="line"><span class="params">                   <span class="type">boolean</span> evict)</span> &#123;</span><br><span class="line">   		<span class="comment">// 1、 tab为当前map数组，p为当前节点，n为数组长度，i为当键值对在数值的下表位置</span></span><br><span class="line">        Node&lt;K,V&gt;[] tab; Node&lt;K,V&gt; p; <span class="type">int</span> n, i;      </span><br><span class="line">    	<span class="comment">//2、 tab为空 n为0  此处判断的同时也为我们的tab指向了table  n值为0</span></span><br><span class="line">        <span class="keyword">if</span> ((tab = table) == <span class="literal">null</span> || (n = tab.length) == <span class="number">0</span>)</span><br><span class="line">            <span class="comment">//3、调用初始化方法  返回新map数组赋值为局部tab，并获取容量大小赋值给局部n</span></span><br><span class="line">            n = (tab = resize()).length;</span><br><span class="line">    	<span class="comment">// 4、获取当前数组长度减一 并使用 ‘与’ 逻辑运算符获取 数组下表位置赋值给i 并获取当前下表下的内容赋值给p，判断是否为空</span></span><br><span class="line">        <span class="keyword">if</span> ((p = tab[i = (n - <span class="number">1</span>) &amp; hash]) == <span class="literal">null</span>)</span><br><span class="line">            <span class="comment">//5、没有内容就进行创建一个node（非树型）节点，放入当前下标中</span></span><br><span class="line">            tab[i] = newNode(hash, key, value, <span class="literal">null</span>);</span><br><span class="line">        <span class="keyword">else</span> &#123;</span><br><span class="line">            Node&lt;K,V&gt; e; K k;</span><br><span class="line">            <span class="keyword">if</span> (p.hash == hash &amp;&amp;</span><br><span class="line">                ((k = p.key) == key || (key != <span class="literal">null</span> &amp;&amp; key.equals(k))))</span><br><span class="line">                e = p;</span><br><span class="line">            <span class="keyword">else</span> <span class="keyword">if</span> (p <span class="keyword">instanceof</span> TreeNode)</span><br><span class="line">                e = ((TreeNode&lt;K,V&gt;)p).putTreeVal(<span class="built_in">this</span>, tab, hash, key, value);</span><br><span class="line">            <span class="keyword">else</span> &#123;</span><br><span class="line">                <span class="keyword">for</span> (<span class="type">int</span> <span class="variable">binCount</span> <span class="operator">=</span> <span class="number">0</span>; ; ++binCount) &#123;</span><br><span class="line">                    <span class="keyword">if</span> ((e = p.next) == <span class="literal">null</span>) &#123;</span><br><span class="line">                        p.next = newNode(hash, key, value, <span class="literal">null</span>);</span><br><span class="line">                        <span class="keyword">if</span> (binCount &gt;= TREEIFY_THRESHOLD - <span class="number">1</span>) <span class="comment">// -1 for 1st</span></span><br><span class="line">                            treeifyBin(tab, hash);</span><br><span class="line">                        <span class="keyword">break</span>;</span><br><span class="line">                    &#125;</span><br><span class="line">                    <span class="keyword">if</span> (e.hash == hash &amp;&amp;</span><br><span class="line">                        ((k = e.key) == key || (key != <span class="literal">null</span> &amp;&amp; key.equals(k))))</span><br><span class="line">                        <span class="keyword">break</span>;</span><br><span class="line">                    p = e;</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="keyword">if</span> (e != <span class="literal">null</span>) &#123; <span class="comment">// existing mapping for key</span></span><br><span class="line">                <span class="type">V</span> <span class="variable">oldValue</span> <span class="operator">=</span> e.value;</span><br><span class="line">                <span class="keyword">if</span> (!onlyIfAbsent || oldValue == <span class="literal">null</span>)</span><br><span class="line">                    e.value = value;</span><br><span class="line">                afterNodeAccess(e);</span><br><span class="line">                <span class="keyword">return</span> oldValue;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    	<span class="comment">//6、modCount进行计数  这个便利店作用显目有解释</span></span><br><span class="line">        ++modCount;</span><br><span class="line">    	<span class="comment">//7、size++ 判断当前加入数组中的数量是否大于临界值</span></span><br><span class="line">        <span class="keyword">if</span> (++size &gt; threshold)</span><br><span class="line">            resize();</span><br><span class="line">        afterNodeInsertion(evict);</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">null</span>;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
-
-
-
-<h5 id="HashMap初始化及调整大小方法："><a href="#HashMap初始化及调整大小方法：" class="headerlink" title="HashMap初始化及调整大小方法："></a><strong>HashMap初始化及调整大小方法：</strong></h5><p>​	这个方法主要是为了当我们数组为null没有进行初始化时进行初始化，并设置临界值，</p>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">final</span> Node&lt;K,V&gt;[] resize() &#123;</span><br><span class="line">    Node&lt;K,V&gt;[] oldTab = table; <span class="comment">//3.1、hashMap数组</span></span><br><span class="line">    <span class="type">int</span> <span class="variable">oldCap</span> <span class="operator">=</span> (oldTab == <span class="literal">null</span>) ? <span class="number">0</span> : oldTab.length;  <span class="comment">//3.2、旧数组大小，如果数组为空则为0 ，不为空则为数组大小</span></span><br><span class="line">    <span class="type">int</span> <span class="variable">oldThr</span> <span class="operator">=</span> threshold; <span class="comment">//3.3、临界点 旧</span></span><br><span class="line">    <span class="type">int</span> newCap, newThr = <span class="number">0</span>;  <span class="comment">//3.4、newCap 数组大小 新    newThr：临界点 新</span></span><br><span class="line">    <span class="keyword">if</span> (oldCap &gt; <span class="number">0</span>) &#123; <span class="comment">//3.5、判断旧数组大小是否大于0 第一次不会进入</span></span><br><span class="line">        <span class="comment">//判断旧容量是否为最大值了</span></span><br><span class="line">        <span class="keyword">if</span> (oldCap &gt;= MAXIMUM_CAPACITY) &#123;</span><br><span class="line">            <span class="comment">//如果数值为最大值了就将最大值为临界点</span></span><br><span class="line">            threshold = Integer.MAX_VALUE;</span><br><span class="line">            <span class="comment">//并返回就数组回去，不进行扩容</span></span><br><span class="line">            <span class="keyword">return</span> oldTab;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="comment">//进行扩容参数初始化，新长度为原来的1倍，新临界点也为原来的1倍</span></span><br><span class="line">        <span class="keyword">else</span> <span class="keyword">if</span> ((newCap = oldCap &lt;&lt; <span class="number">1</span>) &lt; MAXIMUM_CAPACITY &amp;&amp;</span><br><span class="line">                 oldCap &gt;= DEFAULT_INITIAL_CAPACITY)</span><br><span class="line">            newThr = oldThr &lt;&lt; <span class="number">1</span>; <span class="comment">// double threshold</span></span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">else</span> <span class="keyword">if</span> (oldThr &gt; <span class="number">0</span>) <span class="comment">//3.6、判断临界值 旧 是否大于0 第一次不会进入</span></span><br><span class="line">        newCap = oldThr;</span><br><span class="line">    <span class="keyword">else</span> &#123;</span><br><span class="line">        <span class="comment">//3.7、进行基础数据初始化</span></span><br><span class="line">        newCap = DEFAULT_INITIAL_CAPACITY; <span class="comment">//将默认容量大小 16 赋予新数组大小</span></span><br><span class="line">        <span class="comment">//新数组容量与加载因子进行计算得出 临界点 并赋值为临界点局部变量 新</span></span><br><span class="line">        newThr = (<span class="type">int</span>)(DEFAULT_LOAD_FACTOR * DEFAULT_INITIAL_CAPACITY);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">//3.8判断临界值 新 是否为0  一般情况下不会进入</span></span><br><span class="line">    <span class="keyword">if</span> (newThr == <span class="number">0</span>) &#123;</span><br><span class="line">        <span class="type">float</span> <span class="variable">ft</span> <span class="operator">=</span> (<span class="type">float</span>)newCap * loadFactor;</span><br><span class="line">        newThr = (newCap &lt; MAXIMUM_CAPACITY &amp;&amp; ft &lt; (<span class="type">float</span>)MAXIMUM_CAPACITY ?</span><br><span class="line">                  (<span class="type">int</span>)ft : Integer.MAX_VALUE);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">//3.9、将局部临界点赋值给全局临界点</span></span><br><span class="line">    threshold = newThr; </span><br><span class="line">    </span><br><span class="line">    	<span class="comment">//3.10、初始化新map数组 长度为局部newCap大小 </span></span><br><span class="line">        Node&lt;K,V&gt;[] newTab = (Node&lt;K,V&gt;[])<span class="keyword">new</span> <span class="title class_">Node</span>[newCap];</span><br><span class="line">     <span class="comment">//3.11、将新map数组</span></span><br><span class="line">    table = newTab; </span><br><span class="line">    <span class="comment">//3.12、判断旧map数组是否为空 第一次不会进入</span></span><br><span class="line">    <span class="keyword">if</span> (oldTab != <span class="literal">null</span>) &#123;</span><br><span class="line">        <span class="keyword">for</span> (<span class="type">int</span> <span class="variable">j</span> <span class="operator">=</span> <span class="number">0</span>; j &lt; oldCap; ++j) &#123;</span><br><span class="line">            Node&lt;K,V&gt; e;</span><br><span class="line">            <span class="keyword">if</span> ((e = oldTab[j]) != <span class="literal">null</span>) &#123;</span><br><span class="line">                oldTab[j] = <span class="literal">null</span>;</span><br><span class="line">                <span class="keyword">if</span> (e.next == <span class="literal">null</span>)</span><br><span class="line">                    newTab[e.hash &amp; (newCap - <span class="number">1</span>)] = e;</span><br><span class="line">                <span class="keyword">else</span> <span class="keyword">if</span> (e <span class="keyword">instanceof</span> TreeNode)</span><br><span class="line">                    ((TreeNode&lt;K,V&gt;)e).split(<span class="built_in">this</span>, newTab, j, oldCap);</span><br><span class="line">                <span class="keyword">else</span> &#123; <span class="comment">// preserve order</span></span><br><span class="line">                    Node&lt;K,V&gt; loHead = <span class="literal">null</span>, loTail = <span class="literal">null</span>;</span><br><span class="line">                    Node&lt;K,V&gt; hiHead = <span class="literal">null</span>, hiTail = <span class="literal">null</span>;</span><br><span class="line">                    Node&lt;K,V&gt; next;</span><br><span class="line">                    <span class="keyword">do</span> &#123;</span><br><span class="line">                        next = e.next;</span><br><span class="line">                        <span class="keyword">if</span> ((e.hash &amp; oldCap) == <span class="number">0</span>) &#123;</span><br><span class="line">                            <span class="keyword">if</span> (loTail == <span class="literal">null</span>)</span><br><span class="line">                                loHead = e;</span><br><span class="line">                            <span class="keyword">else</span></span><br><span class="line">                                loTail.next = e;</span><br><span class="line">                            loTail = e;</span><br><span class="line">                        &#125;</span><br><span class="line">                        <span class="keyword">else</span> &#123;</span><br><span class="line">                            <span class="keyword">if</span> (hiTail == <span class="literal">null</span>)</span><br><span class="line">                                hiHead = e;</span><br><span class="line">                            <span class="keyword">else</span></span><br><span class="line">                                hiTail.next = e;</span><br><span class="line">                            hiTail = e;</span><br><span class="line">                        &#125;</span><br><span class="line">                    &#125; <span class="keyword">while</span> ((e = next) != <span class="literal">null</span>);</span><br><span class="line">                    <span class="keyword">if</span> (loTail != <span class="literal">null</span>) &#123;</span><br><span class="line">                        loTail.next = <span class="literal">null</span>;</span><br><span class="line">                        newTab[j] = loHead;</span><br><span class="line">                    &#125;</span><br><span class="line">                    <span class="keyword">if</span> (hiTail != <span class="literal">null</span>) &#123;</span><br><span class="line">                        hiTail.next = <span class="literal">null</span>;</span><br><span class="line">                        newTab[j + oldCap] = hiHead;</span><br><span class="line">                    &#125;</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">//返回map数组 新</span></span><br><span class="line">    <span class="keyword">return</span> newTab;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-
-
-<h5 id="创建节点方法："><a href="#创建节点方法：" class="headerlink" title="创建节点方法："></a>创建节点方法：</h5><p>​	创建非树型节点</p>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line">Node&lt;K,V&gt; <span class="title function_">newNode</span><span class="params">(<span class="type">int</span> hash, K key, V value, Node&lt;K,V&gt; next)</span> &#123;</span><br><span class="line">       <span class="keyword">return</span> <span class="keyword">new</span> <span class="title class_">Node</span>&lt;&gt;(hash, key, value, next);</span><br><span class="line">   &#125;</span><br></pre></td></tr></table></figure>
-
-
-
-<h5 id="modCount作用："><a href="#modCount作用：" class="headerlink" title="modCount作用："></a>modCount作用：</h5><p>Fail-Fast 机制<br>我们知道 java.util.HashMap 不是线程安全的，因此如果在使用迭代器的过程中有其他线程修改了map，那么将抛出ConcurrentModificationException，这就是所谓fail-fast策略。这一策略在源码中的实现是通过 modCount 域，modCount 顾名思义就是修改次数，对HashMap 内容的修改都将增加这个值，那么在迭代器初始化过程中会将这个值赋给迭代器的 expectedModCount。在迭代过程中，判断 modCount 跟 expectedModCount 是否相等，如果不相等就表示已经有其他线程修改了 Map：注意到 modCount 声明为 volatile，保证线程之间修改的可见性。</p>
-<h4 id="二次添加："><a href="#二次添加：" class="headerlink" title="二次添加："></a>二次添加：</h4><h5 id="主方法：-1"><a href="#主方法：-1" class="headerlink" title="主方法："></a>主方法：</h5><figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">transient</span> Node&lt;K,V&gt;[] table;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment">//执行方法</span></span><br><span class="line"><span class="keyword">final</span> V <span class="title function_">putVal</span><span class="params">(<span class="type">int</span> hash, K key, V value, <span class="type">boolean</span> onlyIfAbsent,</span></span><br><span class="line"><span class="params">                   <span class="type">boolean</span> evict)</span> &#123;</span><br><span class="line">   		<span class="comment">// 1、 tab为当前map数组，p为当前节点，n为数组长度，i为当键值对在数值的下表位置</span></span><br><span class="line">        Node&lt;K,V&gt;[] tab; Node&lt;K,V&gt; p; <span class="type">int</span> n, i;      </span><br><span class="line">    	<span class="comment">//2、此处判断的同时也为我们的tab指向了table  n值为tab的长度 由于不为空 不进入该方法</span></span><br><span class="line">        <span class="keyword">if</span> ((tab = table) == <span class="literal">null</span> || (n = tab.length) == <span class="number">0</span>)</span><br><span class="line">            n = (tab = resize()).length;</span><br><span class="line">    	<span class="comment">// 3、获取当前数组长度减一 并使用 ‘与’ 逻辑运算符获取 数组下表位置赋值给i 并获取当前下表下的内容赋值给p，判断是否为空</span></span><br><span class="line">        <span class="keyword">if</span> ((p = tab[i = (n - <span class="number">1</span>) &amp; hash]) == <span class="literal">null</span>)</span><br><span class="line">            <span class="comment">//4、没有内容就进行创建一个node（非树型）节点，放入当前下标中</span></span><br><span class="line">            tab[i] = newNode(hash, key, value, <span class="literal">null</span>);</span><br><span class="line">        <span class="keyword">else</span> &#123;</span><br><span class="line">            Node&lt;K,V&gt; e; K k;</span><br><span class="line">            <span class="keyword">if</span> (p.hash == hash &amp;&amp;</span><br><span class="line">                ((k = p.key) == key || (key != <span class="literal">null</span> &amp;&amp; key.equals(k))))</span><br><span class="line">                e = p;</span><br><span class="line">            <span class="keyword">else</span> <span class="keyword">if</span> (p <span class="keyword">instanceof</span> TreeNode)</span><br><span class="line">                e = ((TreeNode&lt;K,V&gt;)p).putTreeVal(<span class="built_in">this</span>, tab, hash, key, value);</span><br><span class="line">            <span class="keyword">else</span> &#123;</span><br><span class="line">                <span class="keyword">for</span> (<span class="type">int</span> <span class="variable">binCount</span> <span class="operator">=</span> <span class="number">0</span>; ; ++binCount) &#123;</span><br><span class="line">                    <span class="keyword">if</span> ((e = p.next) == <span class="literal">null</span>) &#123;</span><br><span class="line">                        p.next = newNode(hash, key, value, <span class="literal">null</span>);</span><br><span class="line">                        <span class="keyword">if</span> (binCount &gt;= TREEIFY_THRESHOLD - <span class="number">1</span>) <span class="comment">// -1 for 1st</span></span><br><span class="line">                            treeifyBin(tab, hash);</span><br><span class="line">                        <span class="keyword">break</span>;</span><br><span class="line">                    &#125;</span><br><span class="line">                    <span class="keyword">if</span> (e.hash == hash &amp;&amp;</span><br><span class="line">                        ((k = e.key) == key || (key != <span class="literal">null</span> &amp;&amp; key.equals(k))))</span><br><span class="line">                        <span class="keyword">break</span>;</span><br><span class="line">                    p = e;</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="keyword">if</span> (e != <span class="literal">null</span>) &#123; <span class="comment">// existing mapping for key</span></span><br><span class="line">                <span class="type">V</span> <span class="variable">oldValue</span> <span class="operator">=</span> e.value;</span><br><span class="line">                <span class="keyword">if</span> (!onlyIfAbsent || oldValue == <span class="literal">null</span>)</span><br><span class="line">                    e.value = value;</span><br><span class="line">                afterNodeAccess(e);</span><br><span class="line">                <span class="keyword">return</span> oldValue;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    	<span class="comment">//5、modCount进行计数  这个便利店作用显目有解释</span></span><br><span class="line">        ++modCount;</span><br><span class="line">    	<span class="comment">//6、size++ 判断当前加入数组中的数量是否大于临界值</span></span><br><span class="line">        <span class="keyword">if</span> (++size &gt; threshold)</span><br><span class="line">            resize();</span><br><span class="line">        afterNodeInsertion(evict);</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">null</span>;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
-
-
-
-
-
-<h4 id="添加至同一个下标中："><a href="#添加至同一个下标中：" class="headerlink" title="添加至同一个下标中："></a>添加至同一个下标中：</h4><p>此处是第二次添加，第一次添加于上面无差别</p>
-<p><strong>注意，要两个key的Hash值相同</strong></p>
-<h5 id="主方法：-2"><a href="#主方法：-2" class="headerlink" title="主方法："></a>主方法：</h5><figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">transient</span> Node&lt;K,V&gt;[] table;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment">//执行方法</span></span><br><span class="line"><span class="keyword">final</span> V <span class="title function_">putVal</span><span class="params">(<span class="type">int</span> hash, K key, V value, <span class="type">boolean</span> onlyIfAbsent,</span></span><br><span class="line"><span class="params">                   <span class="type">boolean</span> evict)</span> &#123;</span><br><span class="line">   		<span class="comment">// 1、 tab为当前map数组，p为当前节点（会随着循环链表成为循环到的那个结构），n为数组长度，i为当键值对在数值的下表位置</span></span><br><span class="line">        Node&lt;K,V&gt;[] tab; Node&lt;K,V&gt; p; <span class="type">int</span> n, i;      </span><br><span class="line">    	<span class="comment">//2、此处判断的同时也为我们的tab指向了table  n值为tab的长度 由于不为空 不进入该方法</span></span><br><span class="line">        <span class="keyword">if</span> ((tab = table) == <span class="literal">null</span> || (n = tab.length) == <span class="number">0</span>)</span><br><span class="line">            n = (tab = resize()).length;</span><br><span class="line">    	<span class="comment">// 3、获取当前数组长度减一 并使用 ‘与’ 逻辑运算符获取 数组下表位置赋值给i 并获取当前下表下的内容赋值给p，判断是否为空</span></span><br><span class="line">    	<span class="comment">//此次hash碰撞，下表相同，进行else</span></span><br><span class="line">        <span class="keyword">if</span> ((p = tab[i = (n - <span class="number">1</span>) &amp; hash]) == <span class="literal">null</span>)</span><br><span class="line">            tab[i] = newNode(hash, key, value, <span class="literal">null</span>);</span><br><span class="line">        <span class="keyword">else</span> &#123;</span><br><span class="line">            <span class="comment">//4、e 局部e为临时存储变量，会一直改变 ，  k为当前数值中需要对比节点的key</span></span><br><span class="line">            Node&lt;K,V&gt; e; K k; </span><br><span class="line">            <span class="keyword">if</span> (p.hash == hash &amp;&amp; <span class="comment">//5、判断当前比较的节点的hash值与本次添加的hash值是否相同</span></span><br><span class="line">                <span class="comment">//此处为k进行赋值并判断他们的值是否相同 </span></span><br><span class="line">                ((k = p.key) == key || (key != <span class="literal">null</span> &amp;&amp; key.equals(k))))</span><br><span class="line">                <span class="comment">//如果key相同，将当前节点赋值给我们的e，下面会将我们要添加的与当前的value进行替换</span></span><br><span class="line">                e = p;</span><br><span class="line">            <span class="comment">//6、判断当前是否为树节点</span></span><br><span class="line">            <span class="keyword">else</span> <span class="keyword">if</span> (p <span class="keyword">instanceof</span> TreeNode)</span><br><span class="line">                e = ((TreeNode&lt;K,V&gt;)p).putTreeVal(<span class="built_in">this</span>, tab, hash, key, value);</span><br><span class="line">            <span class="keyword">else</span> &#123;</span><br><span class="line">                <span class="comment">//7、无限循环</span></span><br><span class="line">                <span class="keyword">for</span> (<span class="type">int</span> <span class="variable">binCount</span> <span class="operator">=</span> <span class="number">0</span>; ; ++binCount) &#123;</span><br><span class="line">                    <span class="comment">//8、将局部e赋值为当前数组上的节点的下一个节点，并判断是否为空</span></span><br><span class="line">                    <span class="keyword">if</span> ((e = p.next) == <span class="literal">null</span>) &#123;</span><br><span class="line">                        <span class="comment">//9、创建一个节点赋值在当前循环到的节点的下一个节点</span></span><br><span class="line">                        p.next = newNode(hash, key, value, <span class="literal">null</span>);</span><br><span class="line">                        <span class="comment">//10、判断当前循环长度是否大于等于8为，注意从0开始的，如果为true则转换为红黑树</span></span><br><span class="line">                        <span class="keyword">if</span> (binCount &gt;= TREEIFY_THRESHOLD - <span class="number">1</span>) <span class="comment">// -1 for 1st</span></span><br><span class="line">                            treeifyBin(tab, hash);</span><br><span class="line">                        <span class="keyword">break</span>;</span><br><span class="line">                    &#125;</span><br><span class="line">                    <span class="comment">//11、判断循环中的节点是否与我们当前要添加的key相同，相同就终止循环</span></span><br><span class="line">                    <span class="keyword">if</span> (e.hash == hash &amp;&amp;</span><br><span class="line">                        ((k = e.key) == key || (key != <span class="literal">null</span> &amp;&amp; key.equals(k))))</span><br><span class="line">                        <span class="keyword">break</span>;</span><br><span class="line">                    <span class="comment">//不一样就将当前遍历到的节点赋值给p进行下一轮遍历</span></span><br><span class="line">                    p = e;</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="comment">//判断e是否为null，不为null</span></span><br><span class="line">            <span class="keyword">if</span> (e != <span class="literal">null</span>) &#123; <span class="comment">// existing mapping for key</span></span><br><span class="line">                <span class="comment">//将原来的旧值赋值给我们的oldValue，等会将这个值返回给我们</span></span><br><span class="line">                <span class="type">V</span> <span class="variable">oldValue</span> <span class="operator">=</span> e.value;</span><br><span class="line">                <span class="keyword">if</span> (!onlyIfAbsent || oldValue == <span class="literal">null</span>)</span><br><span class="line">                    <span class="comment">//将我们新添加的value赋给当前节点的value进行替换</span></span><br><span class="line">                    e.value = value;</span><br><span class="line">                afterNodeAccess(e);</span><br><span class="line">                <span class="comment">//返回旧值</span></span><br><span class="line">                <span class="keyword">return</span> oldValue;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    	<span class="comment">//5、modCount进行计数  这个便利店作用显目有解释</span></span><br><span class="line">        ++modCount;</span><br><span class="line">    	<span class="comment">//6、size++ 判断当前加入数组中的数量是否大于临界值</span></span><br><span class="line">        <span class="keyword">if</span> (++size &gt; threshold)</span><br><span class="line">            resize();</span><br><span class="line">        afterNodeInsertion(evict);</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">null</span>;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
-
-
-
-
-
-<h4 id="链表超出8位："><a href="#链表超出8位：" class="headerlink" title="链表超出8位："></a>链表超出8位：</h4><p>多余的就不多看了，都是上面一样了，我们直接看转红黑树的过程</p>
-<p>如果数组小于64则不会进行红黑树的转换，还是进行扩容</p>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">final</span> <span class="keyword">void</span> <span class="title function_">treeifyBin</span><span class="params">(Node&lt;K,V&gt;[] tab, <span class="type">int</span> hash)</span> &#123;</span><br><span class="line">    <span class="type">int</span> n, index; Node&lt;K,V&gt; e;</span><br><span class="line">    <span class="comment">//判断数组长度是否小于64，小于则是进行扩容</span></span><br><span class="line">    <span class="keyword">if</span> (tab == <span class="literal">null</span> || (n = tab.length) &lt; MIN_TREEIFY_CAPACITY)</span><br><span class="line">      <span class="comment">//小于64于则进行扩容，还不会进行红黑树转换</span></span><br><span class="line">        resize();</span><br><span class="line">    <span class="keyword">else</span> <span class="keyword">if</span> ((e = tab[index = (n - <span class="number">1</span>) &amp; hash]) != <span class="literal">null</span>) &#123;</span><br><span class="line">        TreeNode&lt;K,V&gt; hd = <span class="literal">null</span>, tl = <span class="literal">null</span>;</span><br><span class="line">        <span class="keyword">do</span> &#123;</span><br><span class="line">            TreeNode&lt;K,V&gt; p = replacementTreeNode(e, <span class="literal">null</span>);</span><br><span class="line">            <span class="keyword">if</span> (tl == <span class="literal">null</span>)</span><br><span class="line">                hd = p;</span><br><span class="line">            <span class="keyword">else</span> &#123;</span><br><span class="line">                p.prev = tl;</span><br><span class="line">                tl.next = p;</span><br><span class="line">            &#125;</span><br><span class="line">            tl = p;</span><br><span class="line">        &#125; <span class="keyword">while</span> ((e = e.next) != <span class="literal">null</span>);</span><br><span class="line">        <span class="keyword">if</span> ((tab[index] = hd) != <span class="literal">null</span>)</span><br><span class="line">            hd.treeify(tab);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-]]></content>
-      <categories>
-        <category>Java</category>
-        <category>java集合框架</category>
-      </categories>
-      <tags>
-        <tag>教程</tag>
-        <tag>java</tag>
-        <tag>java集合框架</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>hibernate快速入门</title>
     <url>/2022/06/30/Hibernate%E5%BF%AB%E9%80%9F%E5%85%A5%E9%97%A8/</url>
     <content><![CDATA[<p>前言：</p>
@@ -950,277 +850,103 @@
       </tags>
   </entry>
   <entry>
-    <title>MySQL锁的理解</title>
-    <url>/2022/06/11/MySQL%E9%94%81%E7%9A%84%E7%90%86%E8%A7%A3/</url>
+    <title>HashMap源码讲解</title>
+    <url>/2022/07/01/HashMap%E6%BA%90%E7%A0%81%E8%AE%B2%E8%A7%A3/</url>
     <content><![CDATA[<p>前言：</p>
-<p>本文为百度文章高级互联网专家的原创文章，本篇仅供学习使用，尊重原创</p>
-<p>原文链接：<a href="https://baijiahao.baidu.com/s?id=1709427910908845097&amp;wfr=spider&amp;for=pc">https://baijiahao.baidu.com/s?id=1709427910908845097&amp;wfr=spider&amp;for=pc</a></p>
+<p>本教程简单明了的讲解了java集合中HashMap的底层原理，本文章来源于我好朋友的技术总结，有需要的可以去访问他的博客<br>本文原链接：<a href="https://www.studyhard.site/2022/07/01/HashMap%E6%BA%90%E7%A0%81%E8%AE%B2%E8%A7%A3/">https://www.studyhard.site/2022/07/01/HashMap%E6%BA%90%E7%A0%81%E8%AE%B2%E8%A7%A3/</a></p>
 <hr>
-<h1 id="锁的类型"><a href="#锁的类型" class="headerlink" title="锁的类型"></a>锁的类型</h1><p>InnoDB实现了如下两种标准的行级锁：</p>
-<ul>
-<li><strong>共享锁</strong>（S Lock）：允许事务对一条行数据进行读取</li>
-<li><strong>排他锁</strong>（X Lock）：允许事务对一条行数据进行删除或更新</li>
-</ul>
-<p>如果一个事务T1已经获得了行r的共享锁， 那么另外的事务T2可以立即获得行r的共享锁， 因为读取并没有改变行 r 的数据， 称这种情况为<strong>锁兼容</strong> (Lock Compatible)。 但若有其他的事务T3想获得行r的排他锁， 则其必须等待事务T1, T2释放行r上的共享锁——这种情况称为<strong>锁不兼容</strong>。因为获取排他锁一般是为了改变数据，所以不能同时进行读取或则其他写入操作。</p>
-<p>从上表可以发现，<strong>X锁与任何锁都不兼容，而S锁仅和S锁兼容</strong>。</p>
-<p>此外， InnoDB 存储引擎支持多粒度锁定， 这种锁定允许事务在行级上的锁和表级上的锁同时存在。为了支待在不同粒度上进行加锁操作， InnoDB 存储引擎支持 一种额外的锁方式， 称之为<strong>意向锁</strong> (Intention Lock)。意向锁是将锁定的对象分为多个层次， 意向锁意味着事务希望在更细粒度上进行加锁。</p>
-<p>InnoDB存储引擎支持意向锁设计比较简练，其<strong>意向锁即为表级别的锁</strong>。设计目的主要是为了在事务中揭示下一行将被请求的锁类型。其支持两种意向锁：</p>
-<ul>
-<li><strong>意向共享锁</strong>（IS Lock）：事务想要获得一张表中某几行的共享锁</li>
-<li><strong>意向排他锁</strong>（IX Lock）：事务想要获得一张表中某几行的排他锁</li>
-</ul>
-<p>由于InnoDB存储引擎支持的是行级别的锁，因此<strong>意向锁不会阻塞除全表扫描以外的任何请求</strong>，它们的主要目的是为了表示是否有人请求锁定表中的某一行数据。</p>
-<p>如果没有意向锁，当已经有人使用行锁对表中的某一行进行修改时，如果另外一个请求要对全表进行修改，那么就需要对所有的行是否被锁定进行扫描，在这种情况下，效率是非常低的；不过，在引入意向锁之后，当有人使用行锁对表中的某一行进行修改之前，会先为表添加意向互斥锁（IX），再为行记录添加互斥锁（X），在这时如果有人尝试对全表进行修改就不需要判断表中的每一行数据是否被加锁了，只需要通过等待意向互斥锁被释放就可以了。</p>
-<p>故表级意向锁和行级锁的兼容性如下表所示：</p>
-<h1 id="锁的算法"><a href="#锁的算法" class="headerlink" title="锁的算法"></a>锁的算法</h1><p>InnoDB有三种行锁的算法：</p>
-<ul>
-<li><p><strong>Record Lock</strong></p>
-<p>简单说就是单个行记录上加锁，防止事务间修改或删除数据。Record Lock总是会去锁住索引记录，如果表建立的时候没有设置任何一个索引，InnoDB存储引擎会使用隐式的主键来进行锁定。</p>
-</li>
-<li><p><strong>Gap Lock</strong></p>
-<p>间隙锁，表示只锁住一段范围，<strong>不锁记录本身</strong>，通常表示两个索引记录之间，或者索引上的第一条记录之前，或者最后一条记录之后的锁。</p>
-</li>
-<li><p><strong>Next-Key Lock</strong></p>
-<p>Gap Lock + Record Lock，锁定一个范围及锁定记录本身。例如一个索引有10, 11, 13, 20这四个值，那么该索引可能被Next-key Locking的区间为<code>(负无穷, 10), (10, 11), (11, 13), (12, 20), (20, 正无穷)</code>。需要理解一点，InnoDB中加锁都是给所有记录一条一条加锁，并没有一个直接的范围可以直接锁住，所以会生成多个区间。</p>
-</li>
-</ul>
-<p>MySQL默认情况下使用RR的隔离级别，而<strong>Next-key Lock正是为了解决RR隔离级别下的不可重复读问题和幻读问题</strong>。所谓不可重复读就是一个事务内执行相同的查询，会看到不同的行记录，在RR隔离级别下这是不允许的。</p>
-<p>假设索引上有记录<code>1，4，5，8，12</code>，我们执行类似语句<code>SELECT … WHERE col &gt; 10 FOR UPDATE</code>。如果我们不在<code>(8, 12)</code>之间加上Next-key Lock，另外一个会话就可能向其中插入一条记录9，再执行一次相同的<code>SELECT ... FOR UPDATE</code>，就会看到新插入的记录。这也是为什么MySQL插入一条记录时，需要判断下一条记录上是否加锁了，如果加锁就需要等待。</p>
-<p><strong>InnoDB对行的查询默认采用Next-key算法</strong>。然而，<strong>当查询条件为等值时，且索引有唯一属性时（就是只锁定一条记录），InnoDB存储引擎会对Next-Key Lock进行优化，将其降级为Record Lock</strong>，即仅锁住索引本身，而不是一个范围，因为此时不会产生重复读问题。</p>
-<h1 id="锁读取"><a href="#锁读取" class="headerlink" title="锁读取"></a>锁读取</h1><blockquote>
-<p><strong>一致性非锁定读</strong>(consistent nonlocking read)是指InnoDB存储引擎通过多版本控制(MVCC)读取当前数据库中行数据的方式。如果读取的行正在执行DELETE或UPDATE操作，这时读取操作不会因此去等待行上锁的释放。相反地，InnoDB会去读取行的一个快照。</p>
-</blockquote>
-<p><a href="https://imgtu.com/i/jJJdOK"><img src="https://s1.ax1x.com/2022/07/04/jJJdOK.jpg" alt="jJJdOK.jpg"></a></p>
-<p>上图直观地展现了InnoDB一致性非锁定读的机制。之所以称其为非锁定读，是因为不需要等待行上排他锁的释放。快照数据是指该行的之前版本的数据，每行记录可能有多个版本，一般称这种技术为<strong>行多版本技术</strong>。由此带来的并发控制，称之为<strong>多版本并发控制</strong>(Multi Version Concurrency Control, MVCC)。**InnoDB是通过undo log来实现MVCC。undo log本身用来在事务中回滚数据，因此快照数据本身是没有额外开销。此外，读取快照数据是不需要上锁的，因为没有事务需要对历史的数据进行修改操作。</p>
-<p><strong>一致性非锁定读是InnoDB默认的读取方式</strong>，即读取不会占用和等待行上的锁。但是并不是在每个事务隔离级别下都是采用此种方式。此外，即使都是使用一致性非锁定读，但是对于快照数据的定义也各不相同。</p>
-<p>在事务隔别READ COMMITTED和REPEATABLE READ下，InnoDB使用一致性非锁定读。然而，对于快照数据的定义却不同。</p>
-<p>我们下面举个例子来详细说明一下上述的情况。</p>
-<p><a href="https://imgtu.com/i/jJJ0eO"><img src="https://s1.ax1x.com/2022/07/04/jJJ0eO.jpg" alt="jJJ0eO.jpg"></a></p>
-<p>首先在会话A中显示地开启一个事务，然后读取test表中的id为1的数据，但是事务并没有提交。与此同时，在开启另一个会话B，将test表中id为1的记录修改为id&#x3D;3，但是事务同样也没有提交，这样id&#x3D;1的行其实加了一个排他锁。</p>
-<p>由于InnoDB在READ COMMITTED和REPEATABLE READ事务隔离级别下使用一致性非锁定读，这时如果会话A再次读取id为1的记录，仍然能够读取到相同的数据。此时，READ COMMITTED和REPEATABLE READ事务隔离级别没有任何区别。</p>
-<p>当会话B提交事务后，会话A再次运行<code>SELECT * FROM test WHERE id = 1</code>的SQL语句时，两个事务隔离级别下得到的结果就不一样了：</p>
-<ul>
-<li><strong>对于READ COMMITTED的事务隔离级别，它总是读取行的最新版本</strong>，如果行被锁定了，则读取该行版本的最新一个快照。因为会话B的事务已经提交，所以在该隔离级别下上述SQL语句的结果集是空的。</li>
-<li><strong>对于REPEATABLE READ的事务隔离级别，总是读取事务开始时的行数据</strong>，因此，在该隔离级别下，上述SQL语句仍然会获得相同的数据。</li>
-</ul>
-<p>在默认情况下，即事务的隔离级别是repeatable read模式下，InnoDB存储引擎的SELECT操作使用的是一致性非锁定读。但是在某些情况下，用户需要显示的读取数据操作进行加锁保证数据逻辑的一致性。</p>
-<p>InnoDB提供了两种方式实现一致性锁定读：</p>
-<ul>
-<li><code>select … for udpate</code>，对读取的行加了X锁</li>
-<li><code>select … lock in share mode</code>，对读取的行加了S锁</li>
-</ul>
-<p>需要注意的是，以上两种语句必须在一个事务当中，当事务提交了，锁也就释放了。</p>
-<h1 id="阻塞"><a href="#阻塞" class="headerlink" title="阻塞"></a>阻塞</h1><blockquote>
-<p>因为不同锁之间的兼容性关系，有时候一个事务中的锁需要等待另一个事务中的锁释放它所占用的资源，这就是<strong>阻塞</strong>。</p>
-</blockquote>
-<p>在InnoDB，参数<code>innodb_lock_wait_timeout</code>用来控制等待的时间，<code>innodb_rollback_on_timeout</code>用来设定是否在等待超时后回滚。前者是动态的，后者是静态的。</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">mysql&gt; show variables like &#x27;innodb_lock_wait_timeout&#x27;\G;</span><br><span class="line">*************************** 1. row</span><br><span class="line">Variable_name: innodb_lock_wait_timeout</span><br><span class="line">Value: 50</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">mysql&gt; show variables like &#x27;innodb_rollback_on_timeout&#x27;\G;</span><br><span class="line">1. row</span><br><span class="line">: innodb_rollback_on_timeout</span><br><span class="line">Value: OFF</span><br></pre></td></tr></table></figure>
+<h1 id="HashMap源码："><a href="#HashMap源码：" class="headerlink" title="HashMap源码："></a>HashMap源码：</h1><h2 id="结论："><a href="#结论：" class="headerlink" title="结论："></a>结论：</h2><p>先说下结论，有的小伙伴可能没有心思看看完！</p>
+<p><strong>数据结构：</strong></p>
+<p>加载因子为0.75f</p>
+<p>默认初始容量为16</p>
+<p>扩容为原来的1倍  &lt;&lt;1  临界点也会随着增加1倍 &lt;&lt;1</p>
+<p>依靠每次在数组中添加成功都会自增的size与临界点做比较，是否需要扩容</p>
+<p>如果添加key相同的键值对会进行value的替换，并返回替换掉的value值</p>
+<p>链表未大于等于8位时：</p>
+<p>​	数组加链表，其实就是一个Node类型的数组，而而每个下表都是Node类，Node它的结构为链表的形式，记录下一个、本身键值对，为<strong>单向链表</strong></p>
+<p>转换红黑树条件：</p>
+<p>​	数组长度大于64，并且链表长度大于8才会进行转换</p>
+<p>​	</p>
+<p>与HashTable的区别：</p>
+<p>JDK1.8 ：</p>
+<p>HashMap在添加时进行数组实例化，HashTable实例化时就会进行数组实例化</p>
+<p>HashTable不会转换为红黑树</p>
+<p>线程安全性不同。HashMap线程不安全；Hashtable 中的方法是Synchronize的。<br>key、value是否允许null。HashMap的key和value都是可以是null，key只允许一个null；Hashtable的key和value都不可为null。<br>迭代器不同。HashMap的Iterator是fail-fast迭代器；Hashtable还使用了enumerator迭代器。<br>hash的计算方式不同。HashMap计算了hash值；Hashtable使用了key的hashCode方法。<br>默认初始大小和扩容方式不同。HashMap默认初始大小16，容量必须是2的整数次幂，扩容时将容量变为原来的2倍；Hashtable默认初始大小11，扩容时将容量变为原来的2倍加1。<br>是否有contains方法。HashMap没有contains方法；Hashtable包含contains方法，类似于containsValue。<br>父类不同。HashMap继承自AbstractMap；Hashtable继承自Dictionary。</p>
+<h2 id="HashMap初始化："><a href="#HashMap初始化：" class="headerlink" title="HashMap初始化："></a>HashMap初始化：</h2><p><strong>HashMap有着多个重载的构造方法，接下来 一 一来看看分别有着什么作用！！</strong></p>
+<h3 id="无参构造："><a href="#无参构造：" class="headerlink" title="无参构造："></a>无参构造：</h3><p>无参构造中可以看出我们没有做其他的初始化，只是赋予了一个默认加载因子</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="comment">//常量，加载因子</span></span><br><span class="line"><span class="keyword">static</span> <span class="keyword">final</span> <span class="type">float</span> <span class="variable">DEFAULT_LOAD_FACTOR</span> <span class="operator">=</span> <span class="number">0.75f</span>;</span><br><span class="line"><span class="comment">//真正使用在hashMap中的加载因子</span></span><br><span class="line"><span class="keyword">final</span> <span class="type">float</span> loadFactor;</span><br></pre></td></tr></table></figure>
 
-<h1 id="死锁"><a href="#死锁" class="headerlink" title="死锁"></a>死锁</h1><p>死锁是指两个或两个以上的事务在执行过程中，因争夺资源而造成的一种相互等待的现象。若无外力作用，事务都将无法推进下去。</p>
-<p>解决死锁做简单的方法就是超时，即当两个事务互相等待时，当一个等待时间超过了某一阈值，其中一个事务进行回滚，另一个等待的事务就能继续进行。</p>
-<p>但是如果超时的事务所占权重比较大，如事务更新了很多行，占用了较多的undo log，回滚这个事务的时间相对于另一个事务所占用的时间可能会更多，就显得不合适了。</p>
-<p>因此，除了超时机制，当前数据库都普遍采用<strong>等待图</strong>（wait-for graph）的方式来进行死锁检测。</p>
-<p>wait-for graph要求数据库保存以下两种信息:</p>
-<ul>
-<li>锁的信息链表</li>
-<li>事务等待链表</li>
-</ul>
-<p>通过上述链表可以构造出一张图，而在这个图中若存在回路，就代表存在死锁，因此资源间相互发生等待。在 wait-for graph中,事务为图中的节点。而在图中,事务T1指向T2边的定义为:</p>
-<ul>
-<li>事务T1等待事务T2所占用的资源</li>
-<li>事务T1最终等待T2所占用的资源,也就是事务之间在等待相同的资源,而事务T1发生在事务T2的后面</li>
-</ul>
-<p>来看一个例子：</p>
-<p><a href="https://imgtu.com/i/jJJay6"><img src="https://s1.ax1x.com/2022/07/04/jJJay6.jpg" alt="jJJay6.jpg"></a></p>
-<p>在 Transaction Wait Lists中可以看到共有4个事务t1、t2、t3、t4,故在wait-for graph中应有4个节点。</p>
-<p><a href="https://imgtu.com/i/jJJUQx"><img src="https://s1.ax1x.com/2022/07/04/jJJUQx.jpg" alt="jJJUQx.jpg"></a></p>
-<p>通过上图可以发现存在回路(t1,t2)，因此存在死锁。可以发现wait-for graph是一种较为主动的死锁检测机制，在每个事务请求锁并发生等待时都会判断是否存在回路，若存在则有死锁，通常来说InnoDB存储引擎选择回滚undo量最小的事务。</p>
-<h1 id="InnoDB锁相关状态查询"><a href="#InnoDB锁相关状态查询" class="headerlink" title="InnoDB锁相关状态查询"></a>InnoDB锁相关状态查询</h1><p>用户可以使用<code>INFOMATION_SCHEMA</code>库下的<code>INNODB_TRX</code>、<code>INNODB_LOCKS</code>和<code>INNODB_LOCK_WAITS</code>表来监控当前事务并分析可能出现的锁问题。的关键字段如下：</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">mysql&gt; SELECT * FROM information_schema.INNODB_TRX\G;</span><br><span class="line">************************************* 1.row *********************************************</span><br><span class="line">trx_id: 7311F4</span><br><span class="line">trx_state: LOCK WAIT</span><br><span class="line">trx_started: 2010-01-04 10:49:33</span><br><span class="line">trx_requested_lock_id: 7311F4:96:3:2</span><br><span class="line">trx_wait_started: 2010-01-04 10:49:33</span><br><span class="line">trx_weight: 2</span><br><span class="line">trx_mysql_thread_id: 471719</span><br><span class="line">trx_query: select * from parent lock in share mode</span><br></pre></td></tr></table></figure>
-
-<p>表只能显示当前运行的InnoDB事务，并不能直接判断锁的一些情况。如果需要查看锁，则还需要访问表，该表的关键字段组成如下：</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">mysql&gt; SELECT * FROM.INNODB_LOCKS\G;</span><br><span class="line">1. row</span><br><span class="line">lock_id: 16219:56:4:5</span><br><span class="line">lock_trx_id: 16219</span><br><span class="line">lock_mode: X,GAP</span><br><span class="line">lock_type: RECORD</span><br><span class="line">lock_table: `test`.`z`</span><br><span class="line">lock_index: b</span><br><span class="line">lock_space: 56</span><br><span class="line">lock_page: 4</span><br><span class="line">lock_rec: 5</span><br><span class="line">lock_data: 6, 7</span><br><span class="line">2. row</span><br><span class="line">lock_id: 16218:56:4:5</span><br><span class="line">: 16218</span><br><span class="line">lock_mode: X,GAP</span><br><span class="line">lock_type: RECORD</span><br><span class="line">lock_table: `test`.`z`</span><br><span class="line">lock_index: b</span><br><span class="line">lock_space: 56</span><br><span class="line">lock_page: 4</span><br><span class="line">lock_rec: 5</span><br><span class="line">lock_data: 6, 7</span><br><span class="line">2 rows in set, 1 warning (0.00 sec)</span><br></pre></td></tr></table></figure>
-
-<p>通过表INNODB_LOCKS查看每张表上锁的情况后，用户就可以来判断由此引发的等待情况。当时当事务量非常大，其中锁和等待也时常发生，这个时候就不那么容易判断。但是通过表INNODB_LOCK_WAITS，可以很直观的反应当前事务的等待。表INNODB_LOCK_WAITS由四个字段组成，如下表所示。</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">mysql&gt; SELECT * FROM.INNODB_LOCK_WAITS\G;</span><br><span class="line">*******************************************1.row************************************</span><br><span class="line">requesting_trx_id: 7311F4</span><br><span class="line">requesting_lock_id: 7311F4:96:3:2</span><br><span class="line">blocking_trx_id: 730FEE</span><br><span class="line">blocking_lock_id: 730FEE:96:3:2</span><br></pre></td></tr></table></figure>
-
-<p>通过上述的SQL语句，用户可以清楚直观地看到哪个事务阻塞了另一个事务，然后使用上述的事务ID和锁ID，去INNODB_TRX和INNDOB_LOCKS表中查看更加详细的信息。</p>
-<h1 id="锁的应用实例解析"><a href="#锁的应用实例解析" class="headerlink" title="锁的应用实例解析"></a>锁的应用实例解析</h1><p>有一点需要特别注意，MySQL怎么使用锁，与事务的隔离级别、列上的索引状况等密切相关。单拎出一条SQL语句来讨论加锁的方式以及范围而不考虑使用场景，都是耍流氓的行为。</p>
-<p>下面就不同场景下锁的使用情况做一下对比，深入理解上面的理论知识。</p>
-<h2 id="场景1：RR隔离级别-主键索引"><a href="#场景1：RR隔离级别-主键索引" class="headerlink" title="场景1：RR隔离级别+主键索引"></a>场景1：RR隔离级别+主键索引</h2><p>首先根据如下代码创建测试表t，然后开启两个事务进行操作。</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">create table t(a int primary key);</span><br><span class="line">insert into t select 1;</span><br><span class="line">insert into t select 2;</span><br><span class="line">insert into t select 5;</span><br><span class="line">insert into t select 7;</span><br><span class="line">insert into t select 9;</span><br></pre></td></tr></table></figure>
-
-<p>开启事务1，保持未提交的状态：</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">begin;</span><br><span class="line">select * from t where a=5 for update;</span><br></pre></td></tr></table></figure>
-
-<p>开启事务2并提交：</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">begin;</span><br><span class="line">insert into t select 4;</span><br><span class="line">commit;</span><br></pre></td></tr></table></figure>
-
-<p>表t共有1、2、5、7、9五个值，在上面的例子中，在事务1中首先对<code>a=5</code>进行X锁定，而由于a是主键且唯一，因此锁定的仅是5这个值，而不是（2,5）这个范围。这样在事务2中插入值4而不会阻塞，可以立即插入并返回。即锁定由Next-key Lock算法降级为Record Lock，从而提高应用的并发性。</p>
-<p>需要意的一点是，对于唯一键值的锁定，<strong>Next-Key Lock降级为Record Lock仅存在于查询所有的唯一索引列</strong>。若唯一索引由多个列组成，而查询仅是查找多个唯一索引列中的其中一个，那么查询其实是range类型查询，而不是const类型查询，故InnoDB存储引擎依然使用Next-Key Lock进行锁定。</p>
-<p>但如果对主键进来范围查询时，锁的范围是怎么样的呢？</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">begin;</span><br><span class="line">select * from t where a&lt;=5 for update;</span><br></pre></td></tr></table></figure>
-
-<p>针对下面的sql语句：</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">insert into test.t select 6;</span><br><span class="line">insert into test.t select 8</span><br></pre></td></tr></table></figure>
-
-<p>第一条会产生锁等待，而第二条可以插入成功。</p>
-<p>表t共有1、2、5、7、9五个值，在上面的例子中，在事务1中执行<code>a&lt;=5</code>范围查询时，事务1加锁范围是<code>(负无穷, 1)、(1, 2)、(2, 5)、(5, 7)</code>，且<code>1、2、5、7</code>这四条记录也都加锁了，也就是说再插入<code>&lt;=7</code>的记录都是会产生锁等待，插入记录8是成功的。</p>
-<p>那么InnoDB如何判断是否允许插入数据呢？对于普通索引，insert的加锁策略是：查找小于等于 insert_rec 的第一条记录，然后查看第一条记录的下一个记录是否有Gap锁，有则等待，没有则插入。比如说我们插入6这条记录，首先定位<code>&lt;=6</code>的记录，也就是5，然后确认5的下一条记录是否锁住了Gap，这里也就是7，当7这条记录有锁是代表锁住的是<code>(5, 7)</code>这个范围，就不允许插入（会申请一把插入意向锁），保证了可重复读。证明了在RR隔离级别下使用了Next-key Lock来保证其“可重复读”的特性。如果没有锁就直接插入即可。</p>
-<p>但是如果插入的记录有唯一约束时，只判断下一条记录是否锁住了Gap就不行了，显然会插入重复数据破坏唯一性。这时还会把插入的记录与前一条数据进行比较，如果相同则给插入记录的前一条记录加S Lock（lock in share mode），加锁成功则返回duplicate key，否则等待S Lock。</p>
-<p>这个地方可能有人会有一个疑问，为什么MySQL在加锁时，不直接加5这条记录本身以及&lt;5的记录呢？为什么还要给加锁呢？因为(5, 7)加不加锁并不会影响RR级别可重复读的特性。其实这就跟B+树有关系了，首先MySQL定位到1这条记录并加锁，然后顺着1往后读取数据并加锁，直到读取到第一条不匹配数据才能确定是否停止继续读取数据，而在RR隔离级别下只要被读到的数据都需要进行加锁。如果查询条件是&lt;5，那么加锁只会加到5这条记录为止。</p>
-<p>如果是在RC隔离级别下，只会对符合条件的记录进行加记录锁，不会对满足条件的下一条记录进行加锁。</p>
-<h2 id="场景2：RR隔离级别-普通索引"><a href="#场景2：RR隔离级别-普通索引" class="headerlink" title="场景2：RR隔离级别+普通索引"></a>场景2：RR隔离级别+普通索引</h2><p>正如上面所介绍的，Next-Key Lock降级为Record Lock仅在查询的列是唯一索引且条件为等值查询的情况下。若是辅助索引，则情况会完全不同，</p>
-<p>首先根据如下代码创建测试表z：</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">create table z(id int primary key,b int,index(b));</span><br><span class="line">insert into z values(1,1);</span><br><span class="line">insert into z values(3,1);</span><br><span class="line">insert into z values(5,3);</span><br><span class="line">insert into z values(7,6);</span><br><span class="line">insert into z values(10,8);</span><br></pre></td></tr></table></figure>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="title function_">HashMap</span><span class="params">()</span> &#123;</span><br><span class="line">    <span class="built_in">this</span>.loadFactor = DEFAULT_LOAD_FACTOR; <span class="comment">// 所有字段均为默认值</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
 
 
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">begin;</span><br><span class="line">select * from z where b=3 for update;</span><br></pre></td></tr></table></figure>
 
-<p>这时SQL语句通过索引列b进行查询，因此其使用传统的Next-key Locking技术加锁，并且由于有两个索引，其需要分别进行锁定。对于聚集索引，其仅对列id等于5的索引加上Record Lock。那么，为什么主键索引上的记录也要加锁呢？因为有可能其他事务会根据主键对 z 表进行更新，试想一下，如果主键索引没有加锁，那么显然会存在并发问题。</p>
-<p>而对于辅助索引，其加上的是Next-key Lock，锁定的范围是（1, 3），特别需要注意的是，InnoDB存储引擎还会对辅助索引下一个键值加上Gap lock，即还有一个辅助索引范围为（3, 6）的锁。</p>
-<p>此时，若在新的事务2中运行下面的SQL语句：</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">select * from z where id=5 lock in share mode;</span><br><span class="line">insert into z select 2,1;</span><br><span class="line">insert into z select 4,2;</span><br><span class="line">insert into z select 6,6;</span><br></pre></td></tr></table></figure>
 
-<p>第一个SQL语句，在事务1中执行的SQL语句已经对聚集索引中的列“a&#x3D;5”的值加上X锁，因此执行会被阻塞。</p>
-<p>第二SQL语句，主键插入2，没有问题，插入的辅助索引值1也不在锁定的范围（1,3）中，因此可以执行成功。</p>
-<p>第三个SQL语句，主键插入4，没有问题，插入的辅助索引值2在锁定的范围（1,3）中，因此执行会被阻塞。</p>
-<p>第四个SQL语句，插入的主键6没有被锁定，6也不在范围（1,3）之间。但插入的值6在另一个锁定的范围（3,6）中，故同样需要等待。</p>
-<p>在RR隔离级别下，对于INSERT的操作，其会检查插入记录的下一条记录是否被锁定，若已经被锁定，则不允许操作，从而避免不可重复读问题。而下面的SQL语句，不会被阻塞，可以立即执行：</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">insert into z select 8,6;</span><br><span class="line">insert into z select 2,0;</span><br><span class="line">insert into z select 6,7;</span><br></pre></td></tr></table></figure>
 
-<p>从上面的例子中可以看到，Gap Lock的作用是为了阻止多个事务将记录插入到同一个范围内，解决“不可重复读”问题的产生。例如在上面的例子中，事务1中用户已经锁定了b&#x3D;3的记录，若此时没有Gap Lock锁定<code>(3, 6)</code>，那么用户可以插入索引b列为3的记录，这会导致事务1中的用户再次执行同样的查询时会返回不同的记录，即产生不可重复读问题。</p>
-<p>这里有一个问题值得思考一下，为什么插入<code>(6, 6)</code>不允许，而插入<code>(8, 6)</code>是允许的。这跟InnoDB索引结构有关系，我们知道二级索引是指向主键，所以结构如：<code>(1, 1), (1, 3), (3, 5), (6, 7), (8, 10)</code>。真正的Gap锁锁住的也是<code>((1, 1), (1, 3))</code>这样的结构，所以当我们插入<code>(6, 6)</code>时，需要插入到<code>(3, 5), (6, 7)</code>之间，这区间被锁，所以无法插入；而我们插入<code>(8, 6)</code>是需要插入到<code>(6, 7), (8, 10)</code>之间，没有锁存在，所以可以插入成功。</p>
-<p>另外，在RR隔离级别下，我们访问条件为二级索引的情况下，就算访问一条不存在的记录同样需要加Next-key Lokcs，比如我们查询</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">select * from z where b=7 for update;</span><br></pre></td></tr></table></figure>
 
-<p>InnoDB会对(6, 8)这个区间加了Gap Lock，也就是说插入这个区间的数据都会被阻塞。</p>
-<p>虽然在RR隔离级别默认使用Gap Lock，但用户可以通过以下两种方式来显式地关闭Gap Lock：</p>
-<ul>
-<li>将事务的隔离级别设置为READ COMMITTED；</li>
-<li>将参数<code>innodb_locks_unsafe_for_binlog</code>设置为1；</li>
-</ul>
-<p>当设置了上述参数或隔离级别调整到<strong>READ COMMITTED</strong>时，除了外键约束和唯一性检查（duplicate key）依然需要Gap Lock，其余情况仅使用Record Lock进行锁定。但需要知道的是，上述设置破坏了事务的隔离性，并且对于MySQL复制来说，可能会导致主从数据的不一致。虽然MySQL目前默认隔离级别是RR，但是基本生产环境标配基本都是RC隔离级别+ROW格式。</p>
-<h2 id="场景3：RC隔离级别-主键索引"><a href="#场景3：RC隔离级别-主键索引" class="headerlink" title="场景3：RC隔离级别+主键索引"></a>场景3：RC隔离级别+主键索引</h2><p>将事务隔离级别切为RC，开启事务1，保持未提交的状态：</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">begin;</span><br><span class="line">select * from z where id&gt;3 for update;</span><br></pre></td></tr></table></figure>
+<h3 id="有参构造："><a href="#有参构造：" class="headerlink" title="有参构造："></a>有参构造：</h3><h4 id="设置默认容量构造器："><a href="#设置默认容量构造器：" class="headerlink" title="设置默认容量构造器："></a>设置默认容量构造器：</h4><figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="comment">//常量，加载因子</span></span><br><span class="line"><span class="keyword">static</span> <span class="keyword">final</span> <span class="type">float</span> <span class="variable">DEFAULT_LOAD_FACTOR</span> <span class="operator">=</span> <span class="number">0.75f</span>;</span><br><span class="line"><span class="comment">//最大容量   1,073,741,824</span></span><br><span class="line"><span class="keyword">static</span> <span class="keyword">final</span> <span class="type">int</span> <span class="variable">MAXIMUM_CAPACITY</span> <span class="operator">=</span> <span class="number">1</span> &lt;&lt; <span class="number">30</span>; </span><br></pre></td></tr></table></figure>
 
-<p>执行下面的SQL：</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">insert into z select 6,6;</span><br></pre></td></tr></table></figure>
 
-<p>可以执行成功。证明在事务1执行主键范围for update时，事务2对这个范围扔可以申请写锁。证明RC隔离级别没有使用NEXT-KEY Lock，而是使用行级锁锁住对应的记录。</p>
-<h2 id="场景4：RC隔离级别-普通索引"><a href="#场景4：RC隔离级别-普通索引" class="headerlink" title="场景4：RC隔离级别+普通索引"></a>场景4：RC隔离级别+普通索引</h2><p>将事务隔离级别切为RC，开启事务1，保持未提交的状态：</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">begin;</span><br><span class="line">select * from z where b&gt;3 for update;</span><br></pre></td></tr></table></figure>
 
-<p>此时，若在新的事务2中运行下面的SQL语句：</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">insert into z select 8,4;</span><br><span class="line">update z set b = 10 where b = 6;</span><br><span class="line">update z set b = 10 where b = 1;</span><br></pre></td></tr></table></figure>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="comment">//可设置初始容量</span></span><br><span class="line"><span class="keyword">public</span> <span class="title function_">HashMap</span><span class="params">(<span class="type">int</span> initialCapacity)</span> &#123;</span><br><span class="line">    <span class="comment">//调用其他构造方法</span></span><br><span class="line">    <span class="built_in">this</span>(initialCapacity, DEFAULT_LOAD_FACTOR);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
-<p>第一个SQL语句，插入数据到事务1的for update范围内是可以的，因为这里事务1在RC模式下没有加NEXT-KEY LOCK锁，所以可以插入数据。</p>
-<p>第二个SQL语句，会出现锁等待，我们选择普通索引作为条件，此时MySQL给普通索引b&gt;3的记录都会加行锁。同时，这些记录对应主键索引上的记录也都加上了锁</p>
-<p>第三个SQL语句，插入成功，说明b&lt;3的记录都无锁。</p>
-<h2 id="场景5：RR-无索引"><a href="#场景5：RR-无索引" class="headerlink" title="场景5：RR + 无索引"></a>场景5：RR + 无索引</h2><p><strong>InnoDB行锁是通过给索引上的索引项加锁来实现的</strong>，这一点MySQL与Oracle不同，后者是通过在数据块中对相应数据行加锁来实现的。InnoDB这种行锁实现特点意味着：<strong>只有通过索引条件检索数据，InnoDB才使用行级锁，否则，InnoDB将会给所有记录加锁</strong>。</p>
-<p>在RR隔离级别下，由于查询条件没有索引，那么InnoDB需要扫描所有数据来查找数据，对于扫描过的数据InnoDB都会加上锁，并且是加Next-key lock。</p>
-<p>建立测试表：</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">create table tab_no_index(id int,b int) engine=innodb;</span><br><span class="line">insert into tab_no_index values(1,1),(2,2),(3,3),(4,4),(100,100);</span><br></pre></td></tr></table></figure>
+<p>调用的构造方法</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"> <span class="comment">//真正实例化的构造器   参数：1、默认容量   2、加载因子</span></span><br><span class="line"> <span class="keyword">public</span> <span class="title function_">HashMap</span><span class="params">(<span class="type">int</span> initialCapacity, <span class="type">float</span> loadFactor)</span> &#123;</span><br><span class="line">     	<span class="comment">//判断当前设置的默认容量是否为0 ，为0抛出异常</span></span><br><span class="line">        <span class="keyword">if</span> (initialCapacity &lt; <span class="number">0</span>)</span><br><span class="line">            <span class="keyword">throw</span> <span class="keyword">new</span> <span class="title class_">IllegalArgumentException</span>(<span class="string">&quot;Illegal initial capacity: &quot;</span> +</span><br><span class="line">                                               initialCapacity);</span><br><span class="line">     	<span class="comment">//判断是否超出最大容量，如果超出就赋予最大容量</span></span><br><span class="line">        <span class="keyword">if</span> (initialCapacity &gt; MAXIMUM_CAPACITY)</span><br><span class="line">            initialCapacity = MAXIMUM_CAPACITY;</span><br><span class="line">     	<span class="comment">//判断当前加载因子是否小于等于0 Float.isNaN这个方法目前还不是很清楚</span></span><br><span class="line">        <span class="keyword">if</span> (loadFactor &lt;= <span class="number">0</span> || Float.isNaN(loadFactor))</span><br><span class="line">            <span class="keyword">throw</span> <span class="keyword">new</span> <span class="title class_">IllegalArgumentException</span>(<span class="string">&quot;Illegal load factor: &quot;</span> +</span><br><span class="line">                                               loadFactor);</span><br><span class="line">        <span class="built_in">this</span>.loadFactor = loadFactor;  <span class="comment">//为加载因素赋值</span></span><br><span class="line">        <span class="built_in">this</span>.threshold = tableSizeFor(initialCapacity);  <span class="comment">//根据当前容量得出下次需要扩容的临界点</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
-<p>开启事务1，保持未提交的状态：</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">begin;</span><br><span class="line">select * from tab_no_index where id = 1 for update;</span><br></pre></td></tr></table></figure>
 
-<p>执行下面的SQL：</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">insert into tab_no_index values(5,5);</span><br></pre></td></tr></table></figure>
 
-<p>这时候，并不能插入成功。看起来事务1只给一行加了排他锁，但事务2在请求其他行的排他锁时，却出现了锁等待。原因就在于没有索引的情况下，InnoDB只能扫描所有记录（锁住所有记录）。当我们给其增加一个唯一索引后，InnoDB就只锁定了符合条件的行。</p>
-<p>当我们给其增加一个唯一索引后，InnoDB就只锁定了符合条件的行。</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">create table tab_with_index(id int,b int,primary key(id));</span><br><span class="line">insert into tab_with_index values(1,1),(2,2),(3,3),(4,4),(100,100);</span><br></pre></td></tr></table></figure>
 
-<p>开启事务1，保持未提交的状态：</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">begin;</span><br><span class="line">select * from tab_with_index where id = 1 for update;</span><br></pre></td></tr></table></figure>
 
-<p>执行下面的SQL：</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">select * from tab_with_index where id = 2 for update;</span><br></pre></td></tr></table></figure>
+<h2 id="Put："><a href="#Put：" class="headerlink" title="Put："></a>Put：</h2><p>在初始化我们可以看出都没有进行数据结构的创建，其实HashMap使用的是懒加载默认，但我们真正要存储时再进行创建</p>
+<h3 id="添加方法："><a href="#添加方法：" class="headerlink" title="添加方法："></a>添加方法：</h3><figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> V <span class="title function_">put</span><span class="params">(K key, V value)</span> &#123;</span><br><span class="line">     <span class="keyword">return</span> putVal(hash(key), key, value, <span class="literal">false</span>, <span class="literal">true</span>);</span><br><span class="line"> &#125;</span><br></pre></td></tr></table></figure>
 
-<p>由这个例子可以看出，对于id是主键索引的情况下，只锁了id&#x3D;1这一行记录。其余的行都是可以进行DML操作的，但前提条件是以id为条件。如果是以b字段为条件，那么还是会锁的。</p>
-<h2 id="场景6：RC-无索引"><a href="#场景6：RC-无索引" class="headerlink" title="场景6：RC + 无索引"></a>场景6：RC + 无索引</h2><p>上面演示了在RR隔离级别下，对于where条件无索引的情况下，InnoDB是对所有记录加Next-key Locks。</p>
-<p>但是在RC隔离级别下，对于where条件无索引的情况下，则不会对所有记录加锁，而是只对命中的数据的聚簇索引加X锁。</p>
-<p>同样针对tab_no_index&#96;&#96;表，开启事务1，保持未提交的状态：</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">begin;</span><br><span class="line">delete from tab_no_index where id = 1;</span><br></pre></td></tr></table></figure>
 
-<p>执行下面的SQL：</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">delete from tab_no_index where id = 99;</span><br><span class="line">update tab_no_index set id=2 where id=100;</span><br><span class="line">insert into tab_no_index select 99,99;</span><br></pre></td></tr></table></figure>
 
-<p>都可以执行成功。</p>
-<h2 id="沙场练兵"><a href="#沙场练兵" class="headerlink" title="沙场练兵"></a>沙场练兵</h2><p>有了上面的分场景演习，下面就两条简单SQL进行一场加锁分析的实战。</p>
-<p>下面两条简单的SQL，加什么锁？</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">select * from t1 where id = 10;</span><br><span class="line">delete from t1 where id = 10;</span><br></pre></td></tr></table></figure>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="comment">//更加key获取hash值</span></span><br><span class="line"><span class="keyword">static</span> <span class="keyword">final</span> <span class="type">int</span> <span class="title function_">hash</span><span class="params">(Object key)</span> &#123;</span><br><span class="line">        <span class="type">int</span> h;</span><br><span class="line">        <span class="keyword">return</span> (key == <span class="literal">null</span>) ? <span class="number">0</span> : (h = key.hashCode()) ^ (h &gt;&gt;&gt; <span class="number">16</span>);</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
 
-<p>一眼看去，不经大脑的回答是：</p>
-<ul>
-<li>SQL1：不加锁。因为MySQL是使用多版本并发控制的，读不加锁</li>
-<li>SQL2：对id &#x3D; 10的记录加写锁 (走主键索引)</li>
-</ul>
-<p>可能是正确的，也有可能是错误的，已知条件不足，要回答这个问题，还缺少几个前提条件：</p>
-<ul>
-<li>id列是不是主键？</li>
-<li>当前系统的隔离级别是什么？</li>
-<li>id列如果不是主键，那么id列上有索引吗？</li>
-<li>id列上如果有二级索引，那么这个索引是唯一索引吗？</li>
-</ul>
-<p><strong>组合一：id列是主键，RC隔离级别</strong></p>
-<p>这个组合，是最简单，最容易分析的组合。id是主键，Read Committed隔离级别，给定SQL：<code>delete from t1 where id = 10;</code> 只需要将主键上，id &#x3D; 10的记录加上X锁即可。</p>
-<p><a href="https://imgtu.com/i/jJJTYj"><img src="https://s1.ax1x.com/2022/07/04/jJJTYj.jpg" alt="jJJTYj.jpg"></a></p>
-<p><strong>组合二：id唯一索引+RC</strong></p>
-<p>id是unique索引，而主键是name列。由于id是unique索引，因此delete语句会选择id列的索引进行where条件的过滤，在找到id&#x3D;10的记录后，首先会将unique索引上的id&#x3D;10索引记录加上X锁，同时，会根据读取到的name列，回主键索引(聚簇索引)，然后将聚簇索引上的name &#x3D; ‘d’ 对应的主键索引项加X锁。</p>
-<p>为什么聚簇索引上的记录也要加锁？如果并发的一个SQL，是通过主键索引来更新：<code>update t1 set id = 100 where name = ‘d’;</code> 此时，如果delete语句没有将主键索引上的记录加锁，那么并发的update就会感知不到delete语句的存在，违背了同一记录上的更新&#x2F;删除需要串行执行的约束。</p>
-<p>若id列是unique列，其上有unique索引。那么SQL需要加两个X锁，一个对应于id unique索引上的id &#x3D; 10的记录，另一把锁对应于聚簇索引上的[name&#x3D;’d’,id&#x3D;10]的记录。</p>
-<p><a href="https://imgtu.com/i/jJJL60"><img src="https://s1.ax1x.com/2022/07/04/jJJL60.jpg" alt="jJJL60.jpg"></a></p>
-<p><strong>组合三：id非唯一索引+RC</strong></p>
-<p>相对于组合一、二，id列不再唯一，只有一个普通的索引。</p>
-<p>满足id &#x3D; 10查询条件的记录，均已加锁。同时，这些记录对应的主键索引上的记录也都加上了锁。与组合二唯一的区别在于，组合二最多只有一个满足等值查询的记录，而组合三会将所有满足查询条件的记录都加锁。</p>
-<p><a href="https://imgtu.com/i/jJJbpn"><img src="https://s1.ax1x.com/2022/07/04/jJJbpn.jpg" alt="jJJbpn.jpg"></a></p>
-<p><strong>组合四：id无索引+RC</strong></p>
-<p>这个过滤条件，没法通过索引进行过滤，那么只能走全表扫描做过滤。对应于这个组合，SQL会加什么锁？换句话说，全表扫描时，会加什么锁？</p>
-<p>由于id列上没有索引，因此只能走聚簇索引，进行全部扫描。聚簇索引上所有的记录，都被加上了X锁。无论记录是否满足条件，全部被加上X锁。既不是加表锁，也不是在满足条件的记录上加行锁。</p>
-<p><a href="https://imgtu.com/i/jJJqlq"><img src="https://s1.ax1x.com/2022/07/04/jJJqlq.jpg" alt="jJJqlq.jpg"></a></p>
-<p>为什么不是只在满足条件的记录上加锁呢？这是由于MySQL的实现决定的。如果一个条件无法通过索引快速过滤，那么存储引擎层面就会将所有记录加锁后返回，然后由MySQL Server层进行过滤。因此也就把所有的记录都锁上了。</p>
-<p>在实际的实现中，MySQL有一些改进，在MySQL Server过滤条件，发现不满足后，会调用unlock_row方法，把不满足条件的记录放锁 (违背了2PL的约束)。这样做，保证了最后只会持有满足条件记录上的锁，但是每条记录的加锁操作还是不能省略的。</p>
-<p><strong>组合五：id主键+RR</strong></p>
-<p>上面的四个组合，都是在Read Committed隔离级别下的加锁行为，接下来的四个组合，是在Repeatable Read隔离级别下的加锁行为。</p>
-<p>id列是主键列，Repeatable Read隔离级别，针对<code>delete from t1 where id = 10;</code> 这条SQL，加锁与组合一：[id主键，Read Committed]一致。</p>
-<p><strong>组合六：id唯一索引+RR</strong></p>
-<p>与组合二：[id唯一索引，Read Committed]一致。两个X锁，id唯一索引满足条件的记录上一个，对应的聚簇索引上的记录一个。</p>
-<p><strong>组合七：id非唯一索引+RR</strong></p>
-<p>RC隔离级别允许幻读，而RR隔离级别，不允许存在幻读。那么RR隔离级别下，如何防止幻读呢？</p>
-<p>组合七，Repeatable Read隔离级别，id上有一个非唯一索引，执行<code>delete from t1 where id = 10;</code> 假设选择id列上的索引进行条件过滤，最后的加锁行为，是怎么样的呢？</p>
-<p><a href="https://imgtu.com/i/jJJ7fs"><img src="https://s1.ax1x.com/2022/07/04/jJJ7fs.jpg" alt="jJJ7fs.jpg"></a></p>
-<p>相对于组合三：[id列上非唯一锁，Read Committed]看似相同，其实却有很大的区别。</p>
-<p>最大的区别在于，多了一个GAP锁，而且GAP锁看起来也不是加在记录上的，是加载两条记录之间的位置，GAP锁有何用？</p>
-<p><strong>这个多出来的GAP锁，就是RR隔离级别，相对于RC隔离级别，不会出现幻读的关键</strong>。</p>
-<p>GAP锁锁住的位置，不是记录本身，而是两条记录之间的GAP。所谓幻读，就是同一个事务，连续做两次当前读(例如：<code>select * from t1 where id = 10 for update;</code>)，那么这两次当前读返回的是完全相同的记录 (记录数量一致，记录本身也一致)，第二次的当前读，不会比第一次返回更多的记录 (幻象)。</p>
-<p>如何保证两次当前读返回一致的记录，那就需要在第一次当前读与第二次当前读之间，其他的事务不会插入新的满足条件的记录并提交。为了实现这个功能，GAP锁应运而生。</p>
-<p>如图中所示，有哪些位置可以插入新的满足条件的项 (id &#x3D; 10)，考虑到B+树索引的有序性，满足条件的项一定是连续存放的。记录[6,c]之前，不会插入id&#x3D;10的记录；[6,c]与[10,b]间、[10,b]与[10,d]间、[10,d]与[11,f]间可以插入满足条件的[10,e],[10,z]等；而[11,f]之后也不会插入满足条件的记录。</p>
-<p>因此，为了保证[6,c]与[10,b]间，[10,b]与[10,d]间，[10,d]与[11,f]不会插入新的满足条件的记录，MySQL选择了用GAP锁，将这三个GAP给锁起来。</p>
-<p>Insert操作，如insert [10,a]，首先会定位到[6,c]与[10,b]间，然后在插入前，会检查这个GAP是否已经被锁上，如果被锁上，则Insert不能插入记录。因此，通过第一遍的当前读，不仅将满足条件的记录锁上 (X锁)，与组合三类似。同时还是增加3把GAP锁，将可能插入满足条件记录的3个GAP给锁上，保证后续的Insert不能插入新的id&#x3D;10的记录，也就杜绝了同一事务的第二次当前读，出现幻象的情况。</p>
-<p>既然防止幻读，需要靠GAP锁的保护，为什么组合五、组合六，也是RR隔离级别，却不需要加GAP锁呢？ GAP锁的目的，是为了防止同一事务的两次当前读，出现幻读的情况。而组合五，id是主键；组合六，id是unique键，都能够保证唯一性。一个等值查询，最多只能返回一条记录，而且新的相同取值的记录，一定不会在新插入进来，因此也就避免了GAP锁的使用。</p>
-<p>结论：Repeatable Read隔离级别下，id列上有一个非唯一索引，对应SQL：<code>delete from t1 where id = 10;</code>首先，通过id索引定位到第一条满足查询条件的记录，加记录上的X锁，加GAP上的GAP锁，然后加主键聚簇索引上的记录X锁，然后返回；然后读取下一条，重复进行。直至进行到第一条不满足条件的记录[11,f]，此时，不需要加记录X锁，但是仍旧需要加GAP锁，最后返回结束。</p>
-<p><strong>组合八：id无索引+RR</strong></p>
-<p>id列上没有索引。此时SQL：<code>delete from t1 where id = 10;</code>没有其他的路径可以选择，只能进行全表扫描。最终的加锁情况，如下图所示：</p>
-<p><a href="https://imgtu.com/i/jJJOXV"><img src="https://s1.ax1x.com/2022/07/04/jJJOXV.jpg" alt="jJJOXV.jpg"></a></p>
-<p>这是一个很恐怖的现象。首先，聚簇索引上的所有记录，都被加上了X锁。其次，聚簇索引每条记录间的间隙(GAP)，也同时被加上了GAP锁。这个示例表，只有6条记录，一共需要6个记录锁，7个GAP锁。试想，如果表上有1000万条记录呢？</p>
-<p>在这种情况下，这个表上，除了不加锁的快照度，其他任何加锁的并发SQL，均不能执行，不能更新，不能删除，不能插入，全表被锁死。</p>
-<p>当然，跟组合四：[id无索引, Read Committed]类似，这个情况下，MySQL也做了一些优化，就是所谓的<code>semi-consistent read</code>。<code>semi-consistent read</code>开启的情况下，对于不满足查询条件的记录，MySQL会提前放锁。</p>
-<p>结论：在Repeatable Read隔离级别下，如果进行全表扫描的当前读，那么会锁上表中的所有记录，同时会锁上聚簇索引内的所有GAP，杜绝所有的并发 更新&#x2F;删除&#x2F;插入 操作。当然，也可以通过触发<code>semi-consistent read</code>，来缓解加锁开销与并发影响，但是<code>semi-consistent read</code>本身可能会带来其他问题。</p>
-<p><strong>组合九：Serializable</strong></p>
-<p>Serializable隔离级别。对于SQL2：<code>delete from t1 where id = 10;</code> 来说，Serializable隔离级别与Repeatable Read隔离级别完全一致</p>
-<p>Serializable隔离级别，影响的是SQL1：<code>select * from t1 where id = 10;</code>这条SQL，在RC，RR隔离级别下，都是快照读，不加锁。但是在Serializable隔离级别，SQL1会加读锁，也就是说快照读不复存在，MVCC并发控制降级为Lock-Based CC。</p>
-<p>MVCC 最大的好处：读不加锁，读写不冲突。在读多写少的OLTP应用中，读写不冲突是非常重要的，极大的增加了系统的并发性能，这也是为什么现阶段，几乎所有的RDBMS，都支持了MVCC</p>
-<p>在MySQL&#x2F;InnoDB中，所谓的读不加锁，并不适用于所有的情况，而是隔离级别相关的。Serializable隔离级别，读不加锁就不再成立，所有的读操作，都是当前读。</p>
+
+
+<h4 id="第一次添加："><a href="#第一次添加：" class="headerlink" title="第一次添加："></a>第一次添加：</h4><h5 id="主方法："><a href="#主方法：" class="headerlink" title="主方法："></a>主方法：</h5><figure class="highlight java"><table><tr><td class="code"><pre><span class="line"></span><br><span class="line"><span class="keyword">transient</span> Node&lt;K,V&gt;[] table;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment">//执行方法</span></span><br><span class="line"><span class="keyword">final</span> V <span class="title function_">putVal</span><span class="params">(<span class="type">int</span> hash, K key, V value, <span class="type">boolean</span> onlyIfAbsent,</span></span><br><span class="line"><span class="params">                   <span class="type">boolean</span> evict)</span> &#123;</span><br><span class="line">   		<span class="comment">// 1、 tab为当前map数组，p为当前节点，n为数组长度，i为当键值对在数值的下表位置</span></span><br><span class="line">        Node&lt;K,V&gt;[] tab; Node&lt;K,V&gt; p; <span class="type">int</span> n, i;      </span><br><span class="line">    	<span class="comment">//2、 tab为空 n为0  此处判断的同时也为我们的tab指向了table  n值为0</span></span><br><span class="line">        <span class="keyword">if</span> ((tab = table) == <span class="literal">null</span> || (n = tab.length) == <span class="number">0</span>)</span><br><span class="line">            <span class="comment">//3、调用初始化方法  返回新map数组赋值为局部tab，并获取容量大小赋值给局部n</span></span><br><span class="line">            n = (tab = resize()).length;</span><br><span class="line">    	<span class="comment">// 4、获取当前数组长度减一 并使用 ‘与’ 逻辑运算符获取 数组下表位置赋值给i 并获取当前下表下的内容赋值给p，判断是否为空</span></span><br><span class="line">        <span class="keyword">if</span> ((p = tab[i = (n - <span class="number">1</span>) &amp; hash]) == <span class="literal">null</span>)</span><br><span class="line">            <span class="comment">//5、没有内容就进行创建一个node（非树型）节点，放入当前下标中</span></span><br><span class="line">            tab[i] = newNode(hash, key, value, <span class="literal">null</span>);</span><br><span class="line">        <span class="keyword">else</span> &#123;</span><br><span class="line">            Node&lt;K,V&gt; e; K k;</span><br><span class="line">            <span class="keyword">if</span> (p.hash == hash &amp;&amp;</span><br><span class="line">                ((k = p.key) == key || (key != <span class="literal">null</span> &amp;&amp; key.equals(k))))</span><br><span class="line">                e = p;</span><br><span class="line">            <span class="keyword">else</span> <span class="keyword">if</span> (p <span class="keyword">instanceof</span> TreeNode)</span><br><span class="line">                e = ((TreeNode&lt;K,V&gt;)p).putTreeVal(<span class="built_in">this</span>, tab, hash, key, value);</span><br><span class="line">            <span class="keyword">else</span> &#123;</span><br><span class="line">                <span class="keyword">for</span> (<span class="type">int</span> <span class="variable">binCount</span> <span class="operator">=</span> <span class="number">0</span>; ; ++binCount) &#123;</span><br><span class="line">                    <span class="keyword">if</span> ((e = p.next) == <span class="literal">null</span>) &#123;</span><br><span class="line">                        p.next = newNode(hash, key, value, <span class="literal">null</span>);</span><br><span class="line">                        <span class="keyword">if</span> (binCount &gt;= TREEIFY_THRESHOLD - <span class="number">1</span>) <span class="comment">// -1 for 1st</span></span><br><span class="line">                            treeifyBin(tab, hash);</span><br><span class="line">                        <span class="keyword">break</span>;</span><br><span class="line">                    &#125;</span><br><span class="line">                    <span class="keyword">if</span> (e.hash == hash &amp;&amp;</span><br><span class="line">                        ((k = e.key) == key || (key != <span class="literal">null</span> &amp;&amp; key.equals(k))))</span><br><span class="line">                        <span class="keyword">break</span>;</span><br><span class="line">                    p = e;</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="keyword">if</span> (e != <span class="literal">null</span>) &#123; <span class="comment">// existing mapping for key</span></span><br><span class="line">                <span class="type">V</span> <span class="variable">oldValue</span> <span class="operator">=</span> e.value;</span><br><span class="line">                <span class="keyword">if</span> (!onlyIfAbsent || oldValue == <span class="literal">null</span>)</span><br><span class="line">                    e.value = value;</span><br><span class="line">                afterNodeAccess(e);</span><br><span class="line">                <span class="keyword">return</span> oldValue;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    	<span class="comment">//6、modCount进行计数  这个便利店作用显目有解释</span></span><br><span class="line">        ++modCount;</span><br><span class="line">    	<span class="comment">//7、size++ 判断当前加入数组中的数量是否大于临界值</span></span><br><span class="line">        <span class="keyword">if</span> (++size &gt; threshold)</span><br><span class="line">            resize();</span><br><span class="line">        afterNodeInsertion(evict);</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">null</span>;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<h5 id="HashMap初始化及调整大小方法："><a href="#HashMap初始化及调整大小方法：" class="headerlink" title="HashMap初始化及调整大小方法："></a><strong>HashMap初始化及调整大小方法：</strong></h5><p>​	这个方法主要是为了当我们数组为null没有进行初始化时进行初始化，并设置临界值，</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">final</span> Node&lt;K,V&gt;[] resize() &#123;</span><br><span class="line">    Node&lt;K,V&gt;[] oldTab = table; <span class="comment">//3.1、hashMap数组</span></span><br><span class="line">    <span class="type">int</span> <span class="variable">oldCap</span> <span class="operator">=</span> (oldTab == <span class="literal">null</span>) ? <span class="number">0</span> : oldTab.length;  <span class="comment">//3.2、旧数组大小，如果数组为空则为0 ，不为空则为数组大小</span></span><br><span class="line">    <span class="type">int</span> <span class="variable">oldThr</span> <span class="operator">=</span> threshold; <span class="comment">//3.3、临界点 旧</span></span><br><span class="line">    <span class="type">int</span> newCap, newThr = <span class="number">0</span>;  <span class="comment">//3.4、newCap 数组大小 新    newThr：临界点 新</span></span><br><span class="line">    <span class="keyword">if</span> (oldCap &gt; <span class="number">0</span>) &#123; <span class="comment">//3.5、判断旧数组大小是否大于0 第一次不会进入</span></span><br><span class="line">        <span class="comment">//判断旧容量是否为最大值了</span></span><br><span class="line">        <span class="keyword">if</span> (oldCap &gt;= MAXIMUM_CAPACITY) &#123;</span><br><span class="line">            <span class="comment">//如果数值为最大值了就将最大值为临界点</span></span><br><span class="line">            threshold = Integer.MAX_VALUE;</span><br><span class="line">            <span class="comment">//并返回就数组回去，不进行扩容</span></span><br><span class="line">            <span class="keyword">return</span> oldTab;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="comment">//进行扩容参数初始化，新长度为原来的1倍，新临界点也为原来的1倍</span></span><br><span class="line">        <span class="keyword">else</span> <span class="keyword">if</span> ((newCap = oldCap &lt;&lt; <span class="number">1</span>) &lt; MAXIMUM_CAPACITY &amp;&amp;</span><br><span class="line">                 oldCap &gt;= DEFAULT_INITIAL_CAPACITY)</span><br><span class="line">            newThr = oldThr &lt;&lt; <span class="number">1</span>; <span class="comment">// double threshold</span></span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">else</span> <span class="keyword">if</span> (oldThr &gt; <span class="number">0</span>) <span class="comment">//3.6、判断临界值 旧 是否大于0 第一次不会进入</span></span><br><span class="line">        newCap = oldThr;</span><br><span class="line">    <span class="keyword">else</span> &#123;</span><br><span class="line">        <span class="comment">//3.7、进行基础数据初始化</span></span><br><span class="line">        newCap = DEFAULT_INITIAL_CAPACITY; <span class="comment">//将默认容量大小 16 赋予新数组大小</span></span><br><span class="line">        <span class="comment">//新数组容量与加载因子进行计算得出 临界点 并赋值为临界点局部变量 新</span></span><br><span class="line">        newThr = (<span class="type">int</span>)(DEFAULT_LOAD_FACTOR * DEFAULT_INITIAL_CAPACITY);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">//3.8判断临界值 新 是否为0  一般情况下不会进入</span></span><br><span class="line">    <span class="keyword">if</span> (newThr == <span class="number">0</span>) &#123;</span><br><span class="line">        <span class="type">float</span> <span class="variable">ft</span> <span class="operator">=</span> (<span class="type">float</span>)newCap * loadFactor;</span><br><span class="line">        newThr = (newCap &lt; MAXIMUM_CAPACITY &amp;&amp; ft &lt; (<span class="type">float</span>)MAXIMUM_CAPACITY ?</span><br><span class="line">                  (<span class="type">int</span>)ft : Integer.MAX_VALUE);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">//3.9、将局部临界点赋值给全局临界点</span></span><br><span class="line">    threshold = newThr; </span><br><span class="line">    </span><br><span class="line">    	<span class="comment">//3.10、初始化新map数组 长度为局部newCap大小 </span></span><br><span class="line">        Node&lt;K,V&gt;[] newTab = (Node&lt;K,V&gt;[])<span class="keyword">new</span> <span class="title class_">Node</span>[newCap];</span><br><span class="line">     <span class="comment">//3.11、将新map数组</span></span><br><span class="line">    table = newTab; </span><br><span class="line">    <span class="comment">//3.12、判断旧map数组是否为空 第一次不会进入</span></span><br><span class="line">    <span class="keyword">if</span> (oldTab != <span class="literal">null</span>) &#123;</span><br><span class="line">        <span class="keyword">for</span> (<span class="type">int</span> <span class="variable">j</span> <span class="operator">=</span> <span class="number">0</span>; j &lt; oldCap; ++j) &#123;</span><br><span class="line">            Node&lt;K,V&gt; e;</span><br><span class="line">            <span class="keyword">if</span> ((e = oldTab[j]) != <span class="literal">null</span>) &#123;</span><br><span class="line">                oldTab[j] = <span class="literal">null</span>;</span><br><span class="line">                <span class="keyword">if</span> (e.next == <span class="literal">null</span>)</span><br><span class="line">                    newTab[e.hash &amp; (newCap - <span class="number">1</span>)] = e;</span><br><span class="line">                <span class="keyword">else</span> <span class="keyword">if</span> (e <span class="keyword">instanceof</span> TreeNode)</span><br><span class="line">                    ((TreeNode&lt;K,V&gt;)e).split(<span class="built_in">this</span>, newTab, j, oldCap);</span><br><span class="line">                <span class="keyword">else</span> &#123; <span class="comment">// preserve order</span></span><br><span class="line">                    Node&lt;K,V&gt; loHead = <span class="literal">null</span>, loTail = <span class="literal">null</span>;</span><br><span class="line">                    Node&lt;K,V&gt; hiHead = <span class="literal">null</span>, hiTail = <span class="literal">null</span>;</span><br><span class="line">                    Node&lt;K,V&gt; next;</span><br><span class="line">                    <span class="keyword">do</span> &#123;</span><br><span class="line">                        next = e.next;</span><br><span class="line">                        <span class="keyword">if</span> ((e.hash &amp; oldCap) == <span class="number">0</span>) &#123;</span><br><span class="line">                            <span class="keyword">if</span> (loTail == <span class="literal">null</span>)</span><br><span class="line">                                loHead = e;</span><br><span class="line">                            <span class="keyword">else</span></span><br><span class="line">                                loTail.next = e;</span><br><span class="line">                            loTail = e;</span><br><span class="line">                        &#125;</span><br><span class="line">                        <span class="keyword">else</span> &#123;</span><br><span class="line">                            <span class="keyword">if</span> (hiTail == <span class="literal">null</span>)</span><br><span class="line">                                hiHead = e;</span><br><span class="line">                            <span class="keyword">else</span></span><br><span class="line">                                hiTail.next = e;</span><br><span class="line">                            hiTail = e;</span><br><span class="line">                        &#125;</span><br><span class="line">                    &#125; <span class="keyword">while</span> ((e = next) != <span class="literal">null</span>);</span><br><span class="line">                    <span class="keyword">if</span> (loTail != <span class="literal">null</span>) &#123;</span><br><span class="line">                        loTail.next = <span class="literal">null</span>;</span><br><span class="line">                        newTab[j] = loHead;</span><br><span class="line">                    &#125;</span><br><span class="line">                    <span class="keyword">if</span> (hiTail != <span class="literal">null</span>) &#123;</span><br><span class="line">                        hiTail.next = <span class="literal">null</span>;</span><br><span class="line">                        newTab[j + oldCap] = hiHead;</span><br><span class="line">                    &#125;</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">//返回map数组 新</span></span><br><span class="line">    <span class="keyword">return</span> newTab;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<h5 id="创建节点方法："><a href="#创建节点方法：" class="headerlink" title="创建节点方法："></a>创建节点方法：</h5><p>​	创建非树型节点</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line">Node&lt;K,V&gt; <span class="title function_">newNode</span><span class="params">(<span class="type">int</span> hash, K key, V value, Node&lt;K,V&gt; next)</span> &#123;</span><br><span class="line">       <span class="keyword">return</span> <span class="keyword">new</span> <span class="title class_">Node</span>&lt;&gt;(hash, key, value, next);</span><br><span class="line">   &#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<h5 id="modCount作用："><a href="#modCount作用：" class="headerlink" title="modCount作用："></a>modCount作用：</h5><p>Fail-Fast 机制<br>我们知道 java.util.HashMap 不是线程安全的，因此如果在使用迭代器的过程中有其他线程修改了map，那么将抛出ConcurrentModificationException，这就是所谓fail-fast策略。这一策略在源码中的实现是通过 modCount 域，modCount 顾名思义就是修改次数，对HashMap 内容的修改都将增加这个值，那么在迭代器初始化过程中会将这个值赋给迭代器的 expectedModCount。在迭代过程中，判断 modCount 跟 expectedModCount 是否相等，如果不相等就表示已经有其他线程修改了 Map：注意到 modCount 声明为 volatile，保证线程之间修改的可见性。</p>
+<h4 id="二次添加："><a href="#二次添加：" class="headerlink" title="二次添加："></a>二次添加：</h4><h5 id="主方法：-1"><a href="#主方法：-1" class="headerlink" title="主方法："></a>主方法：</h5><figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">transient</span> Node&lt;K,V&gt;[] table;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment">//执行方法</span></span><br><span class="line"><span class="keyword">final</span> V <span class="title function_">putVal</span><span class="params">(<span class="type">int</span> hash, K key, V value, <span class="type">boolean</span> onlyIfAbsent,</span></span><br><span class="line"><span class="params">                   <span class="type">boolean</span> evict)</span> &#123;</span><br><span class="line">   		<span class="comment">// 1、 tab为当前map数组，p为当前节点，n为数组长度，i为当键值对在数值的下表位置</span></span><br><span class="line">        Node&lt;K,V&gt;[] tab; Node&lt;K,V&gt; p; <span class="type">int</span> n, i;      </span><br><span class="line">    	<span class="comment">//2、此处判断的同时也为我们的tab指向了table  n值为tab的长度 由于不为空 不进入该方法</span></span><br><span class="line">        <span class="keyword">if</span> ((tab = table) == <span class="literal">null</span> || (n = tab.length) == <span class="number">0</span>)</span><br><span class="line">            n = (tab = resize()).length;</span><br><span class="line">    	<span class="comment">// 3、获取当前数组长度减一 并使用 ‘与’ 逻辑运算符获取 数组下表位置赋值给i 并获取当前下表下的内容赋值给p，判断是否为空</span></span><br><span class="line">        <span class="keyword">if</span> ((p = tab[i = (n - <span class="number">1</span>) &amp; hash]) == <span class="literal">null</span>)</span><br><span class="line">            <span class="comment">//4、没有内容就进行创建一个node（非树型）节点，放入当前下标中</span></span><br><span class="line">            tab[i] = newNode(hash, key, value, <span class="literal">null</span>);</span><br><span class="line">        <span class="keyword">else</span> &#123;</span><br><span class="line">            Node&lt;K,V&gt; e; K k;</span><br><span class="line">            <span class="keyword">if</span> (p.hash == hash &amp;&amp;</span><br><span class="line">                ((k = p.key) == key || (key != <span class="literal">null</span> &amp;&amp; key.equals(k))))</span><br><span class="line">                e = p;</span><br><span class="line">            <span class="keyword">else</span> <span class="keyword">if</span> (p <span class="keyword">instanceof</span> TreeNode)</span><br><span class="line">                e = ((TreeNode&lt;K,V&gt;)p).putTreeVal(<span class="built_in">this</span>, tab, hash, key, value);</span><br><span class="line">            <span class="keyword">else</span> &#123;</span><br><span class="line">                <span class="keyword">for</span> (<span class="type">int</span> <span class="variable">binCount</span> <span class="operator">=</span> <span class="number">0</span>; ; ++binCount) &#123;</span><br><span class="line">                    <span class="keyword">if</span> ((e = p.next) == <span class="literal">null</span>) &#123;</span><br><span class="line">                        p.next = newNode(hash, key, value, <span class="literal">null</span>);</span><br><span class="line">                        <span class="keyword">if</span> (binCount &gt;= TREEIFY_THRESHOLD - <span class="number">1</span>) <span class="comment">// -1 for 1st</span></span><br><span class="line">                            treeifyBin(tab, hash);</span><br><span class="line">                        <span class="keyword">break</span>;</span><br><span class="line">                    &#125;</span><br><span class="line">                    <span class="keyword">if</span> (e.hash == hash &amp;&amp;</span><br><span class="line">                        ((k = e.key) == key || (key != <span class="literal">null</span> &amp;&amp; key.equals(k))))</span><br><span class="line">                        <span class="keyword">break</span>;</span><br><span class="line">                    p = e;</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="keyword">if</span> (e != <span class="literal">null</span>) &#123; <span class="comment">// existing mapping for key</span></span><br><span class="line">                <span class="type">V</span> <span class="variable">oldValue</span> <span class="operator">=</span> e.value;</span><br><span class="line">                <span class="keyword">if</span> (!onlyIfAbsent || oldValue == <span class="literal">null</span>)</span><br><span class="line">                    e.value = value;</span><br><span class="line">                afterNodeAccess(e);</span><br><span class="line">                <span class="keyword">return</span> oldValue;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    	<span class="comment">//5、modCount进行计数  这个便利店作用显目有解释</span></span><br><span class="line">        ++modCount;</span><br><span class="line">    	<span class="comment">//6、size++ 判断当前加入数组中的数量是否大于临界值</span></span><br><span class="line">        <span class="keyword">if</span> (++size &gt; threshold)</span><br><span class="line">            resize();</span><br><span class="line">        afterNodeInsertion(evict);</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">null</span>;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+
+
+
+
+
+<h4 id="添加至同一个下标中："><a href="#添加至同一个下标中：" class="headerlink" title="添加至同一个下标中："></a>添加至同一个下标中：</h4><p>此处是第二次添加，第一次添加于上面无差别</p>
+<p><strong>注意，要两个key的Hash值相同</strong></p>
+<h5 id="主方法：-2"><a href="#主方法：-2" class="headerlink" title="主方法："></a>主方法：</h5><figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">transient</span> Node&lt;K,V&gt;[] table;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment">//执行方法</span></span><br><span class="line"><span class="keyword">final</span> V <span class="title function_">putVal</span><span class="params">(<span class="type">int</span> hash, K key, V value, <span class="type">boolean</span> onlyIfAbsent,</span></span><br><span class="line"><span class="params">                   <span class="type">boolean</span> evict)</span> &#123;</span><br><span class="line">   		<span class="comment">// 1、 tab为当前map数组，p为当前节点（会随着循环链表成为循环到的那个结构），n为数组长度，i为当键值对在数值的下表位置</span></span><br><span class="line">        Node&lt;K,V&gt;[] tab; Node&lt;K,V&gt; p; <span class="type">int</span> n, i;      </span><br><span class="line">    	<span class="comment">//2、此处判断的同时也为我们的tab指向了table  n值为tab的长度 由于不为空 不进入该方法</span></span><br><span class="line">        <span class="keyword">if</span> ((tab = table) == <span class="literal">null</span> || (n = tab.length) == <span class="number">0</span>)</span><br><span class="line">            n = (tab = resize()).length;</span><br><span class="line">    	<span class="comment">// 3、获取当前数组长度减一 并使用 ‘与’ 逻辑运算符获取 数组下表位置赋值给i 并获取当前下表下的内容赋值给p，判断是否为空</span></span><br><span class="line">    	<span class="comment">//此次hash碰撞，下表相同，进行else</span></span><br><span class="line">        <span class="keyword">if</span> ((p = tab[i = (n - <span class="number">1</span>) &amp; hash]) == <span class="literal">null</span>)</span><br><span class="line">            tab[i] = newNode(hash, key, value, <span class="literal">null</span>);</span><br><span class="line">        <span class="keyword">else</span> &#123;</span><br><span class="line">            <span class="comment">//4、e 局部e为临时存储变量，会一直改变 ，  k为当前数值中需要对比节点的key</span></span><br><span class="line">            Node&lt;K,V&gt; e; K k; </span><br><span class="line">            <span class="keyword">if</span> (p.hash == hash &amp;&amp; <span class="comment">//5、判断当前比较的节点的hash值与本次添加的hash值是否相同</span></span><br><span class="line">                <span class="comment">//此处为k进行赋值并判断他们的值是否相同 </span></span><br><span class="line">                ((k = p.key) == key || (key != <span class="literal">null</span> &amp;&amp; key.equals(k))))</span><br><span class="line">                <span class="comment">//如果key相同，将当前节点赋值给我们的e，下面会将我们要添加的与当前的value进行替换</span></span><br><span class="line">                e = p;</span><br><span class="line">            <span class="comment">//6、判断当前是否为树节点</span></span><br><span class="line">            <span class="keyword">else</span> <span class="keyword">if</span> (p <span class="keyword">instanceof</span> TreeNode)</span><br><span class="line">                e = ((TreeNode&lt;K,V&gt;)p).putTreeVal(<span class="built_in">this</span>, tab, hash, key, value);</span><br><span class="line">            <span class="keyword">else</span> &#123;</span><br><span class="line">                <span class="comment">//7、无限循环</span></span><br><span class="line">                <span class="keyword">for</span> (<span class="type">int</span> <span class="variable">binCount</span> <span class="operator">=</span> <span class="number">0</span>; ; ++binCount) &#123;</span><br><span class="line">                    <span class="comment">//8、将局部e赋值为当前数组上的节点的下一个节点，并判断是否为空</span></span><br><span class="line">                    <span class="keyword">if</span> ((e = p.next) == <span class="literal">null</span>) &#123;</span><br><span class="line">                        <span class="comment">//9、创建一个节点赋值在当前循环到的节点的下一个节点</span></span><br><span class="line">                        p.next = newNode(hash, key, value, <span class="literal">null</span>);</span><br><span class="line">                        <span class="comment">//10、判断当前循环长度是否大于等于8为，注意从0开始的，如果为true则转换为红黑树</span></span><br><span class="line">                        <span class="keyword">if</span> (binCount &gt;= TREEIFY_THRESHOLD - <span class="number">1</span>) <span class="comment">// -1 for 1st</span></span><br><span class="line">                            treeifyBin(tab, hash);</span><br><span class="line">                        <span class="keyword">break</span>;</span><br><span class="line">                    &#125;</span><br><span class="line">                    <span class="comment">//11、判断循环中的节点是否与我们当前要添加的key相同，相同就终止循环</span></span><br><span class="line">                    <span class="keyword">if</span> (e.hash == hash &amp;&amp;</span><br><span class="line">                        ((k = e.key) == key || (key != <span class="literal">null</span> &amp;&amp; key.equals(k))))</span><br><span class="line">                        <span class="keyword">break</span>;</span><br><span class="line">                    <span class="comment">//不一样就将当前遍历到的节点赋值给p进行下一轮遍历</span></span><br><span class="line">                    p = e;</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="comment">//判断e是否为null，不为null</span></span><br><span class="line">            <span class="keyword">if</span> (e != <span class="literal">null</span>) &#123; <span class="comment">// existing mapping for key</span></span><br><span class="line">                <span class="comment">//将原来的旧值赋值给我们的oldValue，等会将这个值返回给我们</span></span><br><span class="line">                <span class="type">V</span> <span class="variable">oldValue</span> <span class="operator">=</span> e.value;</span><br><span class="line">                <span class="keyword">if</span> (!onlyIfAbsent || oldValue == <span class="literal">null</span>)</span><br><span class="line">                    <span class="comment">//将我们新添加的value赋给当前节点的value进行替换</span></span><br><span class="line">                    e.value = value;</span><br><span class="line">                afterNodeAccess(e);</span><br><span class="line">                <span class="comment">//返回旧值</span></span><br><span class="line">                <span class="keyword">return</span> oldValue;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    	<span class="comment">//5、modCount进行计数  这个便利店作用显目有解释</span></span><br><span class="line">        ++modCount;</span><br><span class="line">    	<span class="comment">//6、size++ 判断当前加入数组中的数量是否大于临界值</span></span><br><span class="line">        <span class="keyword">if</span> (++size &gt; threshold)</span><br><span class="line">            resize();</span><br><span class="line">        afterNodeInsertion(evict);</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">null</span>;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+
+
+
+
+
+<h4 id="链表超出8位："><a href="#链表超出8位：" class="headerlink" title="链表超出8位："></a>链表超出8位：</h4><p>多余的就不多看了，都是上面一样了，我们直接看转红黑树的过程</p>
+<p>如果数组小于64则不会进行红黑树的转换，还是进行扩容</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">final</span> <span class="keyword">void</span> <span class="title function_">treeifyBin</span><span class="params">(Node&lt;K,V&gt;[] tab, <span class="type">int</span> hash)</span> &#123;</span><br><span class="line">    <span class="type">int</span> n, index; Node&lt;K,V&gt; e;</span><br><span class="line">    <span class="comment">//判断数组长度是否小于64，小于则是进行扩容</span></span><br><span class="line">    <span class="keyword">if</span> (tab == <span class="literal">null</span> || (n = tab.length) &lt; MIN_TREEIFY_CAPACITY)</span><br><span class="line">      <span class="comment">//小于64于则进行扩容，还不会进行红黑树转换</span></span><br><span class="line">        resize();</span><br><span class="line">    <span class="keyword">else</span> <span class="keyword">if</span> ((e = tab[index = (n - <span class="number">1</span>) &amp; hash]) != <span class="literal">null</span>) &#123;</span><br><span class="line">        TreeNode&lt;K,V&gt; hd = <span class="literal">null</span>, tl = <span class="literal">null</span>;</span><br><span class="line">        <span class="keyword">do</span> &#123;</span><br><span class="line">            TreeNode&lt;K,V&gt; p = replacementTreeNode(e, <span class="literal">null</span>);</span><br><span class="line">            <span class="keyword">if</span> (tl == <span class="literal">null</span>)</span><br><span class="line">                hd = p;</span><br><span class="line">            <span class="keyword">else</span> &#123;</span><br><span class="line">                p.prev = tl;</span><br><span class="line">                tl.next = p;</span><br><span class="line">            &#125;</span><br><span class="line">            tl = p;</span><br><span class="line">        &#125; <span class="keyword">while</span> ((e = e.next) != <span class="literal">null</span>);</span><br><span class="line">        <span class="keyword">if</span> ((tab[index] = hd) != <span class="literal">null</span>)</span><br><span class="line">            hd.treeify(tab);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 ]]></content>
       <categories>
-        <category>MySQL</category>
+        <category>Java</category>
+        <category>java集合框架</category>
       </categories>
       <tags>
-        <tag>MySQL</tag>
-        <tag>MySQL锁进阶</tag>
+        <tag>教程</tag>
+        <tag>java</tag>
+        <tag>java集合框架</tag>
       </tags>
   </entry>
   <entry>
@@ -1503,6 +1229,280 @@
         <tag>教程</tag>
         <tag>MybatisPlus</tag>
         <tag>面试加分项</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>MySQL锁的理解</title>
+    <url>/2022/06/11/MySQL%E9%94%81%E7%9A%84%E7%90%86%E8%A7%A3/</url>
+    <content><![CDATA[<p>前言：</p>
+<p>本文为百度文章高级互联网专家的原创文章，本篇仅供学习使用，尊重原创</p>
+<p>原文链接：<a href="https://baijiahao.baidu.com/s?id=1709427910908845097&amp;wfr=spider&amp;for=pc">https://baijiahao.baidu.com/s?id=1709427910908845097&amp;wfr=spider&amp;for=pc</a></p>
+<hr>
+<h1 id="锁的类型"><a href="#锁的类型" class="headerlink" title="锁的类型"></a>锁的类型</h1><p>InnoDB实现了如下两种标准的行级锁：</p>
+<ul>
+<li><strong>共享锁</strong>（S Lock）：允许事务对一条行数据进行读取</li>
+<li><strong>排他锁</strong>（X Lock）：允许事务对一条行数据进行删除或更新</li>
+</ul>
+<p>如果一个事务T1已经获得了行r的共享锁， 那么另外的事务T2可以立即获得行r的共享锁， 因为读取并没有改变行 r 的数据， 称这种情况为<strong>锁兼容</strong> (Lock Compatible)。 但若有其他的事务T3想获得行r的排他锁， 则其必须等待事务T1, T2释放行r上的共享锁——这种情况称为<strong>锁不兼容</strong>。因为获取排他锁一般是为了改变数据，所以不能同时进行读取或则其他写入操作。</p>
+<p>从上表可以发现，<strong>X锁与任何锁都不兼容，而S锁仅和S锁兼容</strong>。</p>
+<p>此外， InnoDB 存储引擎支持多粒度锁定， 这种锁定允许事务在行级上的锁和表级上的锁同时存在。为了支待在不同粒度上进行加锁操作， InnoDB 存储引擎支持 一种额外的锁方式， 称之为<strong>意向锁</strong> (Intention Lock)。意向锁是将锁定的对象分为多个层次， 意向锁意味着事务希望在更细粒度上进行加锁。</p>
+<p>InnoDB存储引擎支持意向锁设计比较简练，其<strong>意向锁即为表级别的锁</strong>。设计目的主要是为了在事务中揭示下一行将被请求的锁类型。其支持两种意向锁：</p>
+<ul>
+<li><strong>意向共享锁</strong>（IS Lock）：事务想要获得一张表中某几行的共享锁</li>
+<li><strong>意向排他锁</strong>（IX Lock）：事务想要获得一张表中某几行的排他锁</li>
+</ul>
+<p>由于InnoDB存储引擎支持的是行级别的锁，因此<strong>意向锁不会阻塞除全表扫描以外的任何请求</strong>，它们的主要目的是为了表示是否有人请求锁定表中的某一行数据。</p>
+<p>如果没有意向锁，当已经有人使用行锁对表中的某一行进行修改时，如果另外一个请求要对全表进行修改，那么就需要对所有的行是否被锁定进行扫描，在这种情况下，效率是非常低的；不过，在引入意向锁之后，当有人使用行锁对表中的某一行进行修改之前，会先为表添加意向互斥锁（IX），再为行记录添加互斥锁（X），在这时如果有人尝试对全表进行修改就不需要判断表中的每一行数据是否被加锁了，只需要通过等待意向互斥锁被释放就可以了。</p>
+<p>故表级意向锁和行级锁的兼容性如下表所示：</p>
+<h1 id="锁的算法"><a href="#锁的算法" class="headerlink" title="锁的算法"></a>锁的算法</h1><p>InnoDB有三种行锁的算法：</p>
+<ul>
+<li><p><strong>Record Lock</strong></p>
+<p>简单说就是单个行记录上加锁，防止事务间修改或删除数据。Record Lock总是会去锁住索引记录，如果表建立的时候没有设置任何一个索引，InnoDB存储引擎会使用隐式的主键来进行锁定。</p>
+</li>
+<li><p><strong>Gap Lock</strong></p>
+<p>间隙锁，表示只锁住一段范围，<strong>不锁记录本身</strong>，通常表示两个索引记录之间，或者索引上的第一条记录之前，或者最后一条记录之后的锁。</p>
+</li>
+<li><p><strong>Next-Key Lock</strong></p>
+<p>Gap Lock + Record Lock，锁定一个范围及锁定记录本身。例如一个索引有10, 11, 13, 20这四个值，那么该索引可能被Next-key Locking的区间为<code>(负无穷, 10), (10, 11), (11, 13), (12, 20), (20, 正无穷)</code>。需要理解一点，InnoDB中加锁都是给所有记录一条一条加锁，并没有一个直接的范围可以直接锁住，所以会生成多个区间。</p>
+</li>
+</ul>
+<p>MySQL默认情况下使用RR的隔离级别，而<strong>Next-key Lock正是为了解决RR隔离级别下的不可重复读问题和幻读问题</strong>。所谓不可重复读就是一个事务内执行相同的查询，会看到不同的行记录，在RR隔离级别下这是不允许的。</p>
+<p>假设索引上有记录<code>1，4，5，8，12</code>，我们执行类似语句<code>SELECT … WHERE col &gt; 10 FOR UPDATE</code>。如果我们不在<code>(8, 12)</code>之间加上Next-key Lock，另外一个会话就可能向其中插入一条记录9，再执行一次相同的<code>SELECT ... FOR UPDATE</code>，就会看到新插入的记录。这也是为什么MySQL插入一条记录时，需要判断下一条记录上是否加锁了，如果加锁就需要等待。</p>
+<p><strong>InnoDB对行的查询默认采用Next-key算法</strong>。然而，<strong>当查询条件为等值时，且索引有唯一属性时（就是只锁定一条记录），InnoDB存储引擎会对Next-Key Lock进行优化，将其降级为Record Lock</strong>，即仅锁住索引本身，而不是一个范围，因为此时不会产生重复读问题。</p>
+<h1 id="锁读取"><a href="#锁读取" class="headerlink" title="锁读取"></a>锁读取</h1><blockquote>
+<p><strong>一致性非锁定读</strong>(consistent nonlocking read)是指InnoDB存储引擎通过多版本控制(MVCC)读取当前数据库中行数据的方式。如果读取的行正在执行DELETE或UPDATE操作，这时读取操作不会因此去等待行上锁的释放。相反地，InnoDB会去读取行的一个快照。</p>
+</blockquote>
+<p><a href="https://imgtu.com/i/jJJdOK"><img src="https://s1.ax1x.com/2022/07/04/jJJdOK.jpg" alt="jJJdOK.jpg"></a></p>
+<p>上图直观地展现了InnoDB一致性非锁定读的机制。之所以称其为非锁定读，是因为不需要等待行上排他锁的释放。快照数据是指该行的之前版本的数据，每行记录可能有多个版本，一般称这种技术为<strong>行多版本技术</strong>。由此带来的并发控制，称之为<strong>多版本并发控制</strong>(Multi Version Concurrency Control, MVCC)。**InnoDB是通过undo log来实现MVCC。undo log本身用来在事务中回滚数据，因此快照数据本身是没有额外开销。此外，读取快照数据是不需要上锁的，因为没有事务需要对历史的数据进行修改操作。</p>
+<p><strong>一致性非锁定读是InnoDB默认的读取方式</strong>，即读取不会占用和等待行上的锁。但是并不是在每个事务隔离级别下都是采用此种方式。此外，即使都是使用一致性非锁定读，但是对于快照数据的定义也各不相同。</p>
+<p>在事务隔别READ COMMITTED和REPEATABLE READ下，InnoDB使用一致性非锁定读。然而，对于快照数据的定义却不同。</p>
+<p>我们下面举个例子来详细说明一下上述的情况。</p>
+<p><a href="https://imgtu.com/i/jJJ0eO"><img src="https://s1.ax1x.com/2022/07/04/jJJ0eO.jpg" alt="jJJ0eO.jpg"></a></p>
+<p>首先在会话A中显示地开启一个事务，然后读取test表中的id为1的数据，但是事务并没有提交。与此同时，在开启另一个会话B，将test表中id为1的记录修改为id&#x3D;3，但是事务同样也没有提交，这样id&#x3D;1的行其实加了一个排他锁。</p>
+<p>由于InnoDB在READ COMMITTED和REPEATABLE READ事务隔离级别下使用一致性非锁定读，这时如果会话A再次读取id为1的记录，仍然能够读取到相同的数据。此时，READ COMMITTED和REPEATABLE READ事务隔离级别没有任何区别。</p>
+<p>当会话B提交事务后，会话A再次运行<code>SELECT * FROM test WHERE id = 1</code>的SQL语句时，两个事务隔离级别下得到的结果就不一样了：</p>
+<ul>
+<li><strong>对于READ COMMITTED的事务隔离级别，它总是读取行的最新版本</strong>，如果行被锁定了，则读取该行版本的最新一个快照。因为会话B的事务已经提交，所以在该隔离级别下上述SQL语句的结果集是空的。</li>
+<li><strong>对于REPEATABLE READ的事务隔离级别，总是读取事务开始时的行数据</strong>，因此，在该隔离级别下，上述SQL语句仍然会获得相同的数据。</li>
+</ul>
+<p>在默认情况下，即事务的隔离级别是repeatable read模式下，InnoDB存储引擎的SELECT操作使用的是一致性非锁定读。但是在某些情况下，用户需要显示的读取数据操作进行加锁保证数据逻辑的一致性。</p>
+<p>InnoDB提供了两种方式实现一致性锁定读：</p>
+<ul>
+<li><code>select … for udpate</code>，对读取的行加了X锁</li>
+<li><code>select … lock in share mode</code>，对读取的行加了S锁</li>
+</ul>
+<p>需要注意的是，以上两种语句必须在一个事务当中，当事务提交了，锁也就释放了。</p>
+<h1 id="阻塞"><a href="#阻塞" class="headerlink" title="阻塞"></a>阻塞</h1><blockquote>
+<p>因为不同锁之间的兼容性关系，有时候一个事务中的锁需要等待另一个事务中的锁释放它所占用的资源，这就是<strong>阻塞</strong>。</p>
+</blockquote>
+<p>在InnoDB，参数<code>innodb_lock_wait_timeout</code>用来控制等待的时间，<code>innodb_rollback_on_timeout</code>用来设定是否在等待超时后回滚。前者是动态的，后者是静态的。</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">mysql&gt; show variables like &#x27;innodb_lock_wait_timeout&#x27;\G;</span><br><span class="line">*************************** 1. row</span><br><span class="line">Variable_name: innodb_lock_wait_timeout</span><br><span class="line">Value: 50</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">mysql&gt; show variables like &#x27;innodb_rollback_on_timeout&#x27;\G;</span><br><span class="line">1. row</span><br><span class="line">: innodb_rollback_on_timeout</span><br><span class="line">Value: OFF</span><br></pre></td></tr></table></figure>
+
+<h1 id="死锁"><a href="#死锁" class="headerlink" title="死锁"></a>死锁</h1><p>死锁是指两个或两个以上的事务在执行过程中，因争夺资源而造成的一种相互等待的现象。若无外力作用，事务都将无法推进下去。</p>
+<p>解决死锁做简单的方法就是超时，即当两个事务互相等待时，当一个等待时间超过了某一阈值，其中一个事务进行回滚，另一个等待的事务就能继续进行。</p>
+<p>但是如果超时的事务所占权重比较大，如事务更新了很多行，占用了较多的undo log，回滚这个事务的时间相对于另一个事务所占用的时间可能会更多，就显得不合适了。</p>
+<p>因此，除了超时机制，当前数据库都普遍采用<strong>等待图</strong>（wait-for graph）的方式来进行死锁检测。</p>
+<p>wait-for graph要求数据库保存以下两种信息:</p>
+<ul>
+<li>锁的信息链表</li>
+<li>事务等待链表</li>
+</ul>
+<p>通过上述链表可以构造出一张图，而在这个图中若存在回路，就代表存在死锁，因此资源间相互发生等待。在 wait-for graph中,事务为图中的节点。而在图中,事务T1指向T2边的定义为:</p>
+<ul>
+<li>事务T1等待事务T2所占用的资源</li>
+<li>事务T1最终等待T2所占用的资源,也就是事务之间在等待相同的资源,而事务T1发生在事务T2的后面</li>
+</ul>
+<p>来看一个例子：</p>
+<p><a href="https://imgtu.com/i/jJJay6"><img src="https://s1.ax1x.com/2022/07/04/jJJay6.jpg" alt="jJJay6.jpg"></a></p>
+<p>在 Transaction Wait Lists中可以看到共有4个事务t1、t2、t3、t4,故在wait-for graph中应有4个节点。</p>
+<p><a href="https://imgtu.com/i/jJJUQx"><img src="https://s1.ax1x.com/2022/07/04/jJJUQx.jpg" alt="jJJUQx.jpg"></a></p>
+<p>通过上图可以发现存在回路(t1,t2)，因此存在死锁。可以发现wait-for graph是一种较为主动的死锁检测机制，在每个事务请求锁并发生等待时都会判断是否存在回路，若存在则有死锁，通常来说InnoDB存储引擎选择回滚undo量最小的事务。</p>
+<h1 id="InnoDB锁相关状态查询"><a href="#InnoDB锁相关状态查询" class="headerlink" title="InnoDB锁相关状态查询"></a>InnoDB锁相关状态查询</h1><p>用户可以使用<code>INFOMATION_SCHEMA</code>库下的<code>INNODB_TRX</code>、<code>INNODB_LOCKS</code>和<code>INNODB_LOCK_WAITS</code>表来监控当前事务并分析可能出现的锁问题。的关键字段如下：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">mysql&gt; SELECT * FROM information_schema.INNODB_TRX\G;</span><br><span class="line">************************************* 1.row *********************************************</span><br><span class="line">trx_id: 7311F4</span><br><span class="line">trx_state: LOCK WAIT</span><br><span class="line">trx_started: 2010-01-04 10:49:33</span><br><span class="line">trx_requested_lock_id: 7311F4:96:3:2</span><br><span class="line">trx_wait_started: 2010-01-04 10:49:33</span><br><span class="line">trx_weight: 2</span><br><span class="line">trx_mysql_thread_id: 471719</span><br><span class="line">trx_query: select * from parent lock in share mode</span><br></pre></td></tr></table></figure>
+
+<p>表只能显示当前运行的InnoDB事务，并不能直接判断锁的一些情况。如果需要查看锁，则还需要访问表，该表的关键字段组成如下：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">mysql&gt; SELECT * FROM.INNODB_LOCKS\G;</span><br><span class="line">1. row</span><br><span class="line">lock_id: 16219:56:4:5</span><br><span class="line">lock_trx_id: 16219</span><br><span class="line">lock_mode: X,GAP</span><br><span class="line">lock_type: RECORD</span><br><span class="line">lock_table: `test`.`z`</span><br><span class="line">lock_index: b</span><br><span class="line">lock_space: 56</span><br><span class="line">lock_page: 4</span><br><span class="line">lock_rec: 5</span><br><span class="line">lock_data: 6, 7</span><br><span class="line">2. row</span><br><span class="line">lock_id: 16218:56:4:5</span><br><span class="line">: 16218</span><br><span class="line">lock_mode: X,GAP</span><br><span class="line">lock_type: RECORD</span><br><span class="line">lock_table: `test`.`z`</span><br><span class="line">lock_index: b</span><br><span class="line">lock_space: 56</span><br><span class="line">lock_page: 4</span><br><span class="line">lock_rec: 5</span><br><span class="line">lock_data: 6, 7</span><br><span class="line">2 rows in set, 1 warning (0.00 sec)</span><br></pre></td></tr></table></figure>
+
+<p>通过表INNODB_LOCKS查看每张表上锁的情况后，用户就可以来判断由此引发的等待情况。当时当事务量非常大，其中锁和等待也时常发生，这个时候就不那么容易判断。但是通过表INNODB_LOCK_WAITS，可以很直观的反应当前事务的等待。表INNODB_LOCK_WAITS由四个字段组成，如下表所示。</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">mysql&gt; SELECT * FROM.INNODB_LOCK_WAITS\G;</span><br><span class="line">*******************************************1.row************************************</span><br><span class="line">requesting_trx_id: 7311F4</span><br><span class="line">requesting_lock_id: 7311F4:96:3:2</span><br><span class="line">blocking_trx_id: 730FEE</span><br><span class="line">blocking_lock_id: 730FEE:96:3:2</span><br></pre></td></tr></table></figure>
+
+<p>通过上述的SQL语句，用户可以清楚直观地看到哪个事务阻塞了另一个事务，然后使用上述的事务ID和锁ID，去INNODB_TRX和INNDOB_LOCKS表中查看更加详细的信息。</p>
+<h1 id="锁的应用实例解析"><a href="#锁的应用实例解析" class="headerlink" title="锁的应用实例解析"></a>锁的应用实例解析</h1><p>有一点需要特别注意，MySQL怎么使用锁，与事务的隔离级别、列上的索引状况等密切相关。单拎出一条SQL语句来讨论加锁的方式以及范围而不考虑使用场景，都是耍流氓的行为。</p>
+<p>下面就不同场景下锁的使用情况做一下对比，深入理解上面的理论知识。</p>
+<h2 id="场景1：RR隔离级别-主键索引"><a href="#场景1：RR隔离级别-主键索引" class="headerlink" title="场景1：RR隔离级别+主键索引"></a>场景1：RR隔离级别+主键索引</h2><p>首先根据如下代码创建测试表t，然后开启两个事务进行操作。</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">create table t(a int primary key);</span><br><span class="line">insert into t select 1;</span><br><span class="line">insert into t select 2;</span><br><span class="line">insert into t select 5;</span><br><span class="line">insert into t select 7;</span><br><span class="line">insert into t select 9;</span><br></pre></td></tr></table></figure>
+
+<p>开启事务1，保持未提交的状态：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">begin;</span><br><span class="line">select * from t where a=5 for update;</span><br></pre></td></tr></table></figure>
+
+<p>开启事务2并提交：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">begin;</span><br><span class="line">insert into t select 4;</span><br><span class="line">commit;</span><br></pre></td></tr></table></figure>
+
+<p>表t共有1、2、5、7、9五个值，在上面的例子中，在事务1中首先对<code>a=5</code>进行X锁定，而由于a是主键且唯一，因此锁定的仅是5这个值，而不是（2,5）这个范围。这样在事务2中插入值4而不会阻塞，可以立即插入并返回。即锁定由Next-key Lock算法降级为Record Lock，从而提高应用的并发性。</p>
+<p>需要意的一点是，对于唯一键值的锁定，<strong>Next-Key Lock降级为Record Lock仅存在于查询所有的唯一索引列</strong>。若唯一索引由多个列组成，而查询仅是查找多个唯一索引列中的其中一个，那么查询其实是range类型查询，而不是const类型查询，故InnoDB存储引擎依然使用Next-Key Lock进行锁定。</p>
+<p>但如果对主键进来范围查询时，锁的范围是怎么样的呢？</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">begin;</span><br><span class="line">select * from t where a&lt;=5 for update;</span><br></pre></td></tr></table></figure>
+
+<p>针对下面的sql语句：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">insert into test.t select 6;</span><br><span class="line">insert into test.t select 8</span><br></pre></td></tr></table></figure>
+
+<p>第一条会产生锁等待，而第二条可以插入成功。</p>
+<p>表t共有1、2、5、7、9五个值，在上面的例子中，在事务1中执行<code>a&lt;=5</code>范围查询时，事务1加锁范围是<code>(负无穷, 1)、(1, 2)、(2, 5)、(5, 7)</code>，且<code>1、2、5、7</code>这四条记录也都加锁了，也就是说再插入<code>&lt;=7</code>的记录都是会产生锁等待，插入记录8是成功的。</p>
+<p>那么InnoDB如何判断是否允许插入数据呢？对于普通索引，insert的加锁策略是：查找小于等于 insert_rec 的第一条记录，然后查看第一条记录的下一个记录是否有Gap锁，有则等待，没有则插入。比如说我们插入6这条记录，首先定位<code>&lt;=6</code>的记录，也就是5，然后确认5的下一条记录是否锁住了Gap，这里也就是7，当7这条记录有锁是代表锁住的是<code>(5, 7)</code>这个范围，就不允许插入（会申请一把插入意向锁），保证了可重复读。证明了在RR隔离级别下使用了Next-key Lock来保证其“可重复读”的特性。如果没有锁就直接插入即可。</p>
+<p>但是如果插入的记录有唯一约束时，只判断下一条记录是否锁住了Gap就不行了，显然会插入重复数据破坏唯一性。这时还会把插入的记录与前一条数据进行比较，如果相同则给插入记录的前一条记录加S Lock（lock in share mode），加锁成功则返回duplicate key，否则等待S Lock。</p>
+<p>这个地方可能有人会有一个疑问，为什么MySQL在加锁时，不直接加5这条记录本身以及&lt;5的记录呢？为什么还要给加锁呢？因为(5, 7)加不加锁并不会影响RR级别可重复读的特性。其实这就跟B+树有关系了，首先MySQL定位到1这条记录并加锁，然后顺着1往后读取数据并加锁，直到读取到第一条不匹配数据才能确定是否停止继续读取数据，而在RR隔离级别下只要被读到的数据都需要进行加锁。如果查询条件是&lt;5，那么加锁只会加到5这条记录为止。</p>
+<p>如果是在RC隔离级别下，只会对符合条件的记录进行加记录锁，不会对满足条件的下一条记录进行加锁。</p>
+<h2 id="场景2：RR隔离级别-普通索引"><a href="#场景2：RR隔离级别-普通索引" class="headerlink" title="场景2：RR隔离级别+普通索引"></a>场景2：RR隔离级别+普通索引</h2><p>正如上面所介绍的，Next-Key Lock降级为Record Lock仅在查询的列是唯一索引且条件为等值查询的情况下。若是辅助索引，则情况会完全不同，</p>
+<p>首先根据如下代码创建测试表z：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">create table z(id int primary key,b int,index(b));</span><br><span class="line">insert into z values(1,1);</span><br><span class="line">insert into z values(3,1);</span><br><span class="line">insert into z values(5,3);</span><br><span class="line">insert into z values(7,6);</span><br><span class="line">insert into z values(10,8);</span><br></pre></td></tr></table></figure>
+
+
+
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">begin;</span><br><span class="line">select * from z where b=3 for update;</span><br></pre></td></tr></table></figure>
+
+<p>这时SQL语句通过索引列b进行查询，因此其使用传统的Next-key Locking技术加锁，并且由于有两个索引，其需要分别进行锁定。对于聚集索引，其仅对列id等于5的索引加上Record Lock。那么，为什么主键索引上的记录也要加锁呢？因为有可能其他事务会根据主键对 z 表进行更新，试想一下，如果主键索引没有加锁，那么显然会存在并发问题。</p>
+<p>而对于辅助索引，其加上的是Next-key Lock，锁定的范围是（1, 3），特别需要注意的是，InnoDB存储引擎还会对辅助索引下一个键值加上Gap lock，即还有一个辅助索引范围为（3, 6）的锁。</p>
+<p>此时，若在新的事务2中运行下面的SQL语句：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">select * from z where id=5 lock in share mode;</span><br><span class="line">insert into z select 2,1;</span><br><span class="line">insert into z select 4,2;</span><br><span class="line">insert into z select 6,6;</span><br></pre></td></tr></table></figure>
+
+<p>第一个SQL语句，在事务1中执行的SQL语句已经对聚集索引中的列“a&#x3D;5”的值加上X锁，因此执行会被阻塞。</p>
+<p>第二SQL语句，主键插入2，没有问题，插入的辅助索引值1也不在锁定的范围（1,3）中，因此可以执行成功。</p>
+<p>第三个SQL语句，主键插入4，没有问题，插入的辅助索引值2在锁定的范围（1,3）中，因此执行会被阻塞。</p>
+<p>第四个SQL语句，插入的主键6没有被锁定，6也不在范围（1,3）之间。但插入的值6在另一个锁定的范围（3,6）中，故同样需要等待。</p>
+<p>在RR隔离级别下，对于INSERT的操作，其会检查插入记录的下一条记录是否被锁定，若已经被锁定，则不允许操作，从而避免不可重复读问题。而下面的SQL语句，不会被阻塞，可以立即执行：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">insert into z select 8,6;</span><br><span class="line">insert into z select 2,0;</span><br><span class="line">insert into z select 6,7;</span><br></pre></td></tr></table></figure>
+
+<p>从上面的例子中可以看到，Gap Lock的作用是为了阻止多个事务将记录插入到同一个范围内，解决“不可重复读”问题的产生。例如在上面的例子中，事务1中用户已经锁定了b&#x3D;3的记录，若此时没有Gap Lock锁定<code>(3, 6)</code>，那么用户可以插入索引b列为3的记录，这会导致事务1中的用户再次执行同样的查询时会返回不同的记录，即产生不可重复读问题。</p>
+<p>这里有一个问题值得思考一下，为什么插入<code>(6, 6)</code>不允许，而插入<code>(8, 6)</code>是允许的。这跟InnoDB索引结构有关系，我们知道二级索引是指向主键，所以结构如：<code>(1, 1), (1, 3), (3, 5), (6, 7), (8, 10)</code>。真正的Gap锁锁住的也是<code>((1, 1), (1, 3))</code>这样的结构，所以当我们插入<code>(6, 6)</code>时，需要插入到<code>(3, 5), (6, 7)</code>之间，这区间被锁，所以无法插入；而我们插入<code>(8, 6)</code>是需要插入到<code>(6, 7), (8, 10)</code>之间，没有锁存在，所以可以插入成功。</p>
+<p>另外，在RR隔离级别下，我们访问条件为二级索引的情况下，就算访问一条不存在的记录同样需要加Next-key Lokcs，比如我们查询</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">select * from z where b=7 for update;</span><br></pre></td></tr></table></figure>
+
+<p>InnoDB会对(6, 8)这个区间加了Gap Lock，也就是说插入这个区间的数据都会被阻塞。</p>
+<p>虽然在RR隔离级别默认使用Gap Lock，但用户可以通过以下两种方式来显式地关闭Gap Lock：</p>
+<ul>
+<li>将事务的隔离级别设置为READ COMMITTED；</li>
+<li>将参数<code>innodb_locks_unsafe_for_binlog</code>设置为1；</li>
+</ul>
+<p>当设置了上述参数或隔离级别调整到<strong>READ COMMITTED</strong>时，除了外键约束和唯一性检查（duplicate key）依然需要Gap Lock，其余情况仅使用Record Lock进行锁定。但需要知道的是，上述设置破坏了事务的隔离性，并且对于MySQL复制来说，可能会导致主从数据的不一致。虽然MySQL目前默认隔离级别是RR，但是基本生产环境标配基本都是RC隔离级别+ROW格式。</p>
+<h2 id="场景3：RC隔离级别-主键索引"><a href="#场景3：RC隔离级别-主键索引" class="headerlink" title="场景3：RC隔离级别+主键索引"></a>场景3：RC隔离级别+主键索引</h2><p>将事务隔离级别切为RC，开启事务1，保持未提交的状态：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">begin;</span><br><span class="line">select * from z where id&gt;3 for update;</span><br></pre></td></tr></table></figure>
+
+<p>执行下面的SQL：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">insert into z select 6,6;</span><br></pre></td></tr></table></figure>
+
+<p>可以执行成功。证明在事务1执行主键范围for update时，事务2对这个范围扔可以申请写锁。证明RC隔离级别没有使用NEXT-KEY Lock，而是使用行级锁锁住对应的记录。</p>
+<h2 id="场景4：RC隔离级别-普通索引"><a href="#场景4：RC隔离级别-普通索引" class="headerlink" title="场景4：RC隔离级别+普通索引"></a>场景4：RC隔离级别+普通索引</h2><p>将事务隔离级别切为RC，开启事务1，保持未提交的状态：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">begin;</span><br><span class="line">select * from z where b&gt;3 for update;</span><br></pre></td></tr></table></figure>
+
+<p>此时，若在新的事务2中运行下面的SQL语句：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">insert into z select 8,4;</span><br><span class="line">update z set b = 10 where b = 6;</span><br><span class="line">update z set b = 10 where b = 1;</span><br></pre></td></tr></table></figure>
+
+<p>第一个SQL语句，插入数据到事务1的for update范围内是可以的，因为这里事务1在RC模式下没有加NEXT-KEY LOCK锁，所以可以插入数据。</p>
+<p>第二个SQL语句，会出现锁等待，我们选择普通索引作为条件，此时MySQL给普通索引b&gt;3的记录都会加行锁。同时，这些记录对应主键索引上的记录也都加上了锁</p>
+<p>第三个SQL语句，插入成功，说明b&lt;3的记录都无锁。</p>
+<h2 id="场景5：RR-无索引"><a href="#场景5：RR-无索引" class="headerlink" title="场景5：RR + 无索引"></a>场景5：RR + 无索引</h2><p><strong>InnoDB行锁是通过给索引上的索引项加锁来实现的</strong>，这一点MySQL与Oracle不同，后者是通过在数据块中对相应数据行加锁来实现的。InnoDB这种行锁实现特点意味着：<strong>只有通过索引条件检索数据，InnoDB才使用行级锁，否则，InnoDB将会给所有记录加锁</strong>。</p>
+<p>在RR隔离级别下，由于查询条件没有索引，那么InnoDB需要扫描所有数据来查找数据，对于扫描过的数据InnoDB都会加上锁，并且是加Next-key lock。</p>
+<p>建立测试表：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">create table tab_no_index(id int,b int) engine=innodb;</span><br><span class="line">insert into tab_no_index values(1,1),(2,2),(3,3),(4,4),(100,100);</span><br></pre></td></tr></table></figure>
+
+<p>开启事务1，保持未提交的状态：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">begin;</span><br><span class="line">select * from tab_no_index where id = 1 for update;</span><br></pre></td></tr></table></figure>
+
+<p>执行下面的SQL：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">insert into tab_no_index values(5,5);</span><br></pre></td></tr></table></figure>
+
+<p>这时候，并不能插入成功。看起来事务1只给一行加了排他锁，但事务2在请求其他行的排他锁时，却出现了锁等待。原因就在于没有索引的情况下，InnoDB只能扫描所有记录（锁住所有记录）。当我们给其增加一个唯一索引后，InnoDB就只锁定了符合条件的行。</p>
+<p>当我们给其增加一个唯一索引后，InnoDB就只锁定了符合条件的行。</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">create table tab_with_index(id int,b int,primary key(id));</span><br><span class="line">insert into tab_with_index values(1,1),(2,2),(3,3),(4,4),(100,100);</span><br></pre></td></tr></table></figure>
+
+<p>开启事务1，保持未提交的状态：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">begin;</span><br><span class="line">select * from tab_with_index where id = 1 for update;</span><br></pre></td></tr></table></figure>
+
+<p>执行下面的SQL：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">select * from tab_with_index where id = 2 for update;</span><br></pre></td></tr></table></figure>
+
+<p>由这个例子可以看出，对于id是主键索引的情况下，只锁了id&#x3D;1这一行记录。其余的行都是可以进行DML操作的，但前提条件是以id为条件。如果是以b字段为条件，那么还是会锁的。</p>
+<h2 id="场景6：RC-无索引"><a href="#场景6：RC-无索引" class="headerlink" title="场景6：RC + 无索引"></a>场景6：RC + 无索引</h2><p>上面演示了在RR隔离级别下，对于where条件无索引的情况下，InnoDB是对所有记录加Next-key Locks。</p>
+<p>但是在RC隔离级别下，对于where条件无索引的情况下，则不会对所有记录加锁，而是只对命中的数据的聚簇索引加X锁。</p>
+<p>同样针对tab_no_index&#96;&#96;表，开启事务1，保持未提交的状态：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">begin;</span><br><span class="line">delete from tab_no_index where id = 1;</span><br></pre></td></tr></table></figure>
+
+<p>执行下面的SQL：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">delete from tab_no_index where id = 99;</span><br><span class="line">update tab_no_index set id=2 where id=100;</span><br><span class="line">insert into tab_no_index select 99,99;</span><br></pre></td></tr></table></figure>
+
+<p>都可以执行成功。</p>
+<h2 id="沙场练兵"><a href="#沙场练兵" class="headerlink" title="沙场练兵"></a>沙场练兵</h2><p>有了上面的分场景演习，下面就两条简单SQL进行一场加锁分析的实战。</p>
+<p>下面两条简单的SQL，加什么锁？</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">select * from t1 where id = 10;</span><br><span class="line">delete from t1 where id = 10;</span><br></pre></td></tr></table></figure>
+
+<p>一眼看去，不经大脑的回答是：</p>
+<ul>
+<li>SQL1：不加锁。因为MySQL是使用多版本并发控制的，读不加锁</li>
+<li>SQL2：对id &#x3D; 10的记录加写锁 (走主键索引)</li>
+</ul>
+<p>可能是正确的，也有可能是错误的，已知条件不足，要回答这个问题，还缺少几个前提条件：</p>
+<ul>
+<li>id列是不是主键？</li>
+<li>当前系统的隔离级别是什么？</li>
+<li>id列如果不是主键，那么id列上有索引吗？</li>
+<li>id列上如果有二级索引，那么这个索引是唯一索引吗？</li>
+</ul>
+<p><strong>组合一：id列是主键，RC隔离级别</strong></p>
+<p>这个组合，是最简单，最容易分析的组合。id是主键，Read Committed隔离级别，给定SQL：<code>delete from t1 where id = 10;</code> 只需要将主键上，id &#x3D; 10的记录加上X锁即可。</p>
+<p><a href="https://imgtu.com/i/jJJTYj"><img src="https://s1.ax1x.com/2022/07/04/jJJTYj.jpg" alt="jJJTYj.jpg"></a></p>
+<p><strong>组合二：id唯一索引+RC</strong></p>
+<p>id是unique索引，而主键是name列。由于id是unique索引，因此delete语句会选择id列的索引进行where条件的过滤，在找到id&#x3D;10的记录后，首先会将unique索引上的id&#x3D;10索引记录加上X锁，同时，会根据读取到的name列，回主键索引(聚簇索引)，然后将聚簇索引上的name &#x3D; ‘d’ 对应的主键索引项加X锁。</p>
+<p>为什么聚簇索引上的记录也要加锁？如果并发的一个SQL，是通过主键索引来更新：<code>update t1 set id = 100 where name = ‘d’;</code> 此时，如果delete语句没有将主键索引上的记录加锁，那么并发的update就会感知不到delete语句的存在，违背了同一记录上的更新&#x2F;删除需要串行执行的约束。</p>
+<p>若id列是unique列，其上有unique索引。那么SQL需要加两个X锁，一个对应于id unique索引上的id &#x3D; 10的记录，另一把锁对应于聚簇索引上的[name&#x3D;’d’,id&#x3D;10]的记录。</p>
+<p><a href="https://imgtu.com/i/jJJL60"><img src="https://s1.ax1x.com/2022/07/04/jJJL60.jpg" alt="jJJL60.jpg"></a></p>
+<p><strong>组合三：id非唯一索引+RC</strong></p>
+<p>相对于组合一、二，id列不再唯一，只有一个普通的索引。</p>
+<p>满足id &#x3D; 10查询条件的记录，均已加锁。同时，这些记录对应的主键索引上的记录也都加上了锁。与组合二唯一的区别在于，组合二最多只有一个满足等值查询的记录，而组合三会将所有满足查询条件的记录都加锁。</p>
+<p><a href="https://imgtu.com/i/jJJbpn"><img src="https://s1.ax1x.com/2022/07/04/jJJbpn.jpg" alt="jJJbpn.jpg"></a></p>
+<p><strong>组合四：id无索引+RC</strong></p>
+<p>这个过滤条件，没法通过索引进行过滤，那么只能走全表扫描做过滤。对应于这个组合，SQL会加什么锁？换句话说，全表扫描时，会加什么锁？</p>
+<p>由于id列上没有索引，因此只能走聚簇索引，进行全部扫描。聚簇索引上所有的记录，都被加上了X锁。无论记录是否满足条件，全部被加上X锁。既不是加表锁，也不是在满足条件的记录上加行锁。</p>
+<p><a href="https://imgtu.com/i/jJJqlq"><img src="https://s1.ax1x.com/2022/07/04/jJJqlq.jpg" alt="jJJqlq.jpg"></a></p>
+<p>为什么不是只在满足条件的记录上加锁呢？这是由于MySQL的实现决定的。如果一个条件无法通过索引快速过滤，那么存储引擎层面就会将所有记录加锁后返回，然后由MySQL Server层进行过滤。因此也就把所有的记录都锁上了。</p>
+<p>在实际的实现中，MySQL有一些改进，在MySQL Server过滤条件，发现不满足后，会调用unlock_row方法，把不满足条件的记录放锁 (违背了2PL的约束)。这样做，保证了最后只会持有满足条件记录上的锁，但是每条记录的加锁操作还是不能省略的。</p>
+<p><strong>组合五：id主键+RR</strong></p>
+<p>上面的四个组合，都是在Read Committed隔离级别下的加锁行为，接下来的四个组合，是在Repeatable Read隔离级别下的加锁行为。</p>
+<p>id列是主键列，Repeatable Read隔离级别，针对<code>delete from t1 where id = 10;</code> 这条SQL，加锁与组合一：[id主键，Read Committed]一致。</p>
+<p><strong>组合六：id唯一索引+RR</strong></p>
+<p>与组合二：[id唯一索引，Read Committed]一致。两个X锁，id唯一索引满足条件的记录上一个，对应的聚簇索引上的记录一个。</p>
+<p><strong>组合七：id非唯一索引+RR</strong></p>
+<p>RC隔离级别允许幻读，而RR隔离级别，不允许存在幻读。那么RR隔离级别下，如何防止幻读呢？</p>
+<p>组合七，Repeatable Read隔离级别，id上有一个非唯一索引，执行<code>delete from t1 where id = 10;</code> 假设选择id列上的索引进行条件过滤，最后的加锁行为，是怎么样的呢？</p>
+<p><a href="https://imgtu.com/i/jJJ7fs"><img src="https://s1.ax1x.com/2022/07/04/jJJ7fs.jpg" alt="jJJ7fs.jpg"></a></p>
+<p>相对于组合三：[id列上非唯一锁，Read Committed]看似相同，其实却有很大的区别。</p>
+<p>最大的区别在于，多了一个GAP锁，而且GAP锁看起来也不是加在记录上的，是加载两条记录之间的位置，GAP锁有何用？</p>
+<p><strong>这个多出来的GAP锁，就是RR隔离级别，相对于RC隔离级别，不会出现幻读的关键</strong>。</p>
+<p>GAP锁锁住的位置，不是记录本身，而是两条记录之间的GAP。所谓幻读，就是同一个事务，连续做两次当前读(例如：<code>select * from t1 where id = 10 for update;</code>)，那么这两次当前读返回的是完全相同的记录 (记录数量一致，记录本身也一致)，第二次的当前读，不会比第一次返回更多的记录 (幻象)。</p>
+<p>如何保证两次当前读返回一致的记录，那就需要在第一次当前读与第二次当前读之间，其他的事务不会插入新的满足条件的记录并提交。为了实现这个功能，GAP锁应运而生。</p>
+<p>如图中所示，有哪些位置可以插入新的满足条件的项 (id &#x3D; 10)，考虑到B+树索引的有序性，满足条件的项一定是连续存放的。记录[6,c]之前，不会插入id&#x3D;10的记录；[6,c]与[10,b]间、[10,b]与[10,d]间、[10,d]与[11,f]间可以插入满足条件的[10,e],[10,z]等；而[11,f]之后也不会插入满足条件的记录。</p>
+<p>因此，为了保证[6,c]与[10,b]间，[10,b]与[10,d]间，[10,d]与[11,f]不会插入新的满足条件的记录，MySQL选择了用GAP锁，将这三个GAP给锁起来。</p>
+<p>Insert操作，如insert [10,a]，首先会定位到[6,c]与[10,b]间，然后在插入前，会检查这个GAP是否已经被锁上，如果被锁上，则Insert不能插入记录。因此，通过第一遍的当前读，不仅将满足条件的记录锁上 (X锁)，与组合三类似。同时还是增加3把GAP锁，将可能插入满足条件记录的3个GAP给锁上，保证后续的Insert不能插入新的id&#x3D;10的记录，也就杜绝了同一事务的第二次当前读，出现幻象的情况。</p>
+<p>既然防止幻读，需要靠GAP锁的保护，为什么组合五、组合六，也是RR隔离级别，却不需要加GAP锁呢？ GAP锁的目的，是为了防止同一事务的两次当前读，出现幻读的情况。而组合五，id是主键；组合六，id是unique键，都能够保证唯一性。一个等值查询，最多只能返回一条记录，而且新的相同取值的记录，一定不会在新插入进来，因此也就避免了GAP锁的使用。</p>
+<p>结论：Repeatable Read隔离级别下，id列上有一个非唯一索引，对应SQL：<code>delete from t1 where id = 10;</code>首先，通过id索引定位到第一条满足查询条件的记录，加记录上的X锁，加GAP上的GAP锁，然后加主键聚簇索引上的记录X锁，然后返回；然后读取下一条，重复进行。直至进行到第一条不满足条件的记录[11,f]，此时，不需要加记录X锁，但是仍旧需要加GAP锁，最后返回结束。</p>
+<p><strong>组合八：id无索引+RR</strong></p>
+<p>id列上没有索引。此时SQL：<code>delete from t1 where id = 10;</code>没有其他的路径可以选择，只能进行全表扫描。最终的加锁情况，如下图所示：</p>
+<p><a href="https://imgtu.com/i/jJJOXV"><img src="https://s1.ax1x.com/2022/07/04/jJJOXV.jpg" alt="jJJOXV.jpg"></a></p>
+<p>这是一个很恐怖的现象。首先，聚簇索引上的所有记录，都被加上了X锁。其次，聚簇索引每条记录间的间隙(GAP)，也同时被加上了GAP锁。这个示例表，只有6条记录，一共需要6个记录锁，7个GAP锁。试想，如果表上有1000万条记录呢？</p>
+<p>在这种情况下，这个表上，除了不加锁的快照度，其他任何加锁的并发SQL，均不能执行，不能更新，不能删除，不能插入，全表被锁死。</p>
+<p>当然，跟组合四：[id无索引, Read Committed]类似，这个情况下，MySQL也做了一些优化，就是所谓的<code>semi-consistent read</code>。<code>semi-consistent read</code>开启的情况下，对于不满足查询条件的记录，MySQL会提前放锁。</p>
+<p>结论：在Repeatable Read隔离级别下，如果进行全表扫描的当前读，那么会锁上表中的所有记录，同时会锁上聚簇索引内的所有GAP，杜绝所有的并发 更新&#x2F;删除&#x2F;插入 操作。当然，也可以通过触发<code>semi-consistent read</code>，来缓解加锁开销与并发影响，但是<code>semi-consistent read</code>本身可能会带来其他问题。</p>
+<p><strong>组合九：Serializable</strong></p>
+<p>Serializable隔离级别。对于SQL2：<code>delete from t1 where id = 10;</code> 来说，Serializable隔离级别与Repeatable Read隔离级别完全一致</p>
+<p>Serializable隔离级别，影响的是SQL1：<code>select * from t1 where id = 10;</code>这条SQL，在RC，RR隔离级别下，都是快照读，不加锁。但是在Serializable隔离级别，SQL1会加读锁，也就是说快照读不复存在，MVCC并发控制降级为Lock-Based CC。</p>
+<p>MVCC 最大的好处：读不加锁，读写不冲突。在读多写少的OLTP应用中，读写不冲突是非常重要的，极大的增加了系统的并发性能，这也是为什么现阶段，几乎所有的RDBMS，都支持了MVCC</p>
+<p>在MySQL&#x2F;InnoDB中，所谓的读不加锁，并不适用于所有的情况，而是隔离级别相关的。Serializable隔离级别，读不加锁就不再成立，所有的读操作，都是当前读。</p>
+]]></content>
+      <categories>
+        <category>MySQL</category>
+      </categories>
+      <tags>
+        <tag>MySQL</tag>
+        <tag>MySQL锁进阶</tag>
       </tags>
   </entry>
   <entry>
@@ -2722,17 +2722,17 @@
 <p>email varchar(255) </p>
 <p>);</p>
 <p>insert into t_user(id,username,email)</p>
-<p>values(1,’张三’,‘<a href="mailto:&#122;&#x73;&#x40;&#49;&#x32;&#x33;&#46;&#99;&#111;&#109;">&#122;&#x73;&#x40;&#49;&#x32;&#x33;&#46;&#99;&#111;&#109;</a>‘);</p>
+<p>values(1,’张三’,‘<a href="mailto:&#122;&#115;&#x40;&#x31;&#x32;&#x33;&#x2e;&#x63;&#x6f;&#x6d;">&#122;&#115;&#x40;&#x31;&#x32;&#x33;&#x2e;&#x63;&#x6f;&#x6d;</a>‘);</p>
 <p>insert into t_user(id,username,email)</p>
-<p>values(2,’李四’,‘<a href="mailto:&#x6c;&#x73;&#x40;&#49;&#50;&#x33;&#46;&#99;&#111;&#109;">&#x6c;&#x73;&#x40;&#49;&#50;&#x33;&#46;&#99;&#111;&#109;</a>‘);</p>
+<p>values(2,’李四’,‘<a href="mailto:&#x6c;&#115;&#x40;&#x31;&#50;&#51;&#x2e;&#x63;&#111;&#x6d;">&#x6c;&#115;&#x40;&#x31;&#50;&#51;&#x2e;&#x63;&#111;&#x6d;</a>‘);</p>
 <p>insert into t_user(id,username,email)</p>
-<p>values(3,’王五’,‘<a href="mailto:&#119;&#x77;&#64;&#49;&#50;&#x33;&#46;&#x63;&#x6f;&#109;">&#119;&#x77;&#64;&#49;&#50;&#x33;&#46;&#x63;&#x6f;&#109;</a>‘);</p>
+<p>values(3,’王五’,‘<a href="mailto:&#119;&#119;&#x40;&#x31;&#50;&#x33;&#x2e;&#x63;&#111;&#109;">&#119;&#119;&#x40;&#x31;&#50;&#x33;&#x2e;&#x63;&#111;&#109;</a>‘);</p>
 <p>select *</p>
 <p>from t_user;</p>
 <p>insert into t_user(id,username,email)</p>
-<p>values(1,’小舞’,‘<a href="mailto:&#120;&#119;&#x40;&#x31;&#x32;&#51;&#x2e;&#x63;&#111;&#109;">&#120;&#119;&#x40;&#x31;&#x32;&#51;&#x2e;&#x63;&#111;&#109;</a>‘);</p>
+<p>values(1,’小舞’,‘<a href="mailto:&#120;&#119;&#x40;&#x31;&#50;&#x33;&#x2e;&#99;&#111;&#x6d;">&#120;&#119;&#x40;&#x31;&#50;&#x33;&#x2e;&#99;&#111;&#x6d;</a>‘);</p>
 <p>insert into t_user(username,email)</p>
-<p>values(‘小舞’,‘<a href="mailto:&#120;&#119;&#64;&#x31;&#50;&#51;&#x2e;&#x63;&#x6f;&#109;">&#120;&#119;&#64;&#x31;&#50;&#51;&#x2e;&#x63;&#x6f;&#109;</a>‘);</p>
+<p>values(‘小舞’,‘<a href="mailto:&#x78;&#119;&#x40;&#49;&#50;&#x33;&#46;&#99;&#x6f;&#109;">&#x78;&#119;&#x40;&#49;&#50;&#x33;&#46;&#99;&#x6f;&#109;</a>‘);</p>
 <p>根据以上的测试得出: id是主键，因为添加了主键约束，主键字段中的数据不能为NULL</p>
 <p>主键的特点:不能为NULL，也不能重复。</p>
 <h4 id="主键相关的术语"><a href="#主键相关的术语" class="headerlink" title="主键相关的术语?"></a>主键相关的术语?</h4><p>主键约束: primary key</p>
